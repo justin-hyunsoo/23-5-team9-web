@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LoginRequiredModal from './LoginRequiredModal';
+import { PostListItem } from '../hooks/usePosts';
 
 const BASE_URL = 'https://api-internhasha.wafflestudio.com';
+
+interface PostCardProps {
+  post: PostListItem;
+}
 
 /**
  * 개별 포스트 카드를 렌더링하는 컴포넌트
  * @param {object} post - 개별 포스트 데이터
  */
-function PostCard({ post }) {
+function PostCard({ post }: PostCardProps) {
   
   // 이미지는 post.profileImageKey (회사 로고)를 사용합니다.
   const imageUrl = post.profileImageKey ? `${BASE_URL}/${post.profileImageKey}` : null;
@@ -16,7 +21,6 @@ function PostCard({ post }) {
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked || false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const navigate = useNavigate();
 
   // post.isBookmarked가 변경되면 로컬 상태도 업데이트
   useEffect(() => {
@@ -24,7 +28,7 @@ function PostCard({ post }) {
   }, [post.isBookmarked]);
   
   // 상세 페이지로 이동할 경로 (예: /post/a5f5ead2...)
-  const postDetailUrl = `/${post.id}`; 
+  const postDetailUrl = `/posts/${post.id}`; 
   
   // 위치 데이터 정리 (예: "경기 성남시 분당구...")
   const location = post.location.split('|')[0];
@@ -32,7 +36,7 @@ function PostCard({ post }) {
   /**
    * 북마크 토글 핸들러
    */
-  const handleBookmarkToggle = async (e) => {
+  const handleBookmarkToggle = async (e: React.MouseEvent) => {
     e.preventDefault(); // Link로의 이동 방지
     e.stopPropagation(); // 이벤트 전파 방지
     

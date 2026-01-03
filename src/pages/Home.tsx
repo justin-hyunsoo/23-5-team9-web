@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/common.css"; // 공통 CSS
 import "../styles/postlist.css"; // 이 컴포넌트 전용 CSS
@@ -23,9 +23,9 @@ function PostList() {
     }
   }, [searchParams, navigate]);
 
-  const setPage = (newPage) => {
+  const setPage = (newPage: number) => {
     const currentParams = Object.fromEntries(searchParams.entries());
-    setSearchParams({ ...currentParams, page: newPage });
+    setSearchParams({ ...currentParams, page: newPage.toString() });
   };
   // 직무 필터 관련 상태와 핸들러
   const {
@@ -64,7 +64,6 @@ function PostList() {
     }
 
     const startPage = Math.floor(page / 5) * 5;
-    const endPage = startPage + 5;
 
     // 이전 버튼 - 현재 페이지가 0보다 크면 활성화
     const hasPrev = page > 0;

@@ -2,8 +2,14 @@ import { useEffect, useState } from 'react';
 
 const BASE_URL = 'https://api-internhasha.wafflestudio.com';
 
+interface User {
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
 export default function ProfileInfo() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 

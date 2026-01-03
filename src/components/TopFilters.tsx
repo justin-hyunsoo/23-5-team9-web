@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DOMAINS } from './JobFilter';
 
 /**
  * 상단 필터 컴포넌트 (모집상태, 도메인, 정렬)
  */
+interface TopFiltersProps {
+  selectedDomains: string[];
+  onDomainToggle: (domain: string) => void;
+  isActive: boolean | null;
+  onIsActiveChange: (value: boolean | null) => void;
+  order: number;
+  onOrderChange: (value: number) => void;
+  onResetFilters: () => void;
+  isStatusChanged: boolean;
+  isDomainsChanged: boolean;
+  isSortChanged: boolean;
+}
+
 function TopFilters({
   selectedDomains,
   onDomainToggle,
@@ -15,7 +28,7 @@ function TopFilters({
   isStatusChanged,
   isDomainsChanged,
   isSortChanged
-}) {
+}: TopFiltersProps) {
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isDomainOpen, setIsDomainOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);

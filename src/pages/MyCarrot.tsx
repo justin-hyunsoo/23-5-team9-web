@@ -8,14 +8,14 @@ function MyCarrot() {
     region: '서울시 강남구',
     profileImage: 'https://via.placeholder.com/100'
   });
-  const [coin, setCoin] = useState(1000);
+  const [coin] = useState(1000);
 
-  const handleInfoUpdate = (e) => {
+  const handleInfoUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     alert('정보가 수정되었습니다.');
   };
 
-  const handlePasswordUpdate = (e) => {
+  const handlePasswordUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     alert('비밀번호가 변경되었습니다.');
   };

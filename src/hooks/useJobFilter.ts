@@ -9,7 +9,7 @@ import { JOB_CATEGORIES } from '../components/JobFilter';
 export function useJobFilter() {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  const [selectedRoles, setSelectedRoles] = useState(() => {
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(() => {
     // URL 우선, 없으면 localStorage에서 읽기
     const urlRoles = searchParams.getAll('roles');
     if (urlRoles.length > 0) return urlRoles;
@@ -22,7 +22,7 @@ export function useJobFilter() {
     return [];
   });
   
-  const [selectedDomains, setSelectedDomains] = useState(() => {
+  const [selectedDomains, setSelectedDomains] = useState<string[]>(() => {
     // URL 우선, 없으면 localStorage에서 읽기
     const urlDomains = searchParams.getAll('domains');
     if (urlDomains.length > 0) return urlDomains;
@@ -35,7 +35,7 @@ export function useJobFilter() {
     return [];
   });
   
-  const [isActive, setIsActive] = useState(() => {
+  const [isActive, setIsActive] = useState<boolean | null>(() => {
     // URL 우선, 없으면 localStorage에서 읽기
     const urlParam = searchParams.get('isActive');
     if (urlParam === 'true') return true;
@@ -49,7 +49,7 @@ export function useJobFilter() {
     return null; // 전체
   });
   
-  const [order, setOrder] = useState(() => {
+  const [order, setOrder] = useState<number>(() => {
     // URL 우선, 없으면 localStorage에서 읽기
     const urlParam = searchParams.get('order');
     if (urlParam) return parseInt(urlParam, 10);
@@ -76,7 +76,7 @@ export function useJobFilter() {
   }, [selectedRoles, selectedDomains, isActive, order]);
 
   // URL 파라미터 업데이트
-  const updateSearchParams = (roles, domains, activeState, orderValue) => {
+  const updateSearchParams = (roles: string[], domains: string[], activeState: boolean | null, orderValue: number) => {
     const params = new URLSearchParams();
     
     // roles 추가
@@ -97,7 +97,7 @@ export function useJobFilter() {
   };
 
   // 역할 선택/해제 핸들러
-  const handleRoleToggle = (role) => {
+  const handleRoleToggle = (role: string) => {
     setSelectedRoles(prev => {
       const newRoles = prev.includes(role) 
         ? prev.filter(r => r !== role)
@@ -109,7 +109,7 @@ export function useJobFilter() {
   };
 
   // 카테고리 전체 선택/해제 핸들러
-  const handleCategoryAllToggle = (categoryKey) => {
+  const handleCategoryAllToggle = (categoryKey: keyof typeof JOB_CATEGORIES) => {
     const category = JOB_CATEGORIES[categoryKey];
     const categoryRoleValues = category.roles.map(r => r.value);
     const allSelected = categoryRoleValues.every(role => selectedRoles.includes(role));
@@ -125,7 +125,7 @@ export function useJobFilter() {
   };
 
   // 도메인 선택/해제 핸들러
-  const handleDomainToggle = (domain) => {
+  const handleDomainToggle = (domain: string) => {
     setSelectedDomains(prev => {
       const newDomains = prev.includes(domain)
         ? prev.filter(d => d !== domain)
@@ -137,13 +137,13 @@ export function useJobFilter() {
   };
 
   // 모집 상태 변경 핸들러
-  const handleIsActiveChange = (value) => {
+  const handleIsActiveChange = (value: boolean | null) => {
     setIsActive(value);
     updateSearchParams(selectedRoles, selectedDomains, value, order);
   };
 
   // 정렬 변경 핸들러
-  const handleOrderChange = (value) => {
+  const handleOrderChange = (value: number) => {
     setOrder(value);
     updateSearchParams(selectedRoles, selectedDomains, isActive, value);
   };

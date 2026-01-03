@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = 'https://api-internhasha.wafflestudio.com';
 
-const PasswordRequirements = ({ password }) => {
+interface PasswordRequirementsProps {
+  password: string;
+}
+
+const PasswordRequirements = ({ password }: PasswordRequirementsProps) => {
   const checks = {
     length: password.length >= 8,
     number: /\d/.test(password),
@@ -23,7 +27,11 @@ const PasswordRequirements = ({ password }) => {
   );
 };
 
-export default function SignupForm({ onSignup }) {
+interface SignupFormProps {
+  onSignup?: () => void;
+}
+
+export default function SignupForm({ onSignup }: SignupFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +44,7 @@ export default function SignupForm({ onSignup }) {
 
   const passwordsMatch = password && password === passwordConfirm;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!passwordsMatch) {
       setError('비밀번호가 일치하지 않습니다.');
@@ -67,7 +75,7 @@ export default function SignupForm({ onSignup }) {
         const data = await res.json();
         localStorage.setItem('token', data.token);
         onSignup && onSignup();
-        navigate('/profile');
+        navigate('/jobs');
       } else {
         const errorData = await res.json();
         if (errorData.details) {
@@ -105,7 +113,7 @@ export default function SignupForm({ onSignup }) {
       </div>
       {passwordFocused && (
         <>
-          <PasswordRequirements password={password} className="password-requirements" />
+          <PasswordRequirements password={password} />
           <div className="input-wrapper mt-sm">
             <input
               className="form-input input-with-icon"

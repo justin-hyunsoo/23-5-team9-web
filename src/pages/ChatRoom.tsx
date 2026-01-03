@@ -14,7 +14,7 @@ function ChatRoom() {
   const [messages, setMessages] = useState(mockMessages);
   const [newMessage, setNewMessage] = useState('');
 
-  const handleSend = (e) => {
+  const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
     

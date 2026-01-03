@@ -1,4 +1,3 @@
-import React from 'react';
 
 // 직무 카테고리 정의
 export const JOB_CATEGORIES = {
@@ -48,13 +47,21 @@ export const DOMAINS = [
 /**
  * 직무 필터 컴포넌트 (사이드바)
  */
+interface JobFilterProps {
+  selectedRoles: string[];
+  onRoleToggle: (role: string) => void;
+  onCategoryAllToggle: (categoryKey: keyof typeof JOB_CATEGORIES) => void;
+  isFilterOpen: boolean;
+  onToggleFilter: () => void;
+}
+
 function JobFilter({ 
   selectedRoles, 
   onRoleToggle, 
   onCategoryAllToggle,
   isFilterOpen, 
   onToggleFilter 
-}) {
+}: JobFilterProps) {
   return (
     <aside className="job-filter-sidebar">
       <button className="filter-toggle" onClick={onToggleFilter}>
@@ -76,7 +83,7 @@ function JobFilter({
                   <input
                     type="checkbox"
                     checked={category.roles.every(r => selectedRoles.includes(r.value))}
-                    onChange={() => onCategoryAllToggle(categoryKey)}
+                    onChange={() => onCategoryAllToggle(categoryKey as keyof typeof JOB_CATEGORIES)}
                   />
                   <span>전체 선택</span>
                 </label>

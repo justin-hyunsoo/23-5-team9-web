@@ -1,9 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import "../styles/common.css"; // 공통 CSS
 import "../styles/postbody.css"; // 이 컴포넌트 전용 CSS (아래 CSS 내용 참고)
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
+import { PostDetail as Post } from "../hooks/usePosts";
 
 const BASE_URL = 'https://api-internhasha.wafflestudio.com';
 
@@ -11,7 +10,7 @@ function PostBody({}) {
   const navigate = useNavigate();
   const { id } = useParams(); // URL에서 id 파라미터 가져오기
 
-  const [postInfo, setPostInfo] = useState(null); 
+  const [postInfo, setPostInfo] = useState<Post | null>(null); 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +35,7 @@ function PostBody({}) {
 
   // --- 헬퍼 함수 ---
   // 급여 포맷 (null, 0, 또는 값)
-  const formatSalary = (salary) => {
+  const formatSalary = (salary: number | null | undefined) => {
     if (salary === null || salary === undefined) {
       return '회사 내규에 따름';
     }
@@ -47,7 +46,7 @@ function PostBody({}) {
   };
 
   // 날짜 포맷 (YYYY.MM.DD)
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ko-KR');
   };
 

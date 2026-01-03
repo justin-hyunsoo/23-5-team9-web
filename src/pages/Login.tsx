@@ -4,14 +4,18 @@ import '../styles/login.css';
 
 const BASE_URL = 'https://api-internhasha.wafflestudio.com';
 
-export default function LoginForm({ onLogin }) {
+interface LoginFormProps {
+  onLogin?: () => void;
+}
+
+export default function LoginForm({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -25,7 +29,7 @@ export default function LoginForm({ onLogin }) {
       const data = await res.json();
       localStorage.setItem('token', data.token);
       onLogin && onLogin();
-      navigate('/'); // 홈으로 이동
+      navigate('/jobs'); // 홈으로 이동
     } catch (err) {
       setError('이메일 또는 비밀번호가 올바르지 않습니다.');
     } finally {

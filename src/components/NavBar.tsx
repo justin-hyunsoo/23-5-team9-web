@@ -1,19 +1,23 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function NavBar({ isLoggedIn, onLogout }) {
+interface NavBarProps {
+  isLoggedIn: boolean;
+  onLogout: () => void;
+}
+
+function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const navItems = [
-    { id: 'home', label: '중고거래', path: '/' },
+    { id: 'home', label: '알바', path: '/jobs' },
     { id: 'chat', label: '채팅하기', path: '/chat' },
     { id: 'my', label: '나의 당근', path: '/my' },
   ];
 
-  const isActive = (path) => {
-    if (path === '/' && (location.pathname === '/' || location.pathname === '/')) return true;
-    if (path !== '/' && location.pathname.startsWith(path)) return true;
+  const isActive = (path: string) => {
+    if (path === '/jobs' && (location.pathname === '/jobs' || location.pathname === '/')) return true;
+    if (path !== '/jobs' && location.pathname.startsWith(path)) return true;
     return false;
   };
 
@@ -34,7 +38,7 @@ function NavBar({ isLoggedIn, onLogout }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
         <h1 
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/jobs')}
           style={{ 
             color: '#ff6f0f', 
             fontSize: '24px', 

@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import NavBar from './components/NavBar.jsx';
-import Home from './pages/Home.jsx';
-import PostDetail from './pages/PostDetail.jsx';
-import Login from './pages/Login.jsx';
-import Signup from './pages/Signup.jsx';
-import ChatList from './pages/ChatList.jsx';
-import ChatRoom from './pages/ChatRoom.jsx';
-import MyCarrot from './pages/MyCarrot.jsx';
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
+import NavBar from './components/NavBar';
+import Home from './pages/Home';
+import PostDetail from './pages/PostDetail';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ChatList from './pages/ChatList';
+import ChatRoom from './pages/ChatRoom';
+import MyCarrot from './pages/MyCarrot';
 import './styles/common.css';
 
 function App() {
@@ -23,12 +23,12 @@ function App() {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    navigate('/');
+    navigate('/jobs');
   };
 
   const handleSignup = () => {
     setIsLoggedIn(true);
-    navigate('/');
+    navigate('/jobs');
   };
 
   // Hide NavBar on login/signup pages
@@ -43,7 +43,8 @@ function App() {
         margin: '0 auto'
       }}>
         <Routes>
-          <Route path="/" element={<Home/>}/>
+          <Route path="/" element={<Navigate to="/jobs" replace />} />
+          <Route path="/jobs" element={<Home/>}/>
           <Route path="/posts/:id" element={<PostDetail/>}/>
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />

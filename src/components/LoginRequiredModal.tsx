@@ -1,11 +1,15 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/modal.css';
 
 /**
  * 로그인이 필요한 경우 표시되는 모달
  */
-function LoginRequiredModal({ isOpen, onClose }) {
+interface LoginRequiredModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function LoginRequiredModal({ isOpen, onClose }: LoginRequiredModalProps) {
   const navigate = useNavigate();
 
   if (!isOpen) return null;

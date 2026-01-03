@@ -10,11 +10,53 @@ const BASE_URL = 'https://api-internhasha.wafflestudio.com';
  * @param {number} order - 정렬 방식 (0: 최신순, 1: 마감순)
  * @returns {Object} { posts, loading, error }
  */
-export function usePosts(selectedRoles, selectedDomains, isActive, order, page) {
-  const [posts, setPosts] = useState([]);
+export interface PostListItem {
+  id: number;
+  positionTitle: string;
+  companyName: string;
+  location: string;
+  profileImageKey: string | null;
+  isBookmarked: boolean;
+}
+
+export interface PostDetail {
+  id: number;
+  position: {
+    positionTitle: string;
+    positionType: string;
+    headCount: number;
+    salary: number;
+    employmentEndDate: string;
+    detail: string;
+  };
+  company: {
+    companyName: string;
+    slogan: string;
+    companyEstablishedYear: number;
+    domain: string;
+    headcount: number;
+    location: string;
+    tags: { tag: string }[];
+    links: { link: string; description: string }[];
+    landingPageLink: string;
+    companyInfoPDFKey: string;
+    logoImage: string;
+  };
+  isBookmarked: boolean;
+  coffeeChatCount: number;
+}
+
+export function usePosts(
+  selectedRoles: string[], 
+  selectedDomains: string[], 
+  isActive: boolean | null, 
+  order: number, 
+  page: number
+) {
+  const [posts, setPosts] = useState<PostListItem[]>([]);
   const [paginator, setPaginator] = useState({ lastPage: 1 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // API URL 구성
@@ -50,7 +92,7 @@ export function usePosts(selectedRoles, selectedDomains, isActive, order, page) 
     const token = localStorage.getItem('token');
     
     // API로부터 포스트 목록을 불러옵니다.
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json'
     };
     

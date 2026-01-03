@@ -19,21 +19,21 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('token');
-    navigate('/dangun/login');
+    navigate('/dangeun/login');
   };
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    navigate('/dangun/jobs');
+    navigate('/dangeun/jobs');
   };
 
   const handleSignup = () => {
     setIsLoggedIn(true);
-    navigate('/dangun/jobs');
+    navigate('/dangeun/jobs');
   };
 
   // Hide NavBar on login/signup pages
-  const hideNav = location.pathname === '/dangun/login' || location.pathname === '/dangun/signup';
+  const hideNav = location.pathname === '/dangeun/login' || location.pathname === '/dangeun/signup';
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -44,16 +44,16 @@ function App() {
         margin: '0 auto'
       }}>
         <Routes>
-          <Route path="/" element={<Navigate to="/dangun/jobs" replace />} />
-          <Route path="/dangun/jobs" element={<Home/>}/>
-          <Route path="/dangun/map" element={<NeighborhoodMap/>}/>
-          <Route path="/dangun/posts/:id" element={<PostDetail/>}/>
-          <Route path="/dangun/chat" element={<ChatList />} />
-          <Route path="/dangun/chat/:chatId" element={<ChatRoom />} />
-          <Route path="/dangun/my" element={<MyCarrot />} />
+          <Route path="/" element={<Navigate to="/dangeun/jobs" replace />} />
+          <Route path="/dangeun/jobs" element={<Home/>}/>
+          <Route path="/dangeun/map" element={<NeighborhoodMap/>}/>
+          <Route path="/dangeun/posts/:id" element={<PostDetail/>}/>
+          <Route path="/dangeun/chat" element={<ChatList />} />
+          <Route path="/dangeun/chat/:chatId" element={<ChatRoom />} />
+          <Route path="/dangeun/my" element={<MyCarrot />} />
           
-          <Route path="/dangun/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/dangun/signup" element={<Signup onSignup={handleSignup} />} />
+          <Route path="/dangeun/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/dangeun/signup" element={<Signup onSignup={handleSignup} />} />
         </Routes>
       </div>
     </div>

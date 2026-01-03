@@ -15,7 +15,7 @@ function LoginRequiredModal({ isOpen, onClose }: LoginRequiredModalProps) {
   if (!isOpen) return null;
 
   const handleLoginClick = () => {
-    navigate('/dangun/login');
+    navigate('/dangeun/login');
   };
 
   const handleClose = () => {

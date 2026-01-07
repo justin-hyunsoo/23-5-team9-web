@@ -9,5 +9,5 @@ export default defineConfig({
       usePolling: true,
     },
   },
-  base: '/dangeun/'
+  base: '/dangeun_toy_front/dangeun/'
 })

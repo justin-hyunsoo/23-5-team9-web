@@ -11,6 +11,8 @@ import MyCarrot from './pages/MyCarrot';
 import NeighborhoodMap from './pages/NeighborhoodMap';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
+import CommunityList from './pages/CommunityList';
+import CommunityDetail from './pages/CommunityDetail';
 import './styles/common.css';
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
           <Route path="/dangeun/jobs" element={<Home/>}/>
           <Route path="/dangeun/products" element={<ProductList />} />
           <Route path="/dangeun/products/:id" element={<ProductDetail />} />
+          <Route path="/dangeun/community" element={<CommunityList />} />
+          <Route path="/dangeun/community/:id" element={<CommunityDetail />} />
           <Route path="/dangeun/map" element={<NeighborhoodMap/>}/>
           <Route path="/dangeun/posts/:id" element={<PostDetail/>}/>
           <Route path="/dangeun/chat" element={<ChatList />} />

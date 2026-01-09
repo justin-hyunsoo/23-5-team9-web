@@ -1,14 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MAIN_API_URL } from '../api/config';
 import '../styles/common.css';
+
+interface UserInfo {
+  nickname: string;
+  region: string;
+  profileImage: string;
+  coin: number;
+}
 
 function MyCarrot() {
   const [activeTab, setActiveTab] = useState('info'); // info, coin, password
-  const [userInfo, setUserInfo] = useState({
-    nickname: '당근러',
-    region: '서울시 강남구',
-    profileImage: 'https://via.placeholder.com/100'
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    nickname: '',
+    region: '',
+    profileImage: 'https://via.placeholder.com/100',
+    coin: 0
   });
-  const [coin] = useState(1000);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/dangeun/login');
+                return;
+            }
+
+            const res = await fetch(`${MAIN_API_URL}/api/user/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setUserInfo({
+                    nickname: data.nickname || '',
+                    region: data.region ? data.region.name : '지역 미설정',
+                    profileImage: data.profile_image || 'https://via.placeholder.com/100',
+                    coin: data.coin || 0
+                });
+            } else {
+                console.error('Failed to fetch user info');
+                // 토큰 만료 등의 경우 로그인 페이지로 리다이렉트 고려
+            }
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
+    };
+
+    fetchUserInfo();
+  }, [navigate]);
 
   const handleInfoUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +146,7 @@ function MyCarrot() {
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <h3>나의 코인</h3>
             <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ff6f0f', margin: '20px 0' }}>
-              {coin.toLocaleString()} C
+              {userInfo.coin.toLocaleString()} C
             </div>
             <p>당근머니로 간편하게 거래해보세요!</p>
             <button style={{ marginTop: '20px', padding: '10px 20px', background: '#eee', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>충전하기</button>

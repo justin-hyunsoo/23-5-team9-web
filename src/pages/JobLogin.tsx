@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/login.css';
-import { MAIN_API_URL } from '../api/config';
+import { JOB_API_URL } from '../api/config';
 
 interface LoginFormProps {
   onLogin?: () => void;
 }
 
-export default function Login({ onLogin }: LoginFormProps) {
+export default function JobLogin({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,24 +19,18 @@ export default function Login({ onLogin }: LoginFormProps) {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${MAIN_API_URL}/api/auth/tokens`, {
+      const res = await fetch(`${JOB_API_URL}/api/auth/user/session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.detail || '로그인 실패');
-      }
+      if (!res.ok) throw new Error('로그인 실패');
       const data = await res.json();
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
-      
+      localStorage.setItem('job_token', data.token);
       onLogin && onLogin();
-      navigate('/dangeun/community'); // Main Login goes to Community default? Or Home
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || '이메일 또는 비밀번호가 올바르지 않습니다.');
+      navigate('/dangeun/jobs'); // 홈으로 이동
+    } catch (err) {
+      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
     } finally {
       setLoading(false);
     }
@@ -45,7 +39,7 @@ export default function Login({ onLogin }: LoginFormProps) {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-logo">당근마켓</h1>
+        <h1 className="login-logo">당근알바</h1>
         <form onSubmit={handleSubmit} className="login-form">
           <input 
             className="login-input" 
@@ -66,12 +60,11 @@ export default function Login({ onLogin }: LoginFormProps) {
           <button className="login-button" type="submit" disabled={loading}>
             {loading ? '로그인 중...' : '로그인'}
           </button>
-          
           {error && <div className="login-error">{error}</div>}
         </form>
         <div className="signup-link">
           아직 계정이 없으신가요? 
-          <Link to="/dangeun/signup">회원가입</Link>
+          <Link to="/dangeun/jobs/signup">회원가입</Link>
         </div>
       </div>
     </div>

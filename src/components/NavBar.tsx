@@ -93,7 +93,13 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
           </button>
         ) : (
           <button
-            onClick={() => navigate('/dangeun/login')}
+            onClick={() => {
+                if (location.pathname.startsWith('/dangeun/jobs')) {
+                    navigate('/dangeun/jobs/login');
+                } else {
+                    navigate('/dangeun/login');
+                }
+            }}
             style={{
               padding: '8px 16px',
               fontSize: '14px',

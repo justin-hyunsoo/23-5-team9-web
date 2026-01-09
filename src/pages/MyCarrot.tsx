@@ -159,17 +159,23 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
             onClick={onLogout}
             style={{
                 padding: '8px 16px',
-                backgroundColor: '#e03131',
-                color: 'white',
-                border: 'none',
+                backgroundColor: '#ffffff',
+                color: '#212529',
+                border: '1px solid #dee2e6',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                transition: 'background-color 0.2s'
+                transition: 'all 0.2s'
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#c92a2a'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#e03131'}
+            onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#f8f9fa';
+                e.currentTarget.style.borderColor = '#ccedff'; // Optional hover effect
+            }}
+            onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.borderColor = '#dee2e6';
+            }}
         >
             로그아웃
         </button>

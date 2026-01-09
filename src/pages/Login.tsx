@@ -42,6 +42,22 @@ export default function Login({ onLogin }: LoginFormProps) {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await fetch(`${MAIN_API_URL}/api/auth/oauth2/login/google`);
+      if (!res.ok) {
+        throw new Error('Failed to initiate Google login');
+      }
+      const data = await res.json();
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Google 로그인 초기화 중 오류가 발생했습니다.');
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-card">
@@ -75,6 +91,23 @@ export default function Login({ onLogin }: LoginFormProps) {
           
           {error && <div className="login-error">{error}</div>}
         </form>
+
+        <div style={{ width: '100%', marginTop: '10px' }}>
+          <button 
+            type="button" 
+            onClick={handleGoogleLogin}
+            className="login-button"
+            style={{
+              backgroundColor: '#ffffff',
+              color: '#000000',
+              border: '1px solid #e0e0e0',
+              fontWeight: 'normal'
+            }}
+          >
+            Google로 계속하기
+          </button>
+        </div>
+
         <div className="signup-link">
           아직 계정이 없으신가요? 
           <Link to="/dangeun/signup">회원가입</Link>

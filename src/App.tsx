@@ -19,6 +19,22 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+
+    if (accessToken && refreshToken) {
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+      setIsMainLoggedIn(true);
+      
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      navigate('/dangeun/community');
+    }
+  }, [location, navigate]);
+
   const isLoggedIn = isMainLoggedIn;
 
   const handleLogout = () => {

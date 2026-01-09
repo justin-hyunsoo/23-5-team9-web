@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MAIN_API_URL } from '../api/config';
+import ProfileEditForm from '../components/ProfileEditForm';
 import '../styles/common.css';
 
 interface UserInfo {
@@ -11,10 +12,6 @@ interface UserInfo {
   coin: number;
 }
 
-interface Region {
-  id: string;
-  name: string;
-}
 
 interface MyCarrotProps {
     onLogout: () => void;
@@ -26,7 +23,6 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
   
-  const [regions, setRegions] = useState<Region[]>([]);
   const [warningMessage, setWarningMessage] = useState('');
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
@@ -72,23 +68,9 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
     };
 
     fetchUserInfo();
-
-    const fetchRegions = async () => {
-        try {
-            const res = await fetch(`${MAIN_API_URL}/api/regions/`);
-            if (res.ok) {
-                const data = await res.json();
-                setRegions(data);
-            }
-        } catch (error) {
-            console.error('Error fetching regions:', error);
-        }
-    };
-    fetchRegions();
   }, [navigate]);
 
-  const handleInfoUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleInfoUpdate = async (data: { nickname: string; region_id: string; profile_image: string }) => {
     try {
         const token = localStorage.getItem('token');
         const res = await fetch(`${MAIN_API_URL}/api/user/me/onboard/`, {
@@ -98,14 +80,23 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                nickname: userInfo.nickname,
-                region_id: userInfo.region_id || "78c24c9f-05ac-49b5-b3c7c3f66688", // Fallback to provided ID if empty
-                profile_image: userInfo.profileImage,
+                nickname: data.nickname,
+                region_id: data.region_id,
+                profile_image: data.profile_image,
                 coin: userInfo.coin // Keep existing coin
             })
         });
 
         if (res.ok) {
+            // Update local state to reflect changes (optional, but good for UI consistency if we stayed on same view)
+            // But we might need to refetch region name if region_id changed, or just let 'MyCarrot' reload.
+            // For now, let's just update what we know.
+             setUserInfo(prev => ({
+                ...prev,
+                nickname: data.nickname,
+                region_id: data.region_id,
+                profileImage: data.profile_image
+            }));
             alert('정보가 수정되었습니다.');
         } else {
             alert('정보 수정 실패');
@@ -223,86 +214,14 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
 
       <div className="content-area">
         {activeTab === 'info' && (
-          <form onSubmit={handleInfoUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-              <div style={{ position: 'relative', display: 'inline-block' }}>
-                <img 
-                    src={userInfo.profileImage} 
-                    alt="Profile" 
-                    style={{ 
-                        width: '120px', 
-                        height: '120px', 
-                        borderRadius: '50%', 
-                        objectFit: 'cover',
-                        border: '1px solid #e9ecef'
-                    }} 
-                />
-                <button 
-                    type="button" 
-                    onClick={() => {
-                        const url = prompt('이미지 URL을 입력하세요:', userInfo.profileImage);
-                        if (url) setUserInfo({...userInfo, profileImage: url});
-                    }}
-                    style={{
-                        position: 'absolute',
-                        bottom: '0',
-                        right: '0',
-                        backgroundColor: 'white',
-                        border: '1px solid #dee2e6',
-                        borderRadius: '50%',
-                        width: '36px',
-                        height: '36px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                >
-                    📷
-                </button>
-              </div>
-            </div>
-            
-            <div>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>닉네임</label>
-              <input 
-                className="form-input"
-                type="text" 
-                value={userInfo.nickname} 
-                onChange={(e) => setUserInfo({...userInfo, nickname: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>지역</label>
-              <select
-                className="form-input"
-                value={userInfo.region_id}
-                onChange={(e) => {
-                    const selectedId = e.target.value;
-                    const selectedRegion = regions.find(r => r.id === selectedId);
-                    setUserInfo({
-                        ...userInfo, 
-                        region_id: selectedId,
-                        region: selectedRegion ? selectedRegion.name : '' 
-                    });
-                }}
-              >
-                <option value="" disabled>지역을 선택하세요</option>
-                {regions.map(region => (
-                    <option key={region.id} value={region.id}>
-                        {region.name}
-                    </option>
-                ))}
-              </select>
-            </div>
-            
-            <button type="submit" className="button" style={{ width: '100%', marginTop: '10px', height: '48px' }}>
-                저장하기
-            </button>
-          </form>
+            <ProfileEditForm 
+                initialNickname={userInfo.nickname}
+                initialRegionId={userInfo.region_id}
+                initialProfileImage={userInfo.profileImage}
+                onSubmit={handleInfoUpdate}
+            />
         )}
+
 
         {activeTab === 'coin' && (
           <div style={{ textAlign: 'center', padding: '20px 0' }}>

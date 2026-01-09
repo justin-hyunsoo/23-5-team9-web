@@ -45,7 +45,13 @@ export default function Login({ onLogin }: LoginFormProps) {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-logo">당근마켓</h1>
+        <h1 
+            className="login-logo"
+            onClick={() => navigate('/dangeun/products')}
+            style={{ cursor: 'pointer' }}
+        >
+            당근마켓
+        </h1>
         <form onSubmit={handleSubmit} className="login-form">
           <input 
             className="login-input" 

@@ -11,11 +11,22 @@ interface UserInfo {
   coin: number;
 }
 
-function MyCarrot() {
+interface Region {
+  id: string;
+  name: string;
+}
+
+interface MyCarrotProps {
+    onLogout: () => void;
+}
+
+function MyCarrot({ onLogout }: MyCarrotProps) {
   const [activeTab, setActiveTab] = useState('info'); // info, coin, password
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
+  
+  const [regions, setRegions] = useState<Region[]>([]);
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
     nickname: '',
@@ -59,6 +70,19 @@ function MyCarrot() {
     };
 
     fetchUserInfo();
+
+    const fetchRegions = async () => {
+        try {
+            const res = await fetch(`${MAIN_API_URL}/api/regions/`);
+            if (res.ok) {
+                const data = await res.json();
+                setRegions(data);
+            }
+        } catch (error) {
+            console.error('Error fetching regions:', error);
+        }
+    };
+    fetchRegions();
   }, [navigate]);
 
   const handleInfoUpdate = async (e: React.FormEvent) => {
@@ -128,135 +152,196 @@ function MyCarrot() {
   };
 
   return (
-    <div className="page-padding">
-      <h2>나의 당근</h2>
-      
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+    <div className="container" style={{ maxWidth: '600px', padding: '40px 20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: '800', margin: 0 }}>나의 당근</h2>
         <button 
-          onClick={() => setActiveTab('info')}
-          style={{ 
-            padding: '10px 20px', 
-            borderRadius: '20px', 
-            border: 'none', 
-            background: activeTab === 'info' ? '#ff6f0f' : '#eee',
-            color: activeTab === 'info' ? 'white' : 'black',
-            cursor: 'pointer'
-          }}
+            onClick={onLogout}
+            style={{
+                padding: '8px 16px',
+                backgroundColor: '#e03131',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#c92a2a'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#e03131'}
         >
-          정보 수정
-        </button>
-        <button 
-          onClick={() => setActiveTab('coin')}
-          style={{ 
-            padding: '10px 20px', 
-            borderRadius: '20px', 
-            border: 'none', 
-            background: activeTab === 'coin' ? '#ff6f0f' : '#eee',
-            color: activeTab === 'coin' ? 'white' : 'black',
-            cursor: 'pointer'
-          }}
-        >
-          코인 확인
-        </button>
-        <button 
-          onClick={() => setActiveTab('password')}
-          style={{ 
-            padding: '10px 20px', 
-            borderRadius: '20px', 
-            border: 'none', 
-            background: activeTab === 'password' ? '#ff6f0f' : '#eee',
-            color: activeTab === 'password' ? 'white' : 'black',
-            cursor: 'pointer'
-          }}
-        >
-          비밀번호 수정
+            로그아웃
         </button>
       </div>
-
-      <div className="content-area" style={{ padding: '20px', border: '1px solid #eee', borderRadius: '10px' }}>
-        {activeTab === 'info' && (
-          <form onSubmit={handleInfoUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <h3>프로필 정보 수정</h3>
-            <div style={{ textAlign: 'center' }}>
-              <img src={userInfo.profileImage} alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '10px', objectFit: 'cover' }} />
-              <br/>
-              <button 
-                type="button" 
-                style={{ fontSize: '0.8rem', padding: '5px 10px', cursor: 'pointer' }}
-                onClick={() => {
-                    const url = prompt('이미지 URL을 입력하세요:', userInfo.profileImage);
-                    if (url) setUserInfo({...userInfo, profileImage: url});
+      
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '30px', borderBottom: '1px solid #e9ecef', paddingBottom: '0' }}>
+        {['info', 'coin', 'password'].map(tab => (
+            <button 
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{ 
+                    padding: '12px 20px', 
+                    border: 'none',
+                    background: 'none',
+                    borderBottom: activeTab === tab ? '2px solid #ff6f0f' : '2px solid transparent',
+                    color: activeTab === tab ? '#212529' : '#868e96',
+                    fontWeight: activeTab === tab ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    transition: 'all 0.2s'
                 }}
-              >
-                사진 변경 (URL)
-              </button>
+            >
+                {tab === 'info' && '프로필 수정'}
+                {tab === 'coin' && '코인 관리'}
+                {tab === 'password' && '비밀번호 변경'}
+            </button>
+        ))}
+      </div>
+
+      <div className="content-area">
+        {activeTab === 'info' && (
+          <form onSubmit={handleInfoUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <img 
+                    src={userInfo.profileImage} 
+                    alt="Profile" 
+                    style={{ 
+                        width: '120px', 
+                        height: '120px', 
+                        borderRadius: '50%', 
+                        objectFit: 'cover',
+                        border: '1px solid #e9ecef'
+                    }} 
+                />
+                <button 
+                    type="button" 
+                    onClick={() => {
+                        const url = prompt('이미지 URL을 입력하세요:', userInfo.profileImage);
+                        if (url) setUserInfo({...userInfo, profileImage: url});
+                    }}
+                    style={{
+                        position: 'absolute',
+                        bottom: '0',
+                        right: '0',
+                        backgroundColor: 'white',
+                        border: '1px solid #dee2e6',
+                        borderRadius: '50%',
+                        width: '36px',
+                        height: '36px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                >
+                    📷
+                </button>
+              </div>
             </div>
+            
             <div>
-              <label>닉네임</label>
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>닉네임</label>
               <input 
+                className="form-input"
                 type="text" 
                 value={userInfo.nickname} 
                 onChange={(e) => setUserInfo({...userInfo, nickname: e.target.value})}
-                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
               />
             </div>
+            
             <div>
-              <label>지역 (이름만 표시됨)</label>
-              <input 
-                type="text" 
-                value={userInfo.region} 
-                readOnly
-                disabled
-                style={{ width: '100%', padding: '8px', marginTop: '5px', backgroundColor: '#f0f0f0', color: '#888' }}
-              />
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>지역</label>
+              <select
+                className="form-input"
+                value={userInfo.region_id}
+                onChange={(e) => {
+                    const selectedId = e.target.value;
+                    const selectedRegion = regions.find(r => r.id === selectedId);
+                    setUserInfo({
+                        ...userInfo, 
+                        region_id: selectedId,
+                        region: selectedRegion ? selectedRegion.name : '' 
+                    });
+                }}
+              >
+                <option value="" disabled>지역을 선택하세요</option>
+                {regions.map(region => (
+                    <option key={region.id} value={region.id}>
+                        {region.name}
+                    </option>
+                ))}
+              </select>
             </div>
-            <button type="submit" className="submit-btn" style={{ background: '#ff6f0f', color: 'white', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>저장하기</button>
+            
+            <button type="submit" className="button" style={{ width: '100%', marginTop: '10px', height: '48px' }}>
+                저장하기
+            </button>
           </form>
         )}
 
         {activeTab === 'coin' && (
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <h3>나의 코인</h3>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ff6f0f', margin: '20px 0' }}>
-              {userInfo.coin.toLocaleString()} C
+          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+            <div style={{ backgroundColor: '#fff4e6', padding: '40px', borderRadius: '16px', marginBottom: '30px' }}>
+                <h3 style={{ margin: 0, color: '#ff6f0f', marginBottom: '10px' }}>보유 코인</h3>
+                <div style={{ fontSize: '3rem', fontWeight: '800', color: '#212529' }}>
+                {userInfo.coin.toLocaleString()} <span style={{ fontSize: '1.5rem', fontWeight: 'normal' }}>C</span>
+                </div>
             </div>
-            <p>당근머니로 간편하게 거래해보세요!</p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
-                <button 
-                    onClick={() => handleCoinCharge(1000)}
-                    style={{ padding: '10px 20px', background: '#e9ecef', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
-                >
-                    +1,000 충전
-                </button>
-                <button 
-                    onClick={() => handleCoinCharge(5000)}
-                    style={{ padding: '10px 20px', background: '#e9ecef', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
-                >
-                    +5,000 충전
-                </button>
-                <button 
-                    onClick={() => handleCoinCharge(10000)}
-                    style={{ padding: '10px 20px', background: '#ffe0cc', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', color: '#ff6f0f' }}
-                >
-                    +10,000 충전
-                </button>
+            
+            <h4 style={{ marginBottom: '20px', color: '#495057' }}>코인 충전하기</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                {[1000, 5000, 10000, 30000, 50000, 100000].map(amount => (
+                    <button 
+                        key={amount}
+                        onClick={() => handleCoinCharge(amount)}
+                        style={{
+                            padding: '16px 0',
+                            backgroundColor: '#fff',
+                            border: '1px solid #dee2e6',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            fontWeight: 'bold',
+                            color: '#495057',
+                            transition: 'all 0.2s'
+                        }}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.borderColor = '#ff6f0f';
+                            e.currentTarget.style.color = '#ff6f0f';
+                            e.currentTarget.style.backgroundColor = '#fff4e6';
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.borderColor = '#dee2e6';
+                            e.currentTarget.style.color = '#495057';
+                            e.currentTarget.style.backgroundColor = '#fff';
+                        }}
+                    >
+                        +{amount.toLocaleString()}
+                    </button>
+                ))}
             </div>
           </div>
         )}
 
         {activeTab === 'password' && (
-          <form onSubmit={handlePasswordUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <h3>비밀번호 변경</h3>
+          <form onSubmit={handlePasswordUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label>현재 비밀번호</label>
-              <div style={{ position: 'relative', marginTop: '5px' }}>
-                <input type={showCurrentPassword ? "text" : "password"} style={{ width: '100%', padding: '8px', paddingRight: '50px' }} />
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>현재 비밀번호</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                    className="form-input"
+                    type={showCurrentPassword ? "text" : "password"} 
+                    style={{ paddingRight: '50px', marginBottom: 0 }} 
+                />
                 <button
                     type="button"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                     style={{
                         position: 'absolute',
-                        right: '10px',
+                        right: '12px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         background: 'none',
@@ -272,15 +357,19 @@ function MyCarrot() {
               </div>
             </div>
             <div>
-              <label>새 비밀번호</label>
-              <div style={{ position: 'relative', marginTop: '5px' }}>
-                <input type={showNewPassword ? "text" : "password"} style={{ width: '100%', padding: '8px', paddingRight: '50px' }} />
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>새 비밀번호</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                    className="form-input"
+                    type={showNewPassword ? "text" : "password"} 
+                    style={{ paddingRight: '50px', marginBottom: 0 }} 
+                />
                 <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                     style={{
                         position: 'absolute',
-                        right: '10px',
+                        right: '12px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         background: 'none',
@@ -296,15 +385,19 @@ function MyCarrot() {
               </div>
             </div>
             <div>
-              <label>새 비밀번호 확인</label>
-              <div style={{ position: 'relative', marginTop: '5px' }}>
-                <input type={showNewPasswordConfirm ? "text" : "password"} style={{ width: '100%', padding: '8px', paddingRight: '50px' }} />
+              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>새 비밀번호 확인</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                    className="form-input"
+                    type={showNewPasswordConfirm ? "text" : "password"} 
+                    style={{ paddingRight: '50px', marginBottom: 0 }} 
+                />
                 <button
                     type="button"
                     onClick={() => setShowNewPasswordConfirm(!showNewPasswordConfirm)}
                     style={{
                         position: 'absolute',
-                        right: '10px',
+                        right: '12px',
                         top: '50%',
                         transform: 'translateY(-50%)',
                         background: 'none',
@@ -319,7 +412,9 @@ function MyCarrot() {
                 </button>
               </div>
             </div>
-            <button type="submit" style={{ background: '#ff6f0f', color: 'white', border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>변경하기</button>
+            <button type="submit" className="button" style={{ width: '100%', marginTop: '10px', height: '48px' }}>
+                비밀번호 변경
+            </button>
           </form>
         )}
       </div>

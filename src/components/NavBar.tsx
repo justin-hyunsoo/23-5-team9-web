@@ -2,10 +2,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 interface NavBarProps {
   isLoggedIn: boolean;
-  onLogout: () => void;
 }
 
-function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
+function NavBar({ isLoggedIn }: NavBarProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -14,7 +13,6 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
     { id: 'community', label: '동네생활', path: '/dangeun/community' },
     { id: 'map', label: '동네지도', path: '/dangeun/map' },
     { id: 'chat', label: '채팅하기', path: '/dangeun/chat' },
-    { id: 'my', label: '나의 당근', path: '/dangeun/my' },
   ];
 
   const isActive = (path: string) => {
@@ -74,21 +72,23 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
 
       <div>
         {isLoggedIn ? (
-          <button
-            onClick={onLogout}
-            style={{
-              padding: '8px 16px',
-              fontSize: '14px',
-              backgroundColor: '#e9ecef',
-              color: '#212529',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            로그아웃
-          </button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+                onClick={() => navigate('/dangeun/my')}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  backgroundColor: '#ffffff',
+                  color: '#212529',
+                  border: '1px solid #dee2e6',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+            >
+                나의 당근
+            </button>
+          </div>
         ) : (
           <button
             onClick={() => navigate('/dangeun/login')}

@@ -78,7 +78,7 @@ export default function Signup({ onSignup }: SignupFormProps) {
                 onChange={e => setEmail(e.target.value)} 
                 required 
             />
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', marginBottom: '16px' }}>
                 <input 
                     className="form-input" 
                     type={showPassword ? "text" : "password"} 
@@ -86,7 +86,7 @@ export default function Signup({ onSignup }: SignupFormProps) {
                     value={password} 
                     onChange={e => setPassword(e.target.value)} 
                     required 
-                    style={{ paddingRight: '50px' }} 
+                    style={{ paddingRight: '50px', marginBottom: 0 }} 
                 />
                 <button
                     type="button"
@@ -107,7 +107,7 @@ export default function Signup({ onSignup }: SignupFormProps) {
                     {showPassword ? '숨기기' : '보기'}
                 </button>
             </div>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', marginBottom: '16px' }}>
                 <input 
                     className="form-input" 
                     type={showPasswordConfirm ? "text" : "password"} 
@@ -115,7 +115,7 @@ export default function Signup({ onSignup }: SignupFormProps) {
                     value={passwordConfirm} 
                     onChange={e => setPasswordConfirm(e.target.value)} 
                     required 
-                    style={{ paddingRight: '50px' }} 
+                    style={{ paddingRight: '50px', marginBottom: 0 }} 
                 />
                 <button
                     type="button"

@@ -25,7 +25,7 @@ function App() {
     setIsMainLoggedIn(false);
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
-    navigate('/dangeun/login');
+    navigate('/dangeun/products');
   };
 
   const handleMainLogin = () => {
@@ -39,7 +39,7 @@ function App() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-      {!hideNav && <NavBar isLoggedIn={isLoggedIn} onLogout={handleLogout} />}
+      {!hideNav && <NavBar isLoggedIn={isLoggedIn} />}
       <div style={{ 
         paddingTop: !hideNav ? '64px' : '0',
         maxWidth: '100%',
@@ -57,7 +57,7 @@ function App() {
           <Route path="/dangeun/map" element={<NeighborhoodMap/>}/>
           <Route path="/dangeun/chat" element={<ChatList />} />
           <Route path="/dangeun/chat/:chatId" element={<ChatRoom />} />
-          <Route path="/dangeun/my" element={<MyCarrot />} />
+          <Route path="/dangeun/my" element={<MyCarrot onLogout={handleLogout} />} />
           <Route path="/dangeun/onboarding" element={<Onboarding />} />
           
           <Route path="/dangeun/login" element={<Login onLogin={handleMainLogin} />} />

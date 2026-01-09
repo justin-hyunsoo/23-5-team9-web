@@ -42,20 +42,8 @@ export default function Login({ onLogin }: LoginFormProps) {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const res = await fetch(`${MAIN_API_URL}/api/auth/oauth2/login/google`);
-      if (!res.ok) {
-        throw new Error('Failed to initiate Google login');
-      }
-      const data = await res.json();
-      if (data.redirect_url) {
-        window.location.href = data.redirect_url;
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Google 로그인 초기화 중 오류가 발생했습니다.');
-    }
+  const handleGoogleLogin = () => {
+    window.location.href = `${MAIN_API_URL}/api/auth/oauth2/login/google`;
   };
 
   return (

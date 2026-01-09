@@ -66,7 +66,7 @@ function NavBar({ isLoggedIn, hasBanner = false }: NavBarProps) {
         >
           당근마켓
         </h1>
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -76,28 +76,28 @@ function NavBar({ isLoggedIn, hasBanner = false }: NavBarProps) {
               {item.label}
             </button>
           ))}
-        </div>
-      </div>
-
-      <div>
-        {isLoggedIn ? (
-          <div style={{ display: 'flex', gap: '10px' }}>
+          
+          {/* Main nav items followed directly by auth actions */}
+          {isLoggedIn ? (
             <button
                 onClick={() => navigate('/dangeun/my')}
                 style={isActive('/dangeun/my') ? activeButtonStyle : buttonStyle}
             >
                 나의 당근
             </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => navigate('/dangeun/login')}
-            style={isActive('/dangeun/login') ? activeButtonStyle : buttonStyle}
-          >
-            로그인
-          </button>
-        )}
+          ) : (
+            <button
+              onClick={() => navigate('/dangeun/login')}
+              style={isActive('/dangeun/login') ? activeButtonStyle : buttonStyle}
+            >
+              로그인
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Right side removed to merge into main flow */}
+      <div /> 
     </nav>
   );
 }

@@ -57,7 +57,26 @@ function App() {
       
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
-      navigate('/dangeun/community');
+      
+      // Check user status to decide where to navigate
+      fetch(`${MAIN_API_URL}/api/user/me`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Failed to fetch user');
+      })
+      .then(data => {
+        if (!data.nickname || !data.region) {
+          navigate('/dangeun/onboarding');
+        } else {
+          navigate('/dangeun/community');
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        navigate('/dangeun/community');
+      });
     }
   }, [location, navigate]);
 
@@ -104,7 +123,7 @@ function App() {
         }}>
           <span>서비스 이용을 위해 닉네임과 지역 설정이 필요합니다.</span>
           <button 
-            onClick={() => navigate('/dangeun/onboarding')}
+            onClick={() => navigate('/dangeun/my')}
             style={{
               backgroundColor: 'white',
               color: '#ff6f0f',

@@ -27,10 +27,12 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
   const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
   
   const [regions, setRegions] = useState<Region[]>([]);
+  const [warningMessage, setWarningMessage] = useState('');
 
   const [userInfo, setUserInfo] = useState<UserInfo>({
     nickname: '',
     region: '',
+    region_id: '', 
     profileImage: 'https://via.placeholder.com/100',
     coin: 0
   });
@@ -153,6 +155,20 @@ function MyCarrot({ onLogout }: MyCarrotProps) {
 
   return (
     <div className="container" style={{ maxWidth: '600px', padding: '40px 20px' }}>
+      {warningMessage && (
+        <div style={{
+          backgroundColor: '#fff3cd',
+          color: '#856404',
+          padding: '12px',
+          marginBottom: '20px',
+          borderRadius: '4px',
+          border: '1px solid #ffeeba',
+          textAlign: 'center',
+          fontWeight: 'bold'
+        }}>
+          {warningMessage}
+        </div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: '800', margin: 0 }}>나의 당근</h2>
         <button 

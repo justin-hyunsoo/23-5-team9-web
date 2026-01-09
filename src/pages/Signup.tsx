@@ -12,6 +12,8 @@ export default function Signup({ onSignup }: SignupFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -76,22 +78,64 @@ export default function Signup({ onSignup }: SignupFormProps) {
                 onChange={e => setEmail(e.target.value)} 
                 required 
             />
-            <input 
-                className="form-input" 
-                type="password" 
-                placeholder="비밀번호 (8자 이상)" 
-                value={password} 
-                onChange={e => setPassword(e.target.value)} 
-                required 
-            />
-            <input 
-                className="form-input" 
-                type="password" 
-                placeholder="비밀번호 확인" 
-                value={passwordConfirm} 
-                onChange={e => setPasswordConfirm(e.target.value)} 
-                required 
-            />
+            <div style={{ position: 'relative' }}>
+                <input 
+                    className="form-input" 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="비밀번호 (8자 이상)" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    required 
+                    style={{ paddingRight: '50px' }} 
+                />
+                <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#868e96',
+                        fontSize: '13px',
+                        fontWeight: 'bold'
+                    }}
+                >
+                    {showPassword ? '숨기기' : '보기'}
+                </button>
+            </div>
+            <div style={{ position: 'relative' }}>
+                <input 
+                    className="form-input" 
+                    type={showPasswordConfirm ? "text" : "password"} 
+                    placeholder="비밀번호 확인" 
+                    value={passwordConfirm} 
+                    onChange={e => setPasswordConfirm(e.target.value)} 
+                    required 
+                    style={{ paddingRight: '50px' }} 
+                />
+                <button
+                    type="button"
+                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                    style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#868e96',
+                        fontSize: '13px',
+                        fontWeight: 'bold'
+                    }}
+                >
+                    {showPasswordConfirm ? '숨기기' : '보기'}
+                </button>
+            </div>
              {!passwordsMatch && passwordConfirm && (
                 <div style={{color:'red', fontSize: '12px', marginBottom: '10px'}}>비밀번호가 일치하지 않습니다.</div>
             )}

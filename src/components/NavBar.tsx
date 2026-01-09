@@ -10,7 +10,6 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
   const location = useLocation();
 
   const navItems = [
-    { id: 'home', label: '알바', path: '/dangeun/jobs' },
     { id: 'products', label: '중고거래', path: '/dangeun/products' },
     { id: 'community', label: '동네생활', path: '/dangeun/community' },
     { id: 'map', label: '동네지도', path: '/dangeun/map' },
@@ -19,8 +18,7 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
   ];
 
   const isActive = (path: string) => {
-    if (path === '/dangeun/jobs' && (location.pathname === '/dangeun/jobs' || location.pathname === '/')) return true;
-    if (path !== '/dangeun/jobs' && location.pathname.startsWith(path)) return true;
+    if (location.pathname.startsWith(path)) return true;
     return false;
   };
 
@@ -41,7 +39,7 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
         <h1 
-          onClick={() => navigate('/dangeun/jobs')}
+          onClick={() => navigate('/dangeun/products')}
           style={{ 
             color: '#ff6f0f', 
             fontSize: '24px', 
@@ -93,18 +91,12 @@ function NavBar({ isLoggedIn, onLogout }: NavBarProps) {
           </button>
         ) : (
           <button
-            onClick={() => {
-                if (location.pathname.startsWith('/dangeun/jobs')) {
-                    navigate('/dangeun/jobs/login');
-                } else {
-                    navigate('/dangeun/login');
-                }
-            }}
+            onClick={() => navigate('/dangeun/login')}
             style={{
               padding: '8px 16px',
               fontSize: '14px',
               backgroundColor: '#ff6f0f',
-              color: 'white',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer',

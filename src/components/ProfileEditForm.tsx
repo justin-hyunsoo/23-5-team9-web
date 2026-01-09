@@ -27,6 +27,7 @@ export default function ProfileEditForm({
   const [regions, setRegions] = useState<Region[]>([]);
   const [loading, setLoading] = useState(false);
   const [regionsLoading, setRegionsLoading] = useState(true);
+  const [detecting, setDetecting] = useState(false);
 
   useEffect(() => {
     // Update local state if props change (e.g. data loaded from parent)
@@ -62,6 +63,56 @@ export default function ProfileEditForm({
       setRegionId(regions[0].id);
     }
   }, [regions, regionId]);
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      alert("브라우저가 위치 정보를 지원하지 않습니다.");
+      return;
+    }
+
+    setDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`${MAIN_API_URL}/api/regions/detect`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ latitude, longitude }),
+          });
+
+          if (res.ok) {
+            const detectedRegion = await res.json();
+            // Check if detected region is in the region list
+            const found = regions.find(r => r.id === detectedRegion.id);
+            if (found) {
+                setRegionId(detectedRegion.id);
+                alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
+            } else {
+                // Should not happen if regions are up to date, but if it does:
+                setRegions(prev => [...prev, detectedRegion]);
+                setRegionId(detectedRegion.id);
+                 alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
+            }
+          } else {
+            const errData = await res.json();
+            alert(errData.detail || "위치 감지에 실패했습니다.");
+          }
+        } catch (error) {
+          console.error("Error detecting location:", error);
+          alert("위치 감지 중 오류가 발생했습니다.");
+        } finally {
+          setDetecting(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("위치 정보를 가져올 수 없습니다. 설정에서 위치 권한을 허용해주세요.");
+        setDetecting(false);
+      }
+    );
+  };
+
 
 
   const generateRandomImage = () => {
@@ -158,20 +209,41 @@ export default function ProfileEditForm({
 
       <div>
         <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>지역</label>
-        <select 
-            value={regionId} 
-            onChange={e => setRegionId(e.target.value)}
-            className="form-input"
-            disabled={regionsLoading}
-        >
-            {regionsLoading ? (
-                <option value="">불러오는 중...</option>
-            ) : (
-                regions.map(region => (
-                    <option key={region.id} value={region.id}>{region.name}</option>
-                ))
-            )}
-        </select>
+        <div style={{ display: 'flex', gap: '8px' }}>
+            <select 
+                value={regionId} 
+                onChange={e => setRegionId(e.target.value)}
+                className="form-input"
+                disabled={regionsLoading}
+                style={{ flex: 1 }}
+            >
+                {regionsLoading ? (
+                    <option value="">불러오는 중...</option>
+                ) : (
+                    regions.map(region => (
+                        <option key={region.id} value={region.id}>{region.name}</option>
+                    ))
+                )}
+            </select>
+            <button 
+                type="button" 
+                onClick={handleDetectLocation}
+                disabled={detecting}
+                style={{
+                    padding: '0 16px',
+                    borderRadius: '8px',
+                    border: '1px solid #ff6f0f',
+                    backgroundColor: 'white',
+                    color: '#ff6f0f',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                }}
+            >
+                {detecting ? "감지 중..." : "현재 위치 찾기"}
+            </button>
+        </div>
       </div>
 
       <button 

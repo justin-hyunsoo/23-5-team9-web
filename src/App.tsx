@@ -136,7 +136,7 @@ function App() {
         {/* Banner */}
         {shouldShowBanner && (
           <div className="onboarding-banner">
-            <span>서비스 이용을 위해 닉네임과 지역 설정이 필요합니다.</span>
+            <span>서비스 이용을 위해 닉네임과 지역 설정이 필요합니다</span>
             <button 
               onClick={() => navigate('/onboarding')}
               className="onboarding-banner-button"

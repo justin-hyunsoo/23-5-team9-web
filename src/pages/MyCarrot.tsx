@@ -3,319 +3,153 @@ import { useNavigate } from 'react-router-dom';
 import { userApi, User } from '../api/user';
 import ProfileEditForm from '../components/ProfileEditForm';
 import '../styles/common.css';
+import '../styles/my-carrot.css';
 
-interface MyCarrotProps {
-    onLogout: () => void;
-}
+// --- 1. Sub-components (탭별 컴포넌트 분리) ---
 
-function MyCarrot({ onLogout }: MyCarrotProps) {
-  const [activeTab, setActiveTab] = useState('info'); // info, coin, password
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showNewPasswordConfirm, setShowNewPasswordConfirm] = useState(false);
-  
-  const [warningMessage, setWarningMessage] = useState('');
+const CoinTab = ({ user, onCharge }: { user: User; onCharge: (amount: number) => void }) => (
+  <div className="coin-section">
+    <div className="coin-balance-card">
+      <h3 className="coin-balance-title">보유 코인</h3>
+      <div className="coin-amount">
+        {user.coin.toLocaleString()} <span className="coin-unit">C</span>
+      </div>
+    </div>
+    <h4 className="coin-charge-title">코인 충전하기</h4>
+    <div className="coin-charge-grid">
+      {[1000, 5000, 10000, 30000, 50000, 100000].map((amount) => (
+        <button key={amount} onClick={() => onCharge(amount)} className="coin-charge-button">
+          +{amount.toLocaleString()}
+        </button>
+      ))}
+    </div>
+  </div>
+);
 
-  const [user, setUser] = useState<User | null>(null);
-  const navigate = useNavigate();
+const PasswordInput = ({ label }: { label: string }) => {
+  const [show, setShow] = useState(false);
+  return (
+    <div>
+      <label className="form-label">{label}</label>
+      <div className="password-input-wrapper">
+        <input className="form-input password-input" type={show ? "text" : "password"} />
+        <button type="button" onClick={() => setShow(!show)} className="password-toggle-button">
+          {show ? '숨기기' : '보기'}
+        </button>
+      </div>
+    </div>
+  );
+};
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-
-            const res = await userApi.getMe();
-
-            if (res.ok) {
-                const data = await res.json();
-                setUser(data);
-            } else {
-                console.error('Failed to fetch user info');
-                // 토큰 만료 등의 경우 로그인 페이지로 리다이렉트 고려
-            }
-        } catch (error) {
-            console.error('Error fetching user info:', error);
-        }
-    };
-
-    fetchUserInfo();
-  }, [navigate]);
-
-  const handleInfoUpdate = async (data: { nickname: string; region_id: string; profile_image: string }) => {
-    if (!user) return;
-    try {
-        const res = await userApi.updateOnboard({
-            nickname: data.nickname,
-            region_id: data.region_id,
-            profile_image: data.profile_image,
-            coin: user.coin // Keep existing coin
-        });
-
-        if (res.ok) {
-            const updatedUser = await res.json();
-            setUser(updatedUser);
-            alert('정보가 수정되었습니다.');
-        } else {
-            alert('정보 수정 실패');
-        }
-    } catch (err) {
-        console.error(err);
-        alert('오류 발생');
-    }
-  };
-
-  const handleCoinCharge = async (amount: number) => {
-     if (!user) return;
-     try {
-        const newCoin = user.coin + amount;
-        
-        const res = await userApi.updateOnboard({
-            nickname: user.nickname || '',
-            region_id: user.region?.id || "78c24c9f-05ac-49b5-b3c7c3f66688",
-            profile_image: user.profile_image || '',
-            coin: newCoin
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-            setUser(data);
-            alert(`${amount}코인이 충전되었습니다!`);
-        } else {
-            alert('충전 실패');
-        }
-    } catch (err) {
-        console.error(err);
-        alert('오류 발생');
-    }
-  };
-
-  if (!user) {
-      return <div>Loading...</div>;
-  }
-
-  const handlePasswordUpdate = (e: React.FormEvent) => {
+const PasswordTab = () => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert('비밀번호가 변경되었습니다.');
   };
 
   return (
-    <div className="container" style={{ maxWidth: '600px', padding: '40px 20px' }}>
-      {warningMessage && (
-        <div style={{
-          backgroundColor: '#fff3cd',
-          color: '#856404',
-          padding: '12px',
-          marginBottom: '20px',
-          borderRadius: '4px',
-          border: '1px solid #ffeeba',
-          textAlign: 'center',
-          fontWeight: 'bold'
-        }}>
-          {warningMessage}
-        </div>
-      )}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '800', margin: 0 }}>나의 당근</h2>
-        <button 
-            onClick={onLogout}
-            style={{
-                padding: '8px 16px',
-                backgroundColor: '#ffffff',
-                color: '#212529',
-                border: '1px solid #dee2e6',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#f8f9fa';
-                e.currentTarget.style.borderColor = '#ccedff'; // Optional hover effect
-            }}
-            onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
-                e.currentTarget.style.borderColor = '#dee2e6';
-            }}
-        >
-            로그아웃
-        </button>
+    <form onSubmit={handleSubmit} className="password-form">
+      <PasswordInput label="현재 비밀번호" />
+      <PasswordInput label="새 비밀번호" />
+      <PasswordInput label="새 비밀번호 확인" />
+      <button type="submit" className="button submit-button">비밀번호 변경</button>
+    </form>
+  );
+};
+
+// --- 2. Custom Hook (로직 분리) ---
+
+const useMyCarrotData = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return navigate('/login');
+      
+      try {
+        const res = await userApi.getMe();
+        if (res.ok) setUser(await res.json());
+      } catch (err) { console.error(err); }
+    };
+    fetchUser();
+  }, [navigate]);
+
+  const updateProfile = async (data: any) => {
+    if (!user) return;
+    try {
+      const res = await userApi.updateOnboard({ ...data, coin: user.coin }); // 기존 코인 유지
+      if (res.ok) {
+        setUser(await res.json());
+        alert('정보가 수정되었습니다.');
+      }
+    } catch (err) { console.error(err); alert('오류 발생'); }
+  };
+
+  const chargeCoin = async (amount: number) => {
+    if (!user) return;
+    try {
+      const res = await userApi.updateOnboard({
+        nickname: user.nickname || '',
+        region_id: user.region?.id || "default-id",
+        profile_image: user.profile_image || '',
+        coin: user.coin + amount
+      });
+      if (res.ok) {
+        setUser(await res.json());
+        alert(`${amount}코인이 충전되었습니다!`);
+      }
+    } catch (err) { console.error(err); alert('충전 실패'); }
+  };
+
+  return { user, updateProfile, chargeCoin };
+};
+
+// --- 3. Main Component (구성 및 렌더링) ---
+
+function MyCarrot({ onLogout }: { onLogout: () => void }) {
+  const { user, updateProfile, chargeCoin } = useMyCarrotData();
+  const [activeTab, setActiveTab] = useState('info');
+
+  if (!user) return <div>Loading...</div>;
+
+  const TABS = [
+    { id: 'info', label: '프로필 수정' },
+    { id: 'coin', label: '코인 관리' },
+    { id: 'password', label: '비밀번호 변경' },
+  ];
+
+  return (
+    <div className="my-carrot-container">
+      <div className="header">
+        <h2 className="header-title">나의 당근</h2>
+        <button onClick={onLogout} className="logout-button">로그아웃</button>
       </div>
       
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '30px', borderBottom: '1px solid #e9ecef', paddingBottom: '0' }}>
-        {['info', 'coin', 'password'].map(tab => (
-            <button 
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{ 
-                    padding: '12px 20px', 
-                    border: 'none',
-                    background: 'none',
-                    borderBottom: activeTab === tab ? '2px solid #ff6f0f' : '2px solid transparent',
-                    color: activeTab === tab ? '#212529' : '#868e96',
-                    fontWeight: activeTab === tab ? 'bold' : 'normal',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    transition: 'all 0.2s'
-                }}
-            >
-                {tab === 'info' && '프로필 수정'}
-                {tab === 'coin' && '코인 관리'}
-                {tab === 'password' && '비밀번호 변경'}
-            </button>
+      <div className="tabs-container">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+          >
+            {tab.label}
+          </button>
         ))}
       </div>
 
       <div className="content-area">
         {activeTab === 'info' && (
-            <ProfileEditForm 
-                initialNickname={user.nickname || ''}
-                initialRegionId={user.region?.id || ''}
-                initialProfileImage={user.profile_image || ''}
-                onSubmit={handleInfoUpdate}
-            />
+          <ProfileEditForm
+            initialNickname={user.nickname || ''}
+            initialRegionId={user.region?.id || ''}
+            initialProfileImage={user.profile_image || ''}
+            onSubmit={updateProfile}
+          />
         )}
-
-
-        {activeTab === 'coin' && (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ backgroundColor: '#fff4e6', padding: '40px', borderRadius: '16px', marginBottom: '30px' }}>
-                <h3 style={{ margin: 0, color: '#ff6f0f', marginBottom: '10px' }}>보유 코인</h3>
-                <div style={{ fontSize: '3rem', fontWeight: '800', color: '#212529' }}>
-                {user.coin.toLocaleString()} <span style={{ fontSize: '1.5rem', fontWeight: 'normal' }}>C</span>
-                </div>
-            </div>
-            
-            <h4 style={{ marginBottom: '20px', color: '#495057' }}>코인 충전하기</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                {[1000, 5000, 10000, 30000, 50000, 100000].map(amount => (
-                    <button 
-                        key={amount}
-                        onClick={() => handleCoinCharge(amount)}
-                        style={{
-                            padding: '16px 0',
-                            backgroundColor: '#fff',
-                            border: '1px solid #dee2e6',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            fontWeight: 'bold',
-                            color: '#495057',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseOver={(e) => {
-                            e.currentTarget.style.borderColor = '#ff6f0f';
-                            e.currentTarget.style.color = '#ff6f0f';
-                            e.currentTarget.style.backgroundColor = '#fff4e6';
-                        }}
-                        onMouseOut={(e) => {
-                            e.currentTarget.style.borderColor = '#dee2e6';
-                            e.currentTarget.style.color = '#495057';
-                            e.currentTarget.style.backgroundColor = '#fff';
-                        }}
-                    >
-                        +{amount.toLocaleString()}
-                    </button>
-                ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'password' && (
-          <form onSubmit={handlePasswordUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>현재 비밀번호</label>
-              <div style={{ position: 'relative' }}>
-                <input 
-                    className="form-input"
-                    type={showCurrentPassword ? "text" : "password"} 
-                    style={{ paddingRight: '50px', marginBottom: 0 }} 
-                />
-                <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#868e96',
-                        fontSize: '13px',
-                        fontWeight: 'bold'
-                    }}
-                >
-                    {showCurrentPassword ? '숨기기' : '보기'}
-                </button>
-              </div>
-            </div>
-            <div>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>새 비밀번호</label>
-              <div style={{ position: 'relative' }}>
-                <input 
-                    className="form-input"
-                    type={showNewPassword ? "text" : "password"} 
-                    style={{ paddingRight: '50px', marginBottom: 0 }} 
-                />
-                <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#868e96',
-                        fontSize: '13px',
-                        fontWeight: 'bold'
-                    }}
-                >
-                    {showNewPassword ? '숨기기' : '보기'}
-                </button>
-              </div>
-            </div>
-            <div>
-              <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '8px' }}>새 비밀번호 확인</label>
-              <div style={{ position: 'relative' }}>
-                <input 
-                    className="form-input"
-                    type={showNewPasswordConfirm ? "text" : "password"} 
-                    style={{ paddingRight: '50px', marginBottom: 0 }} 
-                />
-                <button
-                    type="button"
-                    onClick={() => setShowNewPasswordConfirm(!showNewPasswordConfirm)}
-                    style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: '#868e96',
-                        fontSize: '13px',
-                        fontWeight: 'bold'
-                    }}
-                >
-                    {showNewPasswordConfirm ? '숨기기' : '보기'}
-                </button>
-              </div>
-            </div>
-            <button type="submit" className="button" style={{ width: '100%', marginTop: '10px', height: '48px' }}>
-                비밀번호 변경
-            </button>
-          </form>
-        )}
+        {activeTab === 'coin' && <CoinTab user={user} onCharge={chargeCoin} />}
+        {activeTab === 'password' && <PasswordTab />}
       </div>
     </div>
   );

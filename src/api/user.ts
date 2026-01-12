@@ -14,14 +14,14 @@ export interface User {
 export interface UpdateUserParams {
     nickname: string;
     region_id: string;
-    profile_image: string;
+    profile_image?: string;
     coin?: number;
 }
 
 export const userApi = {
     getMe: () => fetchClient('/api/user/me'),
     
-    updateOnboard: (data: UpdateUserParams) => fetchClient('/api/user/me/onboard/', {
+    updateOnboard: (data: UpdateUserParams) => fetchClient('/api/user/me/onboard', {
         method: 'POST',
         body: JSON.stringify(data),
     }),

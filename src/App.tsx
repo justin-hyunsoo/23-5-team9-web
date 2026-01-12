@@ -27,7 +27,7 @@ function App() {
   const location = useLocation();
 
   // 2. API 호출 함수
-  const fetchUserData = useCallback(async (token: string): Promise<User | null> => {
+  const fetchUserData = useCallback(async (): Promise<User | null> => {
     try {
       const res = await userApi.getMe();
       
@@ -52,7 +52,7 @@ function App() {
     }
 
     (async () => {
-      const data = await fetchUserData(token);
+      const data = await fetchUserData();
       if (data) {
         // [부활] 받아온 데이터를 기반으로 State 업데이트
         setNeedsOnboarding(!data.nickname || !data.region);
@@ -83,7 +83,7 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname);
       
       const handleSocialLogin = async () => {
-        const data = await fetchUserData(accessToken);
+        const data = await fetchUserData();
         
         if (data) {
           const isMissingInfo = !data.nickname || !data.region;

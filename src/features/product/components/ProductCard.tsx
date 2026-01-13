@@ -1,45 +1,44 @@
 import { Link } from 'react-router-dom';
 import { Product } from '@/features/product/hooks/useProducts';
-// import '@/styles/product-list.css';
 
-interface ProductCardProps {
-  product: Product;
-}
+// 포맷팅 로직을 컴포넌트 밖으로 분리하여 가독성 확보
+const formatPrice = (price: number) => price.toLocaleString() + '원';
+const formatDate = (date: string) => new Date(date).toLocaleDateString();
 
-function ProductCard({ product }: ProductCardProps) {
-  const productDetailUrl = `/products/${product.id}`;
-
+export default function ProductCard({ product }: { product: Product }) {
   return (
-    <Link to={productDetailUrl} className="flex flex-col text-inherit no-underline transition-transform duration-200 hover:-translate-y-1">
-      <div className="relative w-full pt-[100%] rounded-xl overflow-hidden bg-gray-100 mb-3 border border-black/5">
-        {product.imageUrl ? (
+    <Link to={`/products/${product.id}`} className="group flex flex-col no-underline">
+      {/* 이미지 영역: aspect-square를 사용하여 비율 유지 코드 단순화 */}
+      <div className="relative mb-3 aspect-square w-full overflow-hidden rounded-xl bg-gray-100 border border-black/5">
+        {product.imageUrl && (
           <img 
             src={product.imageUrl} 
             alt={product.title} 
-            className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        ) : (
-          <div className="absolute top-0 left-0 w-full h-full bg-gray-200"></div>
         )}
       </div>
-      <div className="px-[2px]">
-        <h3 className="text-base font-medium mb-1.5 leading-snug text-dark tracking-[-0.02em] break-words line-clamp-2">{product.title}</h3>
-        <div className="text-[13px] text-gray-light mb-1 flex items-center">
-          <span className="post-location">{product.location}</span>
+
+      {/* 텍스트 영역 */}
+      <div className="px-0.5">
+        <h3 className="mb-1.5 line-clamp-2 text-base font-medium leading-snug text-dark">
+          {product.title}
+        </h3>
+        
+        <div className="mb-1 flex items-center text-[13px] text-gray-light">
+          <span>{product.location}</span>
           <span className="mx-1">·</span>
-          <span className="post-time">{new Date(product.createdAt).toLocaleDateString()}</span>
+          <span>{formatDate(product.createdAt)}</span>
         </div>
-        <div className="text-[15px] font-extrabold text-dark mb-1">
-          {product.price.toLocaleString()}원
+        
+        <div className="mb-1 text-[15px] font-extrabold text-dark">
+          {formatPrice(product.price)}
         </div>
-        <div className="text-[13px] text-gray-light flex items-center gap-2 mt-1">
-          <span className="text-gray-light text-[13px]">
-            관심 {product.likeCount}
-          </span>
+        
+        <div className="text-[13px] text-gray-light">
+          관심 {product.likeCount}
         </div>
       </div>
     </Link>
   );
 }
-
-export default ProductCard;

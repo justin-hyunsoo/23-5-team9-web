@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '@/features/user/api/user';
 import ProfileEditForm from '@/features/user/components/ProfileEditForm';
+import { useAuth } from '@/features/auth/context/AuthContext';
 // import '@/styles/login.css';
 
 export default function Onboarding() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
 
   const handleOnboardingSubmit = async (data: { nickname: string; region_id: string; profile_image: string }) => {
      setError('');
@@ -18,6 +20,7 @@ export default function Onboarding() {
 
       try {
         await userApi.updateOnboard(data);
+        await checkAuth();
         navigate('/community'); // Main page after onboarding
       } catch (err: any) {
         const detail = err.response?.data?.detail || '온보딩에 실패했습니다.';

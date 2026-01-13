@@ -29,7 +29,7 @@ function ChatRoom() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-140px)]">
-      <div className="p-3 border-b border-border flex items-center bg-white sticky top-0 z-10">
+      <div className="p-3 border-b border-gray-200 flex items-center bg-white sticky top-0 z-10">
         <button onClick={() => navigate(-1)} className="mr-3 bg-transparent border-none cursor-pointer text-xl flex items-center justify-center p-1">←</button>
         <h3 className="m-0 text-lg font-bold">채팅방 {chatId}</h3>
       </div>
@@ -40,24 +40,24 @@ function ChatRoom() {
             <div className={`py-2.5 px-4 rounded-[15px] text-sm break-words max-w-full ${
               msg.sender === 'me' 
                 ? 'bg-primary text-white rounded-tr-none' 
-                : 'bg-light text-dark rounded-tl-none border border-border'
+                : 'bg-gray-50 text-slate-900 rounded-tl-none border border-gray-200'
             }`}>
               {msg.text}
             </div>
-            <div className={`text-xs text-gray-light mt-1 ${msg.sender === 'me' ? 'text-right' : 'text-left'}`}>
+            <div className={`text-xs text-gray-500 mt-1 ${msg.sender === 'me' ? 'text-right' : 'text-left'}`}>
               {msg.time}
             </div>
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSend} className="p-3 border-t border-border flex gap-2.5 bg-white pb-6">
+      <form onSubmit={handleSend} className="p-3 border-t border-gray-200 flex gap-2.5 bg-white pb-6">
         <input 
           type="text" 
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="메시지를 입력하세요"
-          className="flex-1 p-3 rounded-full border border-border outline-none focus:border-primary transition-colors bg-light"
+          className="flex-1 p-3 rounded-full border border-gray-200 outline-none focus:border-primary transition-colors bg-gray-50"
         />
         <button type="submit" className="bg-primary text-white border-none px-5 py-2 rounded-full cursor-pointer hover:bg-primary-hover font-bold transition-colors whitespace-nowrap">
           전송

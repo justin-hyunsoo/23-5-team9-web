@@ -1,46 +1,46 @@
 import { useState } from 'react';
 import ProductCard from "@/features/product/components/ProductCard";
 import LocationSelector from "@/features/location/components/LocationSelector";
-import { Loading, ErrorMessage, EmptyState } from "@/shared/ui/StatusMessage";
 import { useProducts, LOCATIONS } from "@/features/product/hooks/useProducts";
+import { Loading } from "@/shared/ui/StatusMessage";
 
 function ProductList() {
-  const [selectedLocation, setSelectedLocation] = useState<string>('all');
-  const { products, loading, error } = useProducts(selectedLocation);
+  const [filterLoc, setFilterLoc] = useState<string>('all');
+  const { products, loading, error } = useProducts(filterLoc);
 
+  // 1. 조기 리턴 패턴으로 들여쓰기 깊이 최소화
   if (loading) return <Loading />;
-  if (error) return <ErrorMessage message={error} />;
+  if (error) return <div className="text-red-500 p-10 text-center">{error}</div>;
 
-  const locationLabel = LOCATIONS.find(loc => loc.value === selectedLocation)?.label;
+  // 2. 파생 데이터 계산 (UI 로직 분리)
+  const currentLocLabel = LOCATIONS.find(l => l.value === filterLoc)?.label;
+  const isEmpty = products.length === 0;
 
   return (
-    <div className="max-w-screen-lg mx-auto py-10 px-5">
-      <h1 className="text-2xl font-bold mb-5">중고거래 매물</h1>
+    <div className="max-w-4xl mx-auto p-6">
+      <header className="mb-8 space-y-4">
+        <h1 className="text-3xl font-bold text-slate-900">중고거래 매물</h1>
+        <LocationSelector selected={filterLoc} onChange={setFilterLoc} />
+        
+        {/* 조건부 렌더링을 깔끔하게: 값이 있을 때만 뱃지 표시 */}
+        {filterLoc !== 'all' && (
+          <span className="inline-block px-3 py-1 bg-orange-100 text-primary rounded-full text-sm font-bold">
+            {currentLocLabel} · {products.length}개
+          </span>
+        )}
+      </header>
       
-      <LocationSelector 
-        selectedLocation={selectedLocation}
-        onLocationChange={setSelectedLocation}
-      />
-      
-      {selectedLocation !== 'all' && (
-        <div className="mb-4 p-3 bg-orange-50 rounded-lg text-sm text-primary font-bold">
-          {locationLabel} 매물 {products.length}개
+      {/* 3. 리스트 렌더링 영역 */}
+      {isEmpty ? (
+        <div className="py-20 text-center text-gray-400 bg-gray-50 rounded-2xl">
+          등록된 상품이 없습니다.
         </div>
-      )}
-      
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-6 gap-y-8 mt-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-      
-      {products.length === 0 && (
-        <EmptyState 
-           message={selectedLocation !== 'all' 
-            ? `${locationLabel}에 등록된 상품이 없습니다.`
-            : '등록된 상품이 없습니다.'
-           }
-        />
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
       )}
     </div>
   );

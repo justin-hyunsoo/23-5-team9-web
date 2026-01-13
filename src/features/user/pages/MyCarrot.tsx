@@ -3,10 +3,12 @@ import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import CoinTab from '@/features/user/components/CoinTab';
 import PasswordTab from '@/features/user/components/PasswordTab';
 import { useMyCarrotData } from '@/features/user/hooks/useMyCarrotData';
+import { useAuth } from '@/features/auth/context/AuthContext';
 import { Loading } from "@/shared/ui/StatusMessage";
 
-function MyCarrot({ onLogout }: { onLogout: () => void }) {
+function MyCarrot() {
   const { user, updateProfile, chargeCoin } = useMyCarrotData();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState('info');
 
   if (!user) return <Loading />;
@@ -21,10 +23,10 @@ function MyCarrot({ onLogout }: { onLogout: () => void }) {
     <div className="max-w-[600px] px-5 py-10 mx-auto">
       <div className="flex justify-between items-center mb-[30px]">
         <h2 className="text-2xl font-extrabold m-0">나의 당근</h2>
-        <button onClick={onLogout} className="px-4 py-2 bg-white text-dark border border-gray-300 rounded-md text-sm font-bold cursor-pointer transition-all hover:bg-light hover:border-blue-200">로그아웃</button>
+        <button onClick={logout} className="px-4 py-2 bg-white text-slate-900 border border-gray-300 rounded-md text-sm font-bold cursor-pointer transition-all hover:bg-gray-50 hover:border-blue-200">로그아웃</button>
       </div>
       
-      <div className="flex gap-2 mb-[30px] border-b border-border pb-0">
+      <div className="flex gap-2 mb-[30px] border-b border-gray-200 pb-0">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -32,8 +34,8 @@ function MyCarrot({ onLogout }: { onLogout: () => void }) {
             className={`
               px-5 py-3 border-none bg-none border-b-2 cursor-pointer text-base transition-all
               ${activeTab === tab.id 
-                ? 'border-primary text-dark font-bold' 
-                : 'border-transparent text-gray-light font-normal hover:text-dark'
+                ? 'border-primary text-slate-900 font-bold' 
+                : 'border-transparent text-gray-500 font-normal hover:text-slate-900'
               }
             `}
           >

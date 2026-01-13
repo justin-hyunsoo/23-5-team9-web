@@ -52,7 +52,7 @@ function CommunityCard({ post }: CommunityCardProps) {
             {post.category}
           </span>
         </div>
-        <h3 className="text-base font-medium mb-1.5 leading-normal text-dark tracking-tighter truncate line-clamp-2 break-keep">
+        <h3 className="text-base font-medium mb-1.5 leading-normal text-slate-900 tracking-tighter truncate line-clamp-2 break-keep">
             {post.title}
         </h3>
         <div className="text-[13px] text-gray-500 mb-1 flex items-center">

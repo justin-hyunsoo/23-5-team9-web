@@ -9,7 +9,7 @@ const CoinTab = ({ user, onCharge }: CoinTabProps) => (
   <div className="text-center py-5">
     <div className="bg-[#fff4e6] p-10 rounded-2xl mb-[30px]">
       <h3 className="m-0 text-primary mb-2.5 font-bold">보유 코인</h3>
-      <div className="text-5xl font-extrabold text-dark">
+      <div className="text-5xl font-extrabold text-slate-900">
         {user.coin.toLocaleString()} <span className="text-2xl font-normal ml-1">C</span>
       </div>
     </div>

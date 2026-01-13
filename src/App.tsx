@@ -34,6 +34,10 @@ function App() {
       if (res.ok) {
         const data = await res.json();
         return data as User;
+      } else if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+        setIsMainLoggedIn(false);
       }
     } catch (e) {
       console.error("Failed to fetch user data:", e);

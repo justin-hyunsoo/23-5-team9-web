@@ -13,7 +13,13 @@ export const useMyCarrotData = () => {
       
       try {
         const res = await userApi.getMe();
-        if (res.ok) setUser(await res.json());
+        if (res.ok) {
+          setUser(await res.json());
+        } else if (res.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('refresh_token');
+          navigate('/login');
+        }
       } catch (err) { console.error(err); }
     };
     fetchUser();

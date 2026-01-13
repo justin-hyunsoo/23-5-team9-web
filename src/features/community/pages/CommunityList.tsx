@@ -4,8 +4,6 @@ import LocationSelector from "@/features/location/components/LocationSelector";
 import CategorySelector from "@/shared/ui/CategorySelector";
 import { Loading, ErrorMessage, EmptyState } from "@/shared/ui/StatusMessage";
 import { useCommunity, COMMUNITY_CATEGORIES, LOCATIONS } from "@/features/community/hooks/useCommunity";
-import "@/styles/base-layout.css";
-import "@/styles/community.css";
 
 function CommunityList() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -18,8 +16,8 @@ function CommunityList() {
   const locationLabel = LOCATIONS.find(loc => loc.value === selectedLocation)?.label;
 
   return (
-    <div className="post-list-container">
-      <h1 className="community-title">동네생활</h1>
+    <div className="max-w-[1024px] mx-auto py-10 px-5">
+      <h1 className="text-2xl font-bold mb-5">동네생활</h1>
       
       <LocationSelector 
         selectedLocation={selectedLocation}
@@ -33,12 +31,12 @@ function CommunityList() {
       />
       
       {selectedLocation !== 'all' && (
-        <div className="filter-info-box">
+        <div className="mb-4 p-3 bg-[#fff4e6] rounded-lg text-sm text-primary font-bold">
           {locationLabel} 게시글 {posts.length}개
         </div>
       )}
       
-      <div className="post-list-grid">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-y-8 gap-x-6 mt-6">
         {posts.map((post) => (
           <CommunityCard key={post.id} post={post} />
         ))}

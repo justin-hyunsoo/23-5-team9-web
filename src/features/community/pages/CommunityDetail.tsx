@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import "@/styles/base-layout.css";
 import { useCommunityPost, Comment } from "@/features/community/hooks/useCommunity";
 
 function CommunityDetail() {
@@ -60,44 +59,28 @@ function CommunityDetail() {
     return postDate.toLocaleDateString('ko-KR');
   };
 
-  if (loading) return <div className="loading">불러오는 중...</div>;
-  if (error) return <div className="error-message">{error}</div>;
-  if (!post) return <div className="no-data">게시글 정보가 없습니다.</div>;
+  if (loading) return <div className="p-4 text-center">불러오는 중...</div>;
+  if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
+  if (!post) return <div className="p-4 text-center">게시글 정보가 없습니다.</div>;
 
   return (
-    <div className="post-body-container">
+    <div className="max-w-[720px] mx-auto my-10 px-5">
       <button 
         onClick={() => navigate(-1)} 
-        style={{ 
-          marginBottom: '20px', 
-          border: 'none', 
-          background: 'none', 
-          cursor: 'pointer', 
-          fontSize: '1.2rem', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '5px' 
-        }}
+        className="mb-5 border-none bg-none cursor-pointer text-xl flex items-center gap-1.5 hover:text-gray-600 transition-colors"
       >
         ← 뒤로가기
       </button>
       
-      <section className="position-details card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <span style={{ 
-            fontSize: '12px', 
-            color: '#ff6f0f', 
-            backgroundColor: '#fff4e6', 
-            padding: '4px 12px', 
-            borderRadius: '4px',
-            fontWeight: 'bold'
-          }}>
+      <section className="bg-white rounded-lg">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-xs text-primary bg-[#fff4e6] px-3 py-1 rounded font-bold">
             {post.category}
           </span>
         </div>
 
         {post.imageUrl && (
-          <div style={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
+          <div className="mb-5 rounded-lg overflow-hidden">
             <img 
               src={post.imageUrl} 
               alt={post.title} 

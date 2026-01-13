@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CommunityPost } from '../hooks/useCommunity';
-import '@/styles/community.css';
 
 interface CommunityCardProps {
   post: CommunityPost;
@@ -33,42 +32,46 @@ function CommunityCard({ post }: CommunityCardProps) {
   };
 
   return (
-    <Link to={postDetailUrl} className="post-list-item">
-      <div className="post-image-wrapper">
+    <Link to={postDetailUrl} className="flex flex-col text-inherit transition-transform duration-200 hover:-translate-y-1">
+      <div className="relative w-full pt-[100%] rounded-xl overflow-hidden bg-gray-100 mb-3 border border-black/5">
         {post.imageUrl ? (
           <img 
             src={post.imageUrl} 
             alt={post.title} 
-            className="post-image"
+            className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-300"
           />
         ) : (
-          <div className="post-image-placeholder"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+             {/* Placeholder content if needed */}
+          </div>
         )}
       </div>
-      <div className="post-content">
-        <div className="community-card-category">
-          <span className="community-card-category-label">
+      <div className="px-0.5">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs text-primary bg-[#fff4e6] px-2 py-0.5 rounded font-bold">
             {post.category}
           </span>
         </div>
-        <h3 className="post-title">{post.title}</h3>
-        <div className="post-info">
-          <span className="post-location">{post.location}</span>
-          <span className="post-dot">·</span>
-          <span className="post-time">{formatTimeAgo(post.createdAt)}</span>
+        <h3 className="text-base font-medium mb-1.5 leading-normal text-dark tracking-tighter truncate line-clamp-2 break-keep">
+            {post.title}
+        </h3>
+        <div className="text-[13px] text-gray-500 mb-1 flex items-center">
+          <span className="text-gray-500">{post.location}</span>
+          <span className="mx-1">·</span>
+          <span className="text-gray-500">{formatTimeAgo(post.createdAt)}</span>
         </div>
-        <div className="community-card-footer">
+        <div className="mt-auto pt-2.5 flex gap-3 items-center">
           <button
             onClick={handleLikeClick}
-            className={`community-like-btn ${isLiked ? 'liked' : ''}`}
+            className={`border-none bg-none cursor-pointer p-1 flex items-center gap-1 text-[13px] ${isLiked ? 'text-primary' : 'text-gray-400'}`}
           >
             <span>{isLiked ? '♥' : '♡'}</span>
             <span>{likeCount}</span>
           </button>
-          <span className="community-card-stat">
+          <span className="text-gray-400 text-[13px]">
             💬 {post.commentCount}
           </span>
-          <span className="community-card-stat">
+          <span className="text-gray-400 text-[13px]">
             👁️ {post.viewCount}
           </span>
         </div>

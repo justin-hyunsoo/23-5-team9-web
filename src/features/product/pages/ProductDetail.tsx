@@ -1,6 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-// import "@/styles/base-layout.css";
-// import "@/styles/product-detail.css";
 import { useProduct } from "@/features/product/hooks/useProducts";
 import { Loading, ErrorMessage, EmptyState } from "@/shared/ui/StatusMessage";
 

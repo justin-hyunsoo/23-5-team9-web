@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '@/features/auth/api/auth';
+import { useAuth } from '@/features/auth/context/AuthContext';
 
 // 반복되는 Input 스타일을 재사용 가능한 컴포넌트로 분리
 const InputField = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
@@ -10,9 +11,11 @@ const InputField = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
   />
 );
 
-export default function Login({ onLogin }: { onLogin?: () => void }) {
+export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -26,9 +29,7 @@ export default function Login({ onLogin }: { onLogin?: () => void }) {
     setError('');
     try {
       const { data } = await authApi.login(form);
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
-      onLogin?.();
+      login(data.access_token, data.refresh_token);
       navigate('/community');
     } catch (err: any) {
       setError(err.response?.data?.detail || '이메일 또는 비밀번호가 올바르지 않습니다.');
@@ -50,10 +51,24 @@ export default function Login({ onLogin }: { onLogin?: () => void }) {
             name="email" type="email" placeholder="이메일" required
             value={form.email} onChange={handleChange} 
           />
-          <InputField 
-            name="password" type="password" placeholder="비밀번호" required
-            value={form.password} onChange={handleChange} 
-          />
+          <div className="relative">
+            <InputField 
+              name="password" 
+              type={showPassword ? "text" : "password"} 
+              placeholder="비밀번호" 
+              required
+              value={form.password} 
+              onChange={handleChange} 
+              className="w-full rounded-xl bg-gray-100 p-4 pr-[50px] text-base outline-none transition-all placeholder:text-gray-400 focus:bg-gray-200 focus:ring-2 focus:ring-primary/10"
+            />
+            <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-[15px] top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-500 text-[13px] font-semibold"
+            >
+                {showPassword ? '숨기기' : '보기'}
+            </button>
+          </div>
           
           <button 
             type="submit" disabled={loading}

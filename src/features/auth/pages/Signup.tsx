@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '@/features/auth/api/auth';
+import { useAuth } from '@/features/auth/context/AuthContext';
 // import '@/styles/login.css'; 
 
 interface SignupFormProps {
@@ -16,6 +17,7 @@ export default function Signup({ onSignup }: SignupFormProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const passwordsMatch = password && password === passwordConfirm;
 
@@ -41,8 +43,7 @@ export default function Signup({ onSignup }: SignupFormProps) {
       const loginRes = await authApi.login({ email, password });
       
       const data = loginRes.data;
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
+      login(data.access_token, data.refresh_token);
       
       if (onSignup) {
           onSignup();

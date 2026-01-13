@@ -25,10 +25,10 @@ function ProductDetail() {
         )}
         
         <h2 className="text-2xl font-bold mb-2">{product.title}</h2>
-        <p className="text-lg text-gray-light mb-2.5">{product.category}</p>
+        <p className="text-lg text-gray-500 mb-2.5">{product.category}</p>
         <h3 className="text-2xl font-bold mb-5">{product.price.toLocaleString()}원</h3>
         
-        <div className="flex gap-2.5 mb-5 text-gray-light text-sm">
+        <div className="flex gap-2.5 mb-5 text-gray-500 text-sm">
           <span>{product.location}</span>
           <span>·</span>
           <span>{new Date(product.createdAt).toLocaleDateString()}</span>
@@ -36,7 +36,7 @@ function ProductDetail() {
           <span>관심 {product.likeCount}</span>
         </div>
 
-        <hr className="my-5 border-0 border-t border-border" />
+        <hr className="my-5 border-0 border-t border-gray-200" />
         
         <div className="whitespace-pre-wrap leading-relaxed">
           {product.content}

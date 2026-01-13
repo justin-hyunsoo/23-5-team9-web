@@ -72,9 +72,9 @@ export default function Login({ onLogin }: { onLogin?: () => void }) {
           <GoogleIcon /> Google로 계속하기
         </button>
 
-        <div className="mt-6 text-center text-sm text-gray-light">
+        <div className="mt-6 text-center text-sm text-gray-500">
           아직 계정이 없으신가요? 
-          <Link to="/signup" className="ml-1.5 font-semibold text-primary hover:underline">회원가입</Link>
+          <Link to="/auth/signup" className="ml-1.5 font-semibold text-primary hover:underline">회원가입</Link>
         </div>
       </div>
     </div>

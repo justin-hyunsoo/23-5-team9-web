@@ -2,11 +2,11 @@ import { LOCATIONS } from '@/features/product/hooks/useProducts';
 // import '@/styles/location-selector.css';
 
 interface LocationSelectorProps {
-  selectedLocation: string;
-  onLocationChange: (location: string) => void;
+  selected: string;
+  onChange: (location: string) => void;
 }
 
-function LocationSelector({ selectedLocation, onLocationChange }: LocationSelectorProps) {
+function LocationSelector({ selected, onChange }: LocationSelectorProps) {
   return (
     <div className="mb-6">
       <h3 className="text-base font-bold mb-3 text-gray-800">
@@ -16,9 +16,9 @@ function LocationSelector({ selectedLocation, onLocationChange }: LocationSelect
         {LOCATIONS.map((location) => (
           <button
             key={location.value}
-            onClick={() => onLocationChange(location.value)}
+            onClick={() => onChange(location.value)}
             className={`px-4 py-2 text-sm font-bold rounded-full transition-all ${
-              selectedLocation === location.value 
+              selected === location.value 
                 ? 'bg-primary text-white shadow-sm' 
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}

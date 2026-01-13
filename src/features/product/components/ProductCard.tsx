@@ -21,21 +21,21 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* 텍스트 영역 */}
       <div className="px-0.5">
-        <h3 className="mb-1.5 line-clamp-2 text-base font-medium leading-snug text-dark">
+        <h3 className="mb-1.5 line-clamp-2 text-base font-medium leading-snug text-slate-900">
           {product.title}
         </h3>
         
-        <div className="mb-1 flex items-center text-[13px] text-gray-light">
+        <div className="mb-1 flex items-center text-[13px] text-gray-500">
           <span>{product.location}</span>
           <span className="mx-1">·</span>
           <span>{formatDate(product.createdAt)}</span>
         </div>
         
-        <div className="mb-1 text-[15px] font-extrabold text-dark">
+        <div className="mb-1 text-[15px] font-extrabold text-slate-900">
           {formatPrice(product.price)}
         </div>
         
-        <div className="text-[13px] text-gray-light">
+        <div className="text-[13px] text-gray-500">
           관심 {product.likeCount}
         </div>
       </div>

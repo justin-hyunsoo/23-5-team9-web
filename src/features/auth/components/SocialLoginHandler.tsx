@@ -23,7 +23,7 @@ export function SocialLoginHandler() {
       // (Context 상태 업데이트가 비동기라 약간의 딜레이가 있을 수 있으므로 
       //  login 함수 내부나 여기서 적절히 처리)
       if (needsOnboarding) {
-        navigate('/onboarding');
+        navigate('/auth/onboarding');
       } else {
         navigate('/products');
       }

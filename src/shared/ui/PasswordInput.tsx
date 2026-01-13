@@ -12,7 +12,7 @@ const PasswordInput = ({ label, wrapperClassName = "", className = "w-full borde
       {label && <label className="block font-bold mb-2">{label}</label>}
       <div className={`relative ${wrapperClassName}`}>
         <input className={className} type={show ? "text" : "password"} {...props} />
-        <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-gray-light text-[13px] font-bold">
+        <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer text-gray-500 text-[13px] font-bold">
           {show ? '숨기기' : '보기'}
         </button>
       </div>

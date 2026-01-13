@@ -17,7 +17,7 @@ function ChatRoomItem({ room }: ChatRoomItemProps) {
 
   return (
     <div 
-      className="p-4 border-b border-border cursor-pointer flex justify-between hover:bg-light transition-colors"
+      className="p-4 border-b border-gray-200 cursor-pointer flex justify-between hover:bg-gray-50 transition-colors"
       onClick={() => navigate(`/chat/${room.id}`)}
     >
       <div className="flex flex-col">
@@ -25,7 +25,7 @@ function ChatRoomItem({ room }: ChatRoomItemProps) {
         <div className="text-gray text-sm min-w-0 truncate">{room.lastMessage}</div>
       </div>
       <div className="text-right flex flex-col items-end min-w-[60px]">
-        <div className="text-gray-light text-xs mb-1.5">{room.time}</div>
+        <div className="text-gray-500 text-xs mb-1.5">{room.time}</div>
         {room.unread > 0 && (
           <span className="bg-primary text-white px-2 py-0.5 rounded-full text-xs font-bold inline-block">
             {room.unread}

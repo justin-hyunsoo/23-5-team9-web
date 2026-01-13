@@ -1,5 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from '@/features/auth/context/AuthContext';
+import { MainLayout } from '@/shared/layouts/MainLayout';
+import { SocialLoginHandler } from '@/features/auth/components/SocialLoginHandler';
 
+// Page Imports
 import Login from '@/features/auth/pages/Login';
 import Signup from '@/features/auth/pages/Signup';
 import Onboarding from '@/features/auth/pages/Onboarding';
@@ -12,24 +16,12 @@ import ProductDetail from '@/features/product/pages/ProductDetail';
 import CommunityList from '@/features/community/pages/CommunityList';
 import CommunityDetail from '@/features/community/pages/CommunityDetail';
 
-import { AuthProvider, useAuth } from '@/features/auth/context/AuthContext';
-import { SocialLoginHandler } from '@/features/auth/components/SocialLoginHandler';
-import { MainLayout } from '@/shared/layouts/MainLayout';
-import { AuthLayout } from '@/features/auth/layouts/AuthLayout';
-
-// 내부 컴포넌트로 분리 (AuthContext를 사용하기 위해)
-function AppContent() {
-  const { checkAuth, logout } = useAuth();
-
-  // 로그인/회원가입 완료 시 호출될 핸들러
-  const handleAuthSuccess = () => {
-    checkAuth();
-  };
-
+function App() {
   return (
-    <>
+    <AuthProvider>
       <SocialLoginHandler />
       <Routes>
+        {/* 메인 서비스 영역 */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/products" replace />} />
           <Route path="/products" element={<ProductList />} />
@@ -39,23 +31,16 @@ function AppContent() {
           <Route path="/map" element={<NeighborhoodMap/>}/>
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />
-          <Route path="/my" element={<MyCarrot onLogout={logout} />} />
+          <Route path="/my" element={<MyCarrot />} />
         </Route>
 
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login onLogin={handleAuthSuccess} />} />
-          <Route path="/signup" element={<Signup onSignup={handleAuthSuccess} />} />
-          <Route path="/onboarding" element={<Onboarding />} />
+        {/* 인증 관련 영역 (Layout이 다름) */}
+        <Route path="/auth"> 
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
+          <Route path="onboarding" element={<Onboarding />} />
         </Route>
       </Routes>
-    </>
-  );
-}
-
-function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
     </AuthProvider>
   );
 }

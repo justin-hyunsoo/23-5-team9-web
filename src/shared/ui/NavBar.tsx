@@ -23,7 +23,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
     const baseStyle = mobile 
       ? "block w-full p-4 text-left text-lg hover:bg-gray-50" 
       : "px-3 py-2 text-base font-bold";
-    const activeStyle = isActive ? "text-primary font-bold" : "text-gray-dark font-medium";
+    const activeStyle = isActive ? "text-primary font-bold" : "text-gray-700 font-medium";
 
     return (
       <button onClick={() => handleNav(path)} className={`${baseStyle} ${activeStyle} transition-colors`}>
@@ -32,7 +32,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
     );
   };
 
-  const authItem = { label: isLoggedIn ? '나의 당근' : '로그인', path: isLoggedIn ? '/my' : '/login' };
+  const authItem = { label: isLoggedIn ? '나의 당근' : '로그인', path: isLoggedIn ? '/my' : '/auth/login' };
 
   return (
     <>

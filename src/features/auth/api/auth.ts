@@ -1,6 +1,6 @@
 // src/api/auth.ts
 import client from '@/shared/api/client';
-import { MAIN_API_URL } from '@/shared/api/config';
+import { SOCIAL_LOGIN_API_URL } from '@/features/auth/api/config';
 
 export interface SignupRequest {
   email: string; 
@@ -27,5 +27,5 @@ export const authApi = {
     return client.post<LoginResponse>('/api/auth/tokens', data);
   },
 
-  getGoogleLoginUrl: (): string => `${MAIN_API_URL}/api/auth/oauth2/login/google`,
+  getGoogleLoginUrl: (): string => `${SOCIAL_LOGIN_API_URL}/api/auth/oauth2/login/google`,
 };

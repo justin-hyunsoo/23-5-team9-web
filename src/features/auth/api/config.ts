@@ -1,0 +1,1 @@
+export const SOCIAL_LOGIN_API_URL = 'https://dev.server.team9-toy-project.p-e.kr'; 

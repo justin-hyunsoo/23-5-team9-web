@@ -17,7 +17,7 @@ function LocationSelector({ selected, onChange }: LocationSelectorProps) {
           <button
             key={location.value}
             onClick={() => onChange(location.value)}
-            className={`px-4 py-2 text-sm font-bold rounded-full transition-all ${
+            className={`px-4 py-2 text-sm font-bold rounded-full transition-all cursor-pointer ${
               selected === location.value 
                 ? 'bg-primary text-white shadow-sm' 
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

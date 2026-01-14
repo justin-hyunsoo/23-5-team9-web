@@ -1,4 +1,5 @@
 import PasswordInput from '@/shared/ui/PasswordInput';
+import { Button } from "@/shared/ui/Button"; // 추가
 
 const PasswordTab = () => {
   const handleSubmit = (e: React.FormEvent) => {
@@ -7,11 +8,13 @@ const PasswordTab = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 pt-2">
       <PasswordInput label="현재 비밀번호" />
       <PasswordInput label="새 비밀번호" />
       <PasswordInput label="새 비밀번호 확인" />
-      <button type="submit" className="w-full mt-2.5 h-12 bg-primary text-text-inverse font-bold rounded-md hover:bg-primary-hover transition-colors">비밀번호 변경</button>
+      <Button type="submit" size="lg" fullWidth className="mt-4">
+        비밀번호 변경
+      </Button>
     </form>
   );
 };

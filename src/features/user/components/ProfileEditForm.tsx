@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { regionApi } from '@/features/location/api/region';
+import { Button } from "@/shared/ui/Button"; // 추가
+import { Input } from "@/shared/ui/Input";   // 추가
 
 interface Region {
   id: string;
@@ -138,62 +140,50 @@ export default function ProfileEditForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="text-center mb-2.5">
+      {/* 프로필 이미지 섹션 */}
+      <div className="text-center mb-2">
         <div className="relative inline-block">
           <img
               src={profileImage || 'https://via.placeholder.com/100'}
               alt="Profile"
               className="w-[120px] h-[120px] rounded-full object-cover border border-border-base bg-bg-box-alt"
           />
-          <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex gap-2 w-max">
-            <button
-                type="button"
-                onClick={generateRandomImage}
-                className="px-2.5 py-1.5 rounded-[20px] border border-border-base bg-bg-page text-xs cursor-pointer shadow-[0_2px_4px_rgba(0,0,0,0.05)]"
-            >
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-1 w-max">
+            <Button type="button" size="sm" variant="secondary" onClick={generateRandomImage} className="text-xs py-1 px-3">
                 랜덤
-            </button>
-            <button
-                type="button"
-                onClick={handleLinkInput}
-                className="px-2.5 py-1.5 rounded-[20px] border border-border-base bg-bg-page text-xs cursor-pointer shadow-[0_2px_4px_rgba(0,0,0,0.05)]"
-            >
+            </Button>
+            <Button type="button" size="sm" variant="secondary" onClick={handleLinkInput} className="text-xs py-1 px-3">
                 링크
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {initialEmail && (
         <div>
-          <label className="block mb-2 font-bold">이메일</label>
-          <input
-            type="text"
-            value={initialEmail}
-            readOnly
-            className="w-full p-2.5 border border-border-medium rounded-lg text-base outline-none bg-bg-box text-text-secondary cursor-not-allowed"
-          />
+          <label className="block mb-2 font-bold text-sm text-text-secondary">이메일</label>
+          <Input value={initialEmail} readOnly className="cursor-not-allowed opacity-70" />
         </div>
       )}
 
       <div>
-        <label className="block mb-2 font-bold">닉네임</label>
-        <input
-            type="text"
-            value={nickname}
-            onChange={e => setNickname(e.target.value)}
-            className="w-full p-2.5 border border-border-medium rounded-lg text-base outline-none"
-            required
+        <label className="block mb-2 font-bold text-sm text-text-secondary">닉네임</label>
+        <Input 
+            value={nickname} 
+            onChange={e => setNickname(e.target.value)} 
+            required 
+            placeholder="닉네임을 입력하세요"
         />
       </div>
 
       <div>
-        <label className="block mb-2 font-bold">지역</label>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <label className="block mb-2 font-bold text-sm text-text-secondary">지역</label>
+        <div className="flex gap-2">
+             {/* Select는 Input과 스타일을 맞춰 커스텀하거나 추후 Select 컴포넌트화 필요. 여기서는 Input 클래스를 차용 */}
             <select
                 value={regionId}
                 onChange={e => setRegionId(e.target.value)}
-                className="w-full p-2.5 border border-border-medium rounded-lg text-base outline-none flex-1"
+                className="w-full rounded-xl bg-bg-box p-4 text-base outline-none transition-all focus:bg-bg-box-hover focus:ring-2 focus:ring-primary/10 flex-1 appearance-none border-none"
                 disabled={regionsLoading}
             >
                 {regionsLoading ? (
@@ -204,24 +194,27 @@ export default function ProfileEditForm({
                     ))
                 )}
             </select>
-            <button
-                type="button"
-                onClick={handleDetectLocation}
+            <Button 
+                type="button" 
+                onClick={handleDetectLocation} 
                 disabled={detecting}
-                className="px-3 py-2 bg-text-secondary text-text-inverse border-none rounded-md cursor-pointer text-sm disabled:bg-text-muted disabled:cursor-not-allowed"
+                variant="secondary"
+                className="whitespace-nowrap"
             >
-                {detecting ? "감지 중..." : "현재 위치 찾기"}
-            </button>
+                {detecting ? "감지 중..." : "위치 찾기"}
+            </Button>
         </div>
       </div>
 
-      <button
+      <Button
         type="submit"
-        className="w-full p-3.5 bg-primary text-text-inverse border-none rounded-lg text-base font-bold cursor-pointer mt-3 disabled:bg-[#ffcfb0] disabled:cursor-not-allowed"
+        size="lg"
+        fullWidth
         disabled={loading}
+        className="mt-4"
       >
         {loading ? '처리 중...' : submitButtonText}
-      </button>
+      </Button>
     </form>
   );
 }

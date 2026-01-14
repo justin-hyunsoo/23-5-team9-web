@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import ProductCard from "@/features/product/components/ProductCard";
 import LocationSelector from "@/features/location/components/LocationSelector";
-import { useProducts, LOCATIONS } from "@/features/product/hooks/useProducts";
+import { useProducts } from "@/features/product/hooks/useProducts";
+import { LOCATION_FILTERS } from "@/shared/constants/data";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
 import Badge from "@/shared/ui/Badge";
@@ -10,7 +11,7 @@ function ProductList() {
   const [filterLoc, setFilterLoc] = useState<string>('all');
   const { products, loading, error } = useProducts(filterLoc);
 
-  const currentLocLabel = LOCATIONS.find(l => l.value === filterLoc)?.label;
+  const currentLocLabel = LOCATION_FILTERS.find(l => l.value === filterLoc)?.label;
 
   const Filters = (
     <div className="flex flex-col gap-2 bg-bg-page pb-2">

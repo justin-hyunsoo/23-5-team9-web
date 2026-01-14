@@ -3,7 +3,7 @@ import CommunityCard from "@/features/community/components/CommunityCard";
 import LocationSelector from "@/features/location/components/LocationSelector";
 import CategorySelector from "@/shared/ui/CategorySelector";
 import Badge from "@/shared/ui/Badge";
-import { useCommunity, COMMUNITY_CATEGORIES, LOCATIONS } from "@/features/community/hooks/useCommunity";
+import { useCommunity, COMMUNITY_CATEGORIES, LOCATION_FILTERS } from "@/features/community/hooks/useCommunity";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
 
@@ -12,7 +12,7 @@ function CommunityList() {
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
   const { posts, loading, error } = useCommunity(selectedCategory, selectedLocation);
 
-  const locationLabel = LOCATIONS.find(loc => loc.value === selectedLocation)?.label;
+  const locationLabel = LOCATION_FILTERS.find(loc => loc.value === selectedLocation)?.label;
 
   const Filters = (
     <div className="flex flex-col gap-2 bg-bg-page pb-2">

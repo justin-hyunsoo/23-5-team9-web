@@ -1,4 +1,4 @@
-import { LOCATIONS } from '@/features/product/hooks/useProducts';
+import { LOCATION_FILTERS } from '@/shared/constants/data';
 import CategorySelector from '@/shared/ui/CategorySelector';
 
 interface LocationSelectorProps {
@@ -9,7 +9,7 @@ interface LocationSelectorProps {
 function LocationSelector({ selected, onChange }: LocationSelectorProps) {
   return (
     <CategorySelector
-      options={LOCATIONS}
+      options={LOCATION_FILTERS}
       selected={selected}
       onSelect={onChange}
       title="지역 선택"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { regionApi } from '@/features/location/api/region';
+import { useGeoLocation } from '@/features/location/hooks/useGeoLocation';
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import { Select } from "@/shared/ui/Select";
@@ -34,7 +35,8 @@ export default function ProfileEditForm({
   const [regions, setRegions] = useState<Region[]>([]);
   const [loading, setLoading] = useState(false);
   const [regionsLoading, setRegionsLoading] = useState(true);
-  const [detecting, setDetecting] = useState(false);
+
+  const { detectRegion, detecting } = useGeoLocation();
 
   useEffect(() => {
     if (initialNickname) setNickname(initialNickname);
@@ -71,43 +73,20 @@ export default function ProfileEditForm({
     }
   }, [regions, regionId]);
 
-  const handleDetectLocation = () => {
-    if (!navigator.geolocation) {
-      alert("브라우저가 위치 정보를 지원하지 않습니다.");
-      return;
-    }
+  const handleDetectLocation = async () => {
+    try {
+      const detectedRegion = await detectRegion();
 
-    setDetecting(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await regionApi.detectRegion(latitude, longitude);
-          const detectedRegion = res.data;
-
-          const found = regions.find(r => r.id === detectedRegion.id);
-          if (found) {
-              setRegionId(detectedRegion.id);
-              alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
-          } else {
-              setRegions(prev => [...prev, detectedRegion]);
-              setRegionId(detectedRegion.id);
-               alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
-          }
-        } catch (error: any) {
-          console.error("Error detecting location:", error);
-          const msg = error.response?.data?.detail || "위치 감지 중 오류가 발생했습니다.";
-          alert(msg);
-        } finally {
-          setDetecting(false);
-        }
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        alert("위치 정보를 가져올 수 없습니다. 설정에서 위치 권한을 허용해주세요.");
-        setDetecting(false);
+      const found = regions.find(r => r.id === detectedRegion.id);
+      if (!found) {
+        setRegions(prev => [...prev, detectedRegion]);
       }
-    );
+      setRegionId(detectedRegion.id);
+      alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
+    } catch (error: any) {
+      console.error("Error detecting location:", error);
+      alert(error.message || "위치 감지 실패");
+    }
   };
 
   const generateRandomImage = () => {

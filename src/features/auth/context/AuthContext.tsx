@@ -18,8 +18,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!localStorage.getItem('token'));
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  
+
   const navigate = useNavigate();
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
+    setIsLoggedIn(false);
+    setNeedsOnboarding(false);
+    setUser(null);
+    navigate('/products');
+  }, [navigate]);
 
   // 기존 fetchUserData 로직 이동
   const checkAuth = useCallback(async () => {
@@ -30,42 +39,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const res = await userApi.getMe();
-      const data = res.data;
+      const { data } = await userApi.getMe();
       setUser(data);
       setIsLoggedIn(true);
       setNeedsOnboarding(!data.nickname || !data.region);
     } catch (e: any) {
       console.error("Failed to fetch user data:", e);
       if (e.response?.status === 401) {
-         // logout might be used before declaration if called synchronously, 
-         // but via useEffect it should be fine. 
-         // ideally logout should be hoisted or defined earlier.
-         // For now, repeating logic to be safe or assuming it works as before.
-         localStorage.removeItem('token');
-         localStorage.removeItem('refresh_token');
-         setIsLoggedIn(false);
-         setNeedsOnboarding(false);
-         setUser(null);
-         navigate('/products');
+        logout();
       }
     }
-  }, []);
+  }, [logout]);
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('token', token);
     localStorage.setItem('refresh_token', refreshToken);
     setIsLoggedIn(true);
     checkAuth(); // 로그인 후 유저 정보 및 온보딩 여부 확인
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refresh_token');
-    setIsLoggedIn(false);
-    setNeedsOnboarding(false);
-    setUser(null);
-    navigate('/products');
   };
 
   // 초기 로드 시 인증 체크 (App.tsx의 useEffect 대체)

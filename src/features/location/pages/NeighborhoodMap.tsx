@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Loading } from '@/shared/ui/StatusMessage';
 import { PageContainer } from '@/shared/layouts/PageContainer';
+import { StatCard } from '@/shared/ui/Stat';
 
 // Fix for default marker icon in leaflet with vite
 // We need to import the images directly to ensure they are bundled correctly
@@ -94,14 +95,19 @@ export default function NeighborhoodMap() {
   return (
     <PageContainer title="동네 지도">
       {loading && <Loading />}
-      {error && <div className="text-red-500 text-center py-5">{error}</div>}
-      
+      {error && <div className="text-status-error text-center py-5">{error}</div>}
+
+
       {location && (
         <div className="flex flex-col gap-4">
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 text-lg">
-            현재 위치: <strong className="text-primary">{address}</strong>
-          </div>
-          <div className="h-[500px] w-full rounded-xl overflow-hidden border border-gray-200 z-0 relative">
+          <StatCard 
+            label="현재 위치" 
+            value={address} 
+            layout="horizontal" 
+            variant="outline" // Button의 outline 스타일 적용
+          />
+          
+          <div className="h-[500px] w-full rounded-lg overflow-hidden border border-border-base z-0 relative">
             <MapContainer center={[location.lat, location.lng]} zoom={16} style={{ height: '100%', width: '100%' }}>
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

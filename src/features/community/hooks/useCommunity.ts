@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LOCATIONS } from '@/features/product/hooks/useProducts';
+import { LOCATION_FILTERS } from '@/shared/constants/data';
 
 export interface Comment {
   id: number;
@@ -354,7 +354,7 @@ export const COMMUNITY_CATEGORIES = [
   { value: '동네소식', label: '동네소식' }
 ];
 
-export { LOCATIONS };
+export { LOCATION_FILTERS };
 
 export function useCommunity(category?: string, selectedLocation?: string) {
   const [posts, setPosts] = useState<CommunityPost[]>([]);

@@ -1,57 +1,84 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useProduct } from "@/features/product/hooks/useProducts";
 import { Loading, ErrorMessage, EmptyState } from "@/shared/ui/StatusMessage";
+import { PageContainer } from "@/shared/layouts/PageContainer";
+import { Button } from "@/shared/ui/Button";
+import { DetailHeader } from "@/shared/ui/DetailHeader";
+import { DetailSection } from "@/shared/ui/DetailSection";
+import { DetailImage } from "@/shared/ui/DetailImage";
 
 function ProductDetail() {
-  const navigate = useNavigate();
   const { id } = useParams();
   const { product, loading, error } = useProduct(id);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    if (product) {
+      setLikeCount(product.likeCount);
+    }
+  }, [product]);
 
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
   if (!product) return <EmptyState message="상품 정보가 없습니다." />;
 
+  const handleLikeClick = () => {
+    setIsLiked(!isLiked);
+    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
   return (
-    <div className="max-w-[720px] mx-auto my-10 px-5">
-      <button onClick={() => navigate(-1)} className="mb-5 border-none bg-transparent cursor-pointer text-lg flex items-center gap-1">
-        ← 뒤로가기
-      </button>
-      
-      <section className="bg-white rounded-[20px] border-none shadow-[0_10px_25px_rgba(0,0,0,0.05)] overflow-hidden p-6">
+    <PageContainer>
+      <DetailHeader />
+
+      <DetailSection>
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-xs text-primary bg-primary/10 px-3 py-1 rounded font-bold">
+            {product.category}
+          </span>
+        </div>
+
         {product.imageUrl && (
-          <div className="mb-5 rounded-lg overflow-hidden">
-            <img src={product.imageUrl} alt={product.title} className="w-full max-h-[400px] object-cover" />
-          </div>
+          <DetailImage src={product.imageUrl} alt={product.title} />
         )}
-        
+
         <h2 className="text-2xl font-bold mb-2">{product.title}</h2>
-        <p className="text-lg text-gray-500 mb-2.5">{product.category}</p>
-        <h3 className="text-2xl font-bold mb-5">{product.price.toLocaleString()}원</h3>
-        
-        <div className="flex gap-2.5 mb-5 text-gray-500 text-sm">
+        <h3 className="text-3xl font-bold mb-6 text-text-heading">{product.price.toLocaleString()}원</h3>
+
+        <div className="flex gap-2 text-text-secondary text-sm pb-6 border-b border-border-base">
           <span>{product.location}</span>
           <span>·</span>
           <span>{new Date(product.createdAt).toLocaleDateString()}</span>
-          <span>·</span>
-          <span>관심 {product.likeCount}</span>
         </div>
 
-        <hr className="my-5 border-0 border-t border-gray-200" />
-        
-        <div className="whitespace-pre-wrap leading-relaxed">
+        <div className="mt-6 whitespace-pre-wrap leading-relaxed text-text-body">
           {product.content}
         </div>
-      </section>
-      
-      <div className="mt-5 flex gap-2.5">
-        <button 
-          className="flex-1 p-[15px] bg-primary text-white border-none rounded-md text-lg font-bold cursor-pointer hover:bg-primary-hover"
+
+        <div className="flex gap-4 pt-6 mt-6 border-t border-border-base">
+          <Button
+            variant={isLiked ? "primary" : "outline"}
+            size="sm"
+            onClick={handleLikeClick}
+          >
+            <span className="mr-2">{isLiked ? '♥' : '♡'}</span>
+            좋아요 {likeCount}
+          </Button>
+        </div>
+      </DetailSection>
+
+      <div className="mt-6">
+        <Button
+          size="lg"
+          fullWidth
           onClick={() => alert('채팅 기능은 준비중입니다.')}
         >
           채팅하기
-        </button>
+        </Button>
       </div>
-    </div>
+    </PageContainer>
   );
 }
 

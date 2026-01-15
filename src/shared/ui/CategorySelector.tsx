@@ -1,35 +1,48 @@
-interface Category {
+import { Button } from '@/shared/ui/Button';
+
+export interface SelectOption {
   value: string;
   label: string;
 }
 
 interface CategorySelectorProps {
-  categories: Category[];
-  selectedCategory: string;
+  options: SelectOption[];
+  selected: string;
   onSelect: (value: string) => void;
+  className?: string;
+  title?: string;
 }
 
-export default function CategorySelector({ categories, selectedCategory, onSelect }: CategorySelectorProps) {
+export default function CategorySelector({
+  options,
+  selected,
+  onSelect,
+  className = '',
+  title
+}: CategorySelectorProps) {
   return (
-    <div className="flex gap-2 mb-6 flex-wrap">
-      {categories.map((category) => {
-        const isActive = selectedCategory === category.value;
-        return (
-          <button
-            key={category.value}
-            onClick={() => onSelect(category.value)}
-            className={`
-              px-4 py-2 text-sm font-bold rounded-full transition-all cursor-pointer
-              ${isActive 
-                ? 'bg-primary text-white shadow-sm' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }
-            `}
-          >
-            {category.label}
-          </button>
-        );
-      })}
+    <div className={className}>
+      {title && (
+        <h3 className="text-base font-bold mb-3 text-text-primary">
+          {title}
+        </h3>
+      )}
+      <div className="flex gap-2 flex-wrap">
+        {options.map((option) => {
+          const isActive = selected === option.value;
+          return (
+            <Button
+              key={option.value}
+              onClick={() => onSelect(option.value)}
+              variant={isActive ? 'primary' : 'secondary'}
+              size="sm"
+              className="rounded-full"
+            >
+              {option.label}
+            </Button>
+          );
+        })}
+      </div>
     </div>
   );
 }

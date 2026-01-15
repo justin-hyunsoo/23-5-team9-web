@@ -1,39 +1,37 @@
 import React from 'react';
 
+const BASE_STYLE = "rounded-lg font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer";
+
+const VARIANTS = {
+  primary: "bg-primary text-text-inverse hover:bg-primary-hover border border-transparent",
+  secondary: "bg-bg-box-alt text-text-body hover:bg-bg-box-hover border border-transparent",
+  outline: "border border-border-medium text-text-body hover:bg-bg-box-light",
+  ghost: "bg-transparent text-text-secondary hover:bg-bg-box-light hover:text-text-primary"
+};
+
+const SIZES = {
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-3 text-base",
+  lg: "px-6 py-3.5 text-lg"
+};
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: keyof typeof VARIANTS;
+  size?: keyof typeof SIZES;
   fullWidth?: boolean;
 }
 
-export function Button({ 
-  className = '', 
-  variant = 'primary', 
+export function Button({
+  className = '',
+  variant = 'primary',
   size = 'md',
   fullWidth = false,
-  ...props 
+  ...props
 }: ButtonProps) {
-  const base = "rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
-  
-  const styles = {
-    primary: "bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20 hover:-translate-y-px",
-    secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
-    outline: "border border-gray-200 hover:bg-gray-50 text-slate-700",
-    ghost: "bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-700 shadow-none"
-  };
-
-  const sizes = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-3 text-base",
-    lg: "px-6 py-4 text-lg"
-  };
-
-  const widthClass = fullWidth ? 'w-full' : '';
-
   return (
-    <button 
-      className={`${base} ${styles[variant]} ${sizes[size]} ${widthClass} ${className}`} 
-      {...props} 
+    <button
+      className={`${BASE_STYLE} ${VARIANTS[variant]} ${SIZES[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      {...props}
     />
   );
 }

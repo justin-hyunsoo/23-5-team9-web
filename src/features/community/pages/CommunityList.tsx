@@ -2,7 +2,8 @@ import { useState } from 'react';
 import CommunityCard from "@/features/community/components/CommunityCard";
 import LocationSelector from "@/features/location/components/LocationSelector";
 import CategorySelector from "@/shared/ui/CategorySelector";
-import { useCommunity, COMMUNITY_CATEGORIES, LOCATIONS } from "@/features/community/hooks/useCommunity";
+import Badge from "@/shared/ui/Badge";
+import { useCommunity, COMMUNITY_CATEGORIES, LOCATION_FILTERS } from "@/features/community/hooks/useCommunity";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
 
@@ -11,23 +12,23 @@ function CommunityList() {
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
   const { posts, loading, error } = useCommunity(selectedCategory, selectedLocation);
 
-  const locationLabel = LOCATIONS.find(loc => loc.value === selectedLocation)?.label;
+  const locationLabel = LOCATION_FILTERS.find(loc => loc.value === selectedLocation)?.label;
 
   const Filters = (
-    <div className="flex flex-col gap-2 bg-white pb-2">
-      <LocationSelector 
-          selectedLocation={selectedLocation}
-          onLocationChange={setSelectedLocation}
+    <div className="flex flex-col gap-2 bg-bg-page pb-2">
+      <LocationSelector
+          selected={selectedLocation}
+          onChange={setSelectedLocation}
         />
-        <CategorySelector 
-          categories={COMMUNITY_CATEGORIES}
-          selectedCategory={selectedCategory}
+        <CategorySelector
+          options={COMMUNITY_CATEGORIES}
+          selected={selectedCategory}
           onSelect={setSelectedCategory}
         />
         {selectedLocation !== 'all' && (
-          <div className="p-3 bg-[#fff4e6] rounded-lg text-sm text-primary font-bold w-fit">
+          <Badge variant="primary" className="text-sm w-fit p-3">
             {locationLabel} 게시글 {posts.length}개
-          </div>
+          </Badge>
         )}
     </div>
   );
@@ -38,7 +39,7 @@ function CommunityList() {
         isLoading={loading}
         error={error}
         isEmpty={posts.length === 0}
-        emptyMessage={selectedLocation !== 'all' 
+        emptyMessage={selectedLocation !== 'all'
           ? `${locationLabel}에 등록된 게시글이 없습니다.`
           : '등록된 게시글이 없습니다.'
         }

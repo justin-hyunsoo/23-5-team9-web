@@ -5,6 +5,7 @@ import PasswordTab from '@/features/user/components/PasswordTab';
 import { useMyCarrotData } from '@/features/user/hooks/useMyCarrotData';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { Loading } from "@/shared/ui/StatusMessage";
+import { Button } from '@/shared/ui/Button';
 
 function MyCarrot() {
   const { user, updateProfile, chargeCoin } = useMyCarrotData();
@@ -22,25 +23,26 @@ function MyCarrot() {
   return (
     <div className="max-w-[600px] px-5 py-10 mx-auto">
       <div className="flex justify-between items-center mb-[30px]">
-        <h2 className="text-2xl font-extrabold m-0">나의 당근</h2>
-        <button onClick={logout} className="px-4 py-2 bg-white text-slate-900 border border-gray-300 rounded-md text-sm font-bold cursor-pointer transition-all hover:bg-gray-50 hover:border-blue-200">로그아웃</button>
+        <h2 className="text-2xl font-extrabold m-0">마이캐럿</h2>
+        <Button onClick={logout} variant="outline" size="sm">로그아웃</Button>
       </div>
-      
-      <div className="flex gap-2 mb-[30px] border-b border-gray-200 pb-0">
+
+      <div className="flex gap-2 mb-[30px] border-b border-border-base pb-0">
         {TABS.map((tab) => (
-          <button
+          <Button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
+            variant="ghost"
             className={`
-              px-5 py-3 border-none bg-none border-b-2 cursor-pointer text-base transition-all
-              ${activeTab === tab.id 
-                ? 'border-primary text-slate-900 font-bold' 
-                : 'border-transparent text-gray-500 font-normal hover:text-slate-900'
+              border-b-2 rounded-none
+              ${activeTab === tab.id
+                ? 'border-primary text-text-heading font-bold'
+                : 'border-transparent text-text-secondary font-normal hover:text-text-heading'
               }
             `}
           >
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 

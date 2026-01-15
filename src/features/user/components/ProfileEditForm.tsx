@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { regionApi } from '@/features/location/api/region';
+import { useGeoLocation } from '@/features/location/hooks/useGeoLocation';
+import { Button } from "@/shared/ui/Button";
+import { Input } from "@/shared/ui/Input";
+import { Select } from "@/shared/ui/Select";
+import Avatar from "@/shared/ui/Avatar";
 
 interface Region {
   id: string;
@@ -24,17 +29,16 @@ export default function ProfileEditForm({
   onSubmit
 }: ProfileEditFormProps) {
 
-  // onboarding data
   const [nickname, setNickname] = useState(initialNickname);
   const [regionId, setRegionId] = useState(initialRegionId);
   const [profileImage, setProfileImage] = useState(initialProfileImage);
   const [regions, setRegions] = useState<Region[]>([]);
   const [loading, setLoading] = useState(false);
   const [regionsLoading, setRegionsLoading] = useState(true);
-  const [detecting, setDetecting] = useState(false);
+
+  const { detectRegion, detecting } = useGeoLocation();
 
   useEffect(() => {
-    // Update local state if props change (e.g. data loaded from parent)
     if (initialNickname) setNickname(initialNickname);
     if (initialRegionId) setRegionId(initialRegionId);
     if (initialProfileImage) {
@@ -51,7 +55,6 @@ export default function ProfileEditForm({
         const res = await regionApi.getRegions();
         const data = res.data;
         setRegions(data);
-        // If no region is selected and regions are loaded, select the first one
         if (!regionId && data.length > 0) {
           setRegionId(data[0].id);
         }
@@ -64,55 +67,27 @@ export default function ProfileEditForm({
     fetchRegions();
   }, []);
 
-  // Effect to set default region if loaded and none selected yet (handling race conditions)
   useEffect(() => {
     if (!regionId && regions.length > 0) {
       setRegionId(regions[0].id);
     }
   }, [regions, regionId]);
 
-  const handleDetectLocation = () => {
-    if (!navigator.geolocation) {
-      alert("브라우저가 위치 정보를 지원하지 않습니다.");
-      return;
-    }
+  const handleDetectLocation = async () => {
+    try {
+      const detectedRegion = await detectRegion();
 
-    setDetecting(true);
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await regionApi.detectRegion(latitude, longitude);
-          const detectedRegion = res.data;
-
-          // Check if detected region is in the region list
-          const found = regions.find(r => r.id === detectedRegion.id);
-          if (found) {
-              setRegionId(detectedRegion.id);
-              alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
-          } else {
-              // Should not happen if regions are up to date, but if it does:
-              setRegions(prev => [...prev, detectedRegion]);
-              setRegionId(detectedRegion.id);
-               alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
-          }
-        } catch (error: any) {
-          console.error("Error detecting location:", error);
-          const msg = error.response?.data?.detail || "위치 감지 중 오류가 발생했습니다.";
-          alert(msg);
-        } finally {
-          setDetecting(false);
-        }
-      },
-      (error) => {
-        console.error("Geolocation error:", error);
-        alert("위치 정보를 가져올 수 없습니다. 설정에서 위치 권한을 허용해주세요.");
-        setDetecting(false);
+      const found = regions.find(r => r.id === detectedRegion.id);
+      if (!found) {
+        setRegions(prev => [...prev, detectedRegion]);
       }
-    );
+      setRegionId(detectedRegion.id);
+      alert(`현재 위치('${detectedRegion.name}')가 선택되었습니다.`);
+    } catch (error: any) {
+      console.error("Error detecting location:", error);
+      alert(error.message || "위치 감지 실패");
+    }
   };
-
-
 
   const generateRandomImage = () => {
     const randomSeed = Math.random().toString(36).substring(7);
@@ -136,92 +111,74 @@ export default function ProfileEditForm({
     }
   };
 
+  const regionOptions = regionsLoading
+    ? [{ value: '', label: '불러오는 중...' }]
+    : regions.map(r => ({ value: r.id, label: r.name }));
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="text-center mb-2.5">
+      <div className="text-center mb-2">
         <div className="relative inline-block">
-          <img 
-              src={profileImage || 'https://via.placeholder.com/100'} 
-              alt="Profile" 
-              className="w-[120px] h-[120px] rounded-full object-cover border border-[#e9ecef] bg-[#f8f9fa]"
-          />
-          <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex gap-2 w-max">
-            <button 
-                type="button" 
-                onClick={generateRandomImage}
-                className="px-2.5 py-1.5 rounded-[20px] border border-[#dee2e6] bg-white text-xs cursor-pointer shadow-[0_2px_4px_rgba(0,0,0,0.05)]"
-            >
+          <Avatar src={profileImage} alt="Profile" size="xl" />
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-1 w-max">
+            <Button type="button" size="sm" variant="secondary" onClick={generateRandomImage} className="text-xs py-1 px-3">
                 랜덤
-            </button>
-            <button 
-                type="button" 
-                onClick={handleLinkInput}
-                className="px-2.5 py-1.5 rounded-[20px] border border-[#dee2e6] bg-white text-xs cursor-pointer shadow-[0_2px_4px_rgba(0,0,0,0.05)]"
-            >
+            </Button>
+            <Button type="button" size="sm" variant="secondary" onClick={handleLinkInput} className="text-xs py-1 px-3">
                 링크
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {initialEmail && (
         <div>
-          <label className="block mb-2 font-bold">이메일</label>
-          <input
-            type="text"
-            value={initialEmail}
-            readOnly
-            className="w-full p-2.5 border border-gray-300 rounded-lg text-base outline-none bg-[#f0f0f0] text-[#666] cursor-not-allowed"
-          />
+          <label className="block mb-2 font-bold text-sm text-text-secondary">이메일</label>
+          <Input value={initialEmail} readOnly className="cursor-not-allowed opacity-70" />
         </div>
       )}
 
       <div>
-        <label className="block mb-2 font-bold">닉네임</label>
-        <input 
-            type="text" 
-            value={nickname} 
+        <label className="block mb-2 font-bold text-sm text-text-secondary">닉네임</label>
+        <Input
+            value={nickname}
             onChange={e => setNickname(e.target.value)}
-            className="w-full p-2.5 border border-gray-300 rounded-lg text-base outline-none"
             required
+            placeholder="닉네임을 입력하세요"
         />
       </div>
 
       <div>
-        <label className="block mb-2 font-bold">지역</label>
-        <div style={{ display: 'flex', gap: '8px' }}>
-            <select 
-                value={regionId} 
-                onChange={e => setRegionId(e.target.value)}
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-base outline-none flex-1"
-                disabled={regionsLoading}
-            >
-                {regionsLoading ? (
-                    <option value="">불러오는 중...</option>
-                ) : (
-                    regions.map(region => (
-                        <option key={region.id} value={region.id}>{region.name}</option>
-                    ))
-                )}
-            </select>
-            <button 
-                type="button" 
-                onClick={handleDetectLocation}
-                disabled={detecting}
-                className="px-3 py-2 bg-gray text-white border-none rounded-md cursor-pointer text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-                {detecting ? "감지 중..." : "현재 위치 찾기"}
-            </button>
+        <label className="block mb-2 font-bold text-sm text-text-secondary">지역</label>
+        <div className="flex gap-2">
+          <Select
+            options={regionOptions}
+            value={regionId}
+            onChange={e => setRegionId(e.target.value)}
+            disabled={regionsLoading}
+            className="flex-1"
+          />
+          <Button
+              type="button"
+              onClick={handleDetectLocation}
+              disabled={detecting}
+              variant="secondary"
+              className="whitespace-nowrap"
+          >
+              {detecting ? "감지 중..." : "위치 찾기"}
+          </Button>
         </div>
       </div>
 
-      <button 
-        type="submit" 
-        className="w-full p-3.5 bg-primary text-white border-none rounded-lg text-base font-bold cursor-pointer mt-3 disabled:bg-[#ffcfb0] disabled:cursor-not-allowed"
+      <Button
+        type="submit"
+        size="lg"
+        fullWidth
         disabled={loading}
+        className="mt-4"
       >
         {loading ? '처리 중...' : submitButtonText}
-      </button>
+      </Button>
     </form>
   );
 }

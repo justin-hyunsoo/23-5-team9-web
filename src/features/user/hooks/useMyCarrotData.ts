@@ -1,14 +1,14 @@
-import { useUser, useUpdateUser, usePatchUser } from '@/features/user/hooks/useUser';
+import { useUser, useOnboarding, usePatchUser } from '@/features/user/hooks/useUser';
 
 export const useMyCarrotData = () => {
   const { user } = useUser();
-  const updateUserMutation = useUpdateUser();
+  const onboardingMutation = useOnboarding();
   const patchUserMutation = usePatchUser();
 
   const updateProfile = async (data: any) => {
     if (!user) return;
     try {
-      await updateUserMutation.mutateAsync({ ...data, coin: user.coin });
+      await onboardingMutation.mutateAsync(data);
       alert('정보가 수정되었습니다.');
     } catch (err) {
       console.error(err);

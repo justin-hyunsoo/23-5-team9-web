@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userApi, UpdateUserParams, PatchUserParams } from '@/features/user/api/user';
+import { userApi, OnboardingParams, PatchUserParams } from '@/features/user/api/user';
 
 export const userKeys = {
   all: ['user'] as const,
@@ -33,12 +33,12 @@ export function useUser() {
   };
 }
 
-export function useUpdateUser() {
+export function useOnboarding() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: UpdateUserParams) => {
-      const { data: result } = await userApi.updateOnboard(data);
+    mutationFn: async (data: OnboardingParams) => {
+      const { data: result } = await userApi.onboardMe(data);
       return result;
     },
     onSuccess: () => {
@@ -52,7 +52,7 @@ export function usePatchUser() {
 
   return useMutation({
     mutationFn: async (data: PatchUserParams) => {
-      const { data: result } = await userApi.patchUser(data);
+      const { data: result } = await userApi.patchMe(data);
       return result;
     },
     onSuccess: () => {

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 interface ChatRoom {
-  id: number;
+  id: string | number;
   partner: string;
   lastMessage: string;
   time: string;

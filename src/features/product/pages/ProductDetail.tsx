@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useProducts } from "@/features/product/hooks/useProducts";
+import { useUser } from "@/features/user/hooks/useUser";
+import { createOrGetRoom } from "@/features/chat/api/chatApi";
 import { Loading, ErrorMessage, EmptyState } from "@/shared/ui/StatusMessage";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { Button } from "@/shared/ui/Button";
@@ -10,11 +12,14 @@ import Badge from "@/shared/ui/Badge";
 
 function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { products, loading, error } = useProducts();
+  const { user, isLoggedIn } = useUser();
   const product = products.find(p => p.id === id);
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [chatLoading, setChatLoading] = useState(false);
 
   useEffect(() => {
     if (product) {
@@ -29,6 +34,29 @@ function ProductDetail() {
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+  };
+
+  const handleChatClick = async () => {
+    if (!isLoggedIn) {
+      navigate('/auth/login');
+      return;
+    }
+
+    if (String(user?.id) === product.ownerId) {
+      alert('본인의 상품입니다.');
+      return;
+    }
+
+    setChatLoading(true);
+    try {
+      const roomId = await createOrGetRoom(product.ownerId);
+      navigate(`/chat/${roomId}`);
+    } catch (err) {
+      console.error('채팅방 생성 실패:', err);
+      alert('채팅방을 열 수 없습니다.');
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   return (
@@ -67,9 +95,10 @@ function ProductDetail() {
         <Button
           size="lg"
           fullWidth
-          onClick={() => alert('채팅 기능은 준비중입니다.')}
+          onClick={handleChatClick}
+          disabled={chatLoading}
         >
-          채팅하기
+          {chatLoading ? '채팅방 연결 중...' : '채팅하기'}
         </Button>
       </div>
     </PageContainer>

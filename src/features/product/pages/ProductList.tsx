@@ -9,6 +9,7 @@ import { DataListLayout } from "@/shared/layouts/DataListLayout";
 import Badge from "@/shared/ui/Badge";
 import { Button } from "@/shared/ui/Button";
 import { Loading, ErrorMessage, EmptyState } from '@/shared/ui/StatusMessage';
+import { TabBar, Tab } from '@/shared/ui/TabBar';
 
 const formatPrice = (price: number) => price.toLocaleString() + '원';
 
@@ -190,32 +191,17 @@ function MyProducts() {
 
 type TabType = 'all' | 'my';
 
+const TABS: Tab<TabType>[] = [
+  { id: 'all', label: '전체 상품' },
+  { id: 'my', label: '나의 상품' },
+];
+
 function ProductList() {
   const [activeTab, setActiveTab] = useState<TabType>('all');
 
-  const tabs: { key: TabType; label: string }[] = [
-    { key: 'all', label: '전체 상품' },
-    { key: 'my', label: '나의 상품' },
-  ];
-
   return (
     <PageContainer title="중고거래 매물">
-      <div className="flex gap-4 border-b border-border-base mb-6">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`pb-3 px-1 font-medium transition-colors ${
-              activeTab === tab.key
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-text-muted hover:text-text-body'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
+      <TabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
       {activeTab === 'all' ? <AllProducts /> : <MyProducts />}
     </PageContainer>
   );

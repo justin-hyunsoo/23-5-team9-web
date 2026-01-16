@@ -7,16 +7,18 @@ import { useMyCarrotData } from '@/features/user/hooks/useMyCarrotData';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { Loading } from "@/shared/ui/StatusMessage";
 import { Button } from '@/shared/ui/Button';
+import { TabBar, Tab } from '@/shared/ui/TabBar';
 
 function MyCarrot() {
   const { user, updateProfile, chargeCoin } = useMyCarrotData();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('info');
+  type TabType = 'info' | 'coin' | 'password';
+  const [activeTab, setActiveTab] = useState<TabType>('info');
 
   if (!user) return <Loading />;
 
-  const TABS = [
+  const TABS: Tab<TabType>[] = [
     { id: 'info', label: '프로필 수정' },
     { id: 'coin', label: '코인 관리' },
     { id: 'password', label: '비밀번호 변경' },
@@ -29,24 +31,7 @@ function MyCarrot() {
         <Button onClick={() => { logout(); navigate('/products'); }} variant="outline" size="sm">로그아웃</Button>
       </div>
 
-      <div className="flex gap-2 mb-[30px] border-b border-border-base pb-0">
-        {TABS.map((tab) => (
-          <Button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            variant="ghost"
-            className={`
-              border-b-2 rounded-none
-              ${activeTab === tab.id
-                ? 'border-primary text-text-heading font-bold'
-                : 'border-transparent text-text-secondary font-normal hover:text-text-heading'
-              }
-            `}
-          >
-            {tab.label}
-          </Button>
-        ))}
-      </div>
+      <TabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="content-area">
         {activeTab === 'info' && (

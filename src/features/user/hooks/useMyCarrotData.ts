@@ -1,8 +1,9 @@
-import { useUser, useUpdateUser } from '@/features/user/hooks/useUser';
+import { useUser, useUpdateUser, usePatchUser } from '@/features/user/hooks/useUser';
 
 export const useMyCarrotData = () => {
   const { user } = useUser();
   const updateUserMutation = useUpdateUser();
+  const patchUserMutation = usePatchUser();
 
   const updateProfile = async (data: any) => {
     if (!user) return;
@@ -18,10 +19,7 @@ export const useMyCarrotData = () => {
   const chargeCoin = async (amount: number) => {
     if (!user) return;
     try {
-      await updateUserMutation.mutateAsync({
-        nickname: user.nickname || '',
-        region_id: user.region?.id || "default-id",
-        profile_image: user.profile_image || '',
+      await patchUserMutation.mutateAsync({
         coin: user.coin + amount
       });
     } catch (err) {

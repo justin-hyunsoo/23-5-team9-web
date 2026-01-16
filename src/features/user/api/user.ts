@@ -19,8 +19,17 @@ export interface UpdateUserParams {
     coin?: number;
 }
 
+export interface PatchUserParams {
+    nickname?: string;
+    region_id?: string;
+    profile_image?: string;
+    coin?: number;
+}
+
 export const userApi = {
     getMe: () => client.get<User>('/api/user/me'),
-    
+
     updateOnboard: (data: UpdateUserParams) => client.post<User>('/api/user/me/onboard', data),
+
+    patchUser: (data: PatchUserParams) => client.patch<User>('/api/user/me', data),
 };

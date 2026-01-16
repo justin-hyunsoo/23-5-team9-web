@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { userApi, UpdateUserParams } from '@/features/user/api/user';
+import { userApi, UpdateUserParams, PatchUserParams } from '@/features/user/api/user';
 
 export const userKeys = {
   all: ['user'] as const,
@@ -39,6 +39,20 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: async (data: UpdateUserParams) => {
       const { data: result } = await userApi.updateOnboard(data);
+      return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+    },
+  });
+}
+
+export function usePatchUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: PatchUserParams) => {
+      const { data: result } = await userApi.patchUser(data);
       return result;
     },
     onSuccess: () => {

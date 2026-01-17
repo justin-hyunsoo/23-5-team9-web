@@ -23,16 +23,21 @@ function App() {
         {/* 모든 페이지를 MainLayout 하나로 통합 */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/products" replace />} />
-          
+
           {/* 기존 메인 서비스 */}
-          <Route path="/products" element={<ProductList />} />
+          <Route path="/products" element={<Navigate to="/products/all" replace />} />
+          <Route path="/products/all" element={<ProductList initialTab="all" />} />
+          <Route path="/products/me" element={<ProductList initialTab="my" />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/community" element={<CommunityList />} />
           <Route path="/community/:id" element={<CommunityDetail />} />
           <Route path="/map" element={<NeighborhoodMap/>}/>
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />
-          <Route path="/my" element={<MyCarrot />} />
+          <Route path="/my" element={<Navigate to="/my/profile" replace />} />
+          <Route path="/my/profile" element={<MyCarrot initialTab="profile" />} />
+          <Route path="/my/coin" element={<MyCarrot initialTab="coin" />} />
+          <Route path="/my/password" element={<MyCarrot initialTab="password" />} />
 
           {/* 인증 페이지도 이곳으로 통합 */}
           <Route path="/auth/login" element={<Login />} />

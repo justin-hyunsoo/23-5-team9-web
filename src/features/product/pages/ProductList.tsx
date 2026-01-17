@@ -196,17 +196,19 @@ function MyProducts() {
 type TabType = 'all' | 'my';
 
 const TABS: Tab<TabType>[] = [
-  { id: 'all', label: '전체 상품' },
-  { id: 'my', label: '나의 상품' },
+  { id: 'all', label: '전체 상품', to: '/products' },
+  { id: 'my', label: '나의 상품', to: '/products/me' },
 ];
 
-function ProductList() {
-  const [activeTab, setActiveTab] = useState<TabType>('all');
+interface ProductListProps {
+  initialTab?: TabType;
+}
 
+function ProductList({ initialTab = 'all' }: ProductListProps) {
   return (
     <PageContainer title="중고거래 매물">
-      <TabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
-      {activeTab === 'all' ? <AllProducts /> : <MyProducts />}
+      <TabBar tabs={TABS} activeTab={initialTab} />
+      {initialTab === 'all' ? <AllProducts /> : <MyProducts />}
     </PageContainer>
   );
 }

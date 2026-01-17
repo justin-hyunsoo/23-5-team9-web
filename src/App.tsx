@@ -26,6 +26,7 @@ function App() {
           
           {/* 기존 메인 서비스 */}
           <Route path="/products" element={<ProductList />} />
+          <Route path="/products/me" element={<ProductList initialTab="my" />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/community" element={<CommunityList />} />
           <Route path="/community/:id" element={<CommunityDetail />} />

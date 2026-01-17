@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import CoinTab from '@/features/user/components/CoinTab';
@@ -9,20 +8,24 @@ import { Loading } from "@/shared/ui/StatusMessage";
 import { Button } from '@/shared/ui/Button';
 import { TabBar, Tab } from '@/shared/ui/TabBar';
 
-function MyCarrot() {
+type TabType = 'profile' | 'coin' | 'password';
+
+const TABS: Tab<TabType>[] = [
+  { id: 'profile', label: '프로필 수정', to: '/my/profile' },
+  { id: 'coin', label: '코인 관리', to: '/my/coin' },
+  { id: 'password', label: '비밀번호 변경', to: '/my/password' },
+];
+
+interface MyCarrotProps {
+  initialTab?: TabType;
+}
+
+function MyCarrot({ initialTab = 'profile' }: MyCarrotProps) {
   const { user, updateProfile, chargeCoin } = useMyCarrotData();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  type TabType = 'info' | 'coin' | 'password';
-  const [activeTab, setActiveTab] = useState<TabType>('info');
 
   if (!user) return <Loading />;
-
-  const TABS: Tab<TabType>[] = [
-    { id: 'info', label: '프로필 수정' },
-    { id: 'coin', label: '코인 관리' },
-    { id: 'password', label: '비밀번호 변경' },
-  ];
 
   return (
     <div className="max-w-[600px] px-5 py-10 mx-auto">
@@ -31,10 +34,10 @@ function MyCarrot() {
         <Button onClick={() => { logout(); navigate('/products'); }} variant="outline" size="sm">로그아웃</Button>
       </div>
 
-      <TabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar tabs={TABS} activeTab={initialTab} />
 
       <div className="content-area">
-        {activeTab === 'info' && (
+        {initialTab === 'profile' && (
           <ProfileEditForm
             initialEmail={user.email}
             initialNickname={user.nickname || ''}
@@ -43,8 +46,8 @@ function MyCarrot() {
             onSubmit={updateProfile}
           />
         )}
-        {activeTab === 'coin' && <CoinTab user={user} onCharge={chargeCoin} />}
-        {activeTab === 'password' && <PasswordTab />}
+        {initialTab === 'coin' && <CoinTab user={user} onCharge={chargeCoin} />}
+        {initialTab === 'password' && <PasswordTab />}
       </div>
     </div>
   );

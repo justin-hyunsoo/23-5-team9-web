@@ -33,7 +33,10 @@ function App() {
           <Route path="/map" element={<NeighborhoodMap/>}/>
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />
-          <Route path="/my" element={<MyCarrot />} />
+          <Route path="/my" element={<Navigate to="/my/profile" replace />} />
+          <Route path="/my/profile" element={<MyCarrot initialTab="profile" />} />
+          <Route path="/my/coin" element={<MyCarrot initialTab="coin" />} />
+          <Route path="/my/password" element={<MyCarrot initialTab="password" />} />
 
           {/* 인증 페이지도 이곳으로 통합 */}
           <Route path="/auth/login" element={<Login />} />

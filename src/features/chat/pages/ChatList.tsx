@@ -51,6 +51,18 @@ function ChatList() {
     };
 
     loadRooms();
+
+    // 주기적으로 채팅방 목록 갱신 (폴링)
+    const interval = setInterval(async () => {
+      try {
+        const data = await fetchChatRooms();
+        setRooms(data);
+      } catch (err) {
+        console.error('채팅방 목록 갱신 실패:', err);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, [isLoggedIn, userLoading, navigate]);
 
   if (userLoading || loading) return <Loading />;

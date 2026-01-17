@@ -76,7 +76,11 @@ function ChatRoom() {
   }, [chatId, isLoggedIn, userLoading, navigate]);
 
   useEffect(() => {
-    scrollToBottom();
+    // DOM 렌더링 후 스크롤이 적용되도록 약간의 딜레이 추가
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
   }, [messages]);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -109,8 +113,8 @@ function ChatRoom() {
 
   return (
     <>
-      {/* 모바일: 전체 화면 */}
-      <div className="flex flex-col h-[100dvh] bg-bg-base md:hidden">
+      {/* 모바일: 전체 화면 (navbar 높이 64px 제외) */}
+      <div className="flex flex-col h-[calc(100dvh-64px)] bg-bg-base md:hidden">
         {/* 헤더 */}
         <div className="flex items-center gap-3 px-4 py-3 bg-bg-box border-b border-border-base">
           <button

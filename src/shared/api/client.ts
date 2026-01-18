@@ -41,11 +41,9 @@ client.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // refresh 요청 자체가 401이면 로그아웃
-      if (originalRequest.url?.includes('/api/auth/tokens/refresh')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/auth/login';
+      // 로그인 요청이나 refresh 요청 자체가 401이면 토큰 갱신 시도하지 않고 에러 반환
+      if (originalRequest.url?.includes('/api/auth/tokens')) {
+        // 로그인 요청(/api/auth/tokens) 또는 refresh 요청(/api/auth/tokens/refresh)은 토큰 갱신 시도하지 않음
         return Promise.reject(error);
       }
 

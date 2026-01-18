@@ -1,37 +1,76 @@
+import { useState } from 'react';
 import { User } from '@/features/user/api/user';
 import { Button } from '@/shared/ui/Button';
 import { StatCard } from '@/shared/ui/Stat';
 
 interface CoinTabProps {
   user: User;
-  onCharge: (amount: number) => void;
+  onDeposit: (amount: number) => void;
+  onWithdraw: (amount: number) => void;
 }
 
-const CoinTab = ({ user, onCharge }: CoinTabProps) => (
-  <div className="text-center py-5">
-    <StatCard 
-      label="보유 코인" 
-      value={user.coin.toLocaleString()} 
-      unit="C" 
-      layout="vertical"
-      variant="outline" // 회색 배경이 없는 버튼 스타일 테두리
-      className="mb-[30px]" 
-    />
+type Mode = 'deposit' | 'withdraw';
 
-    <h4 className="mb-5 text-text-secondary font-bold">코인 충전하기</h4>
-    <div className="grid grid-cols-3 gap-3">
-      {[1000, 5000, 10000, 30000, 50000, 100000].map((amount) => (
+const CoinTab = ({ user, onDeposit, onWithdraw }: CoinTabProps) => {
+  const [mode, setMode] = useState<Mode>('deposit');
+
+  const handleAction = (amount: number) => {
+    if (mode === 'deposit') {
+      onDeposit(amount);
+    } else {
+      onWithdraw(amount);
+    }
+  };
+
+  return (
+    <div className="text-center py-5">
+      <StatCard
+        label="보유 코인"
+        value={user.coin.toLocaleString()}
+        unit="C"
+        layout="vertical"
+        variant="outline"
+        className="mb-[30px]"
+      />
+
+      <div className="flex gap-2 justify-center mb-5">
         <Button
-          key={amount}
-          onClick={() => onCharge(amount)}
-          variant="outline"
-          className="hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30"
+          onClick={() => setMode('deposit')}
+          variant={mode === 'deposit' ? 'primary' : 'outline'}
+          size="sm"
         >
-          +{amount.toLocaleString()}
+          충전
         </Button>
-      ))}
+        <Button
+          onClick={() => setMode('withdraw')}
+          variant={mode === 'withdraw' ? 'primary' : 'outline'}
+          size="sm"
+        >
+          출금
+        </Button>
+      </div>
+
+      <h4 className="mb-5 text-text-secondary font-bold">
+        {mode === 'deposit' ? '코인 충전하기' : '코인 출금하기'}
+      </h4>
+      <div className="grid grid-cols-3 gap-3">
+        {[1000, 5000, 10000, 30000, 50000, 100000].map((amount) => (
+          <Button
+            key={amount}
+            onClick={() => handleAction(amount)}
+            variant="outline"
+            className={
+              mode === 'deposit'
+                ? 'hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30'
+                : 'hover:border-red-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30'
+            }
+          >
+            {mode === 'deposit' ? '+' : '-'}{amount.toLocaleString()}
+          </Button>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default CoinTab;

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar } from '@/shared/ui';
+import { Avatar, Badge } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
 import { ChatRoom } from '@/features/chat/api/chatApi'; 
 
@@ -48,9 +48,7 @@ function ChatRoomItem({ room }: ChatRoomItemProps) {
       <div className="text-right flex flex-col items-end min-w-[60px]">
         <div className="text-text-secondary text-xs mb-1.5">{displayTime}</div>
         {room.unread_count > 0 && (
-          <span className="bg-primary text-white px-2.5 py-1 rounded-full text-xs font-bold inline-block min-w-[24px] text-center">
-            {room.unread_count}
-          </span>
+          <Badge variant="notification">{room.unread_count > 99 ? '99+' : room.unread_count}</Badge>
         )}
       </div>
     </div>

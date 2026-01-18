@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/shared/store/themeStore';
 import { useChatStore } from '@/shared/store/chatStore';
 import { Button } from '../display/Button';
+import { Badge } from '../feedback';
 
 const MENUS = [
   { id: 'products', label: '중고거래', path: '/products' },
@@ -51,9 +52,9 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
       >
         {label}
         {showBadge && (
-          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
+          <Badge variant="notification">
             {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
-          </span>
+          </Badge>
         )}
       </Button>
     );

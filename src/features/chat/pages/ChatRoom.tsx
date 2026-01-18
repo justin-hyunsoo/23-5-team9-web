@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchMessages, sendMessage, markMessagesAsRead, fetchChatRooms, Message, ChatRoom as ChatRoomType } from '@/features/chat/api/chatApi';
 import { useUser, useUserProfile } from '@/features/user/hooks/useUser';
-import { Loading, ErrorMessage, Avatar, DetailHeader, Button, Input } from '@/shared/ui';
-import { useTransfer } from '@/features/pay/hooks/useTransfer';
+import { Loading, ErrorMessage, Avatar, DetailHeader } from '@/shared/ui';
+import TransferMenu from '@/features/pay/components/TransferMenu';
 
 function formatMessageTime(dateString: string): string {
   const date = new Date(dateString);
@@ -24,24 +24,7 @@ function ChatRoom() {
   const desktopMessagesEndRef = useRef<HTMLDivElement>(null);
 
   const { profile: opponentProfile } = useUserProfile(roomInfo?.opponentId);
-
-  const {
-    showTransferMenu,
-    transferAmount,
-    transferring,
-    setTransferAmount,
-    transfer,
-    toggleTransferMenu,
-    addAmount,
-  } = useTransfer({
-    userId: user?.id,
-    currentCoin: user?.coin || 0,
-  });
-
-  const handleTransfer = async () => {
-    if (!roomInfo?.opponentId) return;
-    await transfer(roomInfo.opponentId, opponentProfile?.nickname || undefined);
-  };
+  const [showTransferMenu, setShowTransferMenu] = useState(false);
 
   const scrollToBottom = () => {
     mobileMessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -150,7 +133,7 @@ function ChatRoom() {
             {opponentProfile?.nickname || '알 수 없음'}
           </span>
           <button
-            onClick={toggleTransferMenu}
+            onClick={() => setShowTransferMenu(!showTransferMenu)}
             className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
           >
             {user?.coin.toLocaleString()} C
@@ -159,39 +142,12 @@ function ChatRoom() {
 
         {/* 송금 메뉴 */}
         {showTransferMenu && (
-          <div className="px-4 py-3 bg-bg-box border-b border-border-base">
-            <div className="flex items-center gap-2 mb-2">
-              <Input
-                type="number"
-                placeholder="송금할 금액"
-                value={transferAmount}
-                onChange={(e) => setTransferAmount(e.target.value)}
-                className="flex-1 !py-2 !px-3 text-sm"
-              />
-              <Button
-                onClick={handleTransfer}
-                disabled={transferring || !transferAmount}
-                size="sm"
-                className="whitespace-nowrap"
-              >
-                {transferring ? '송금 중...' : '송금'}
-              </Button>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {[1000, 5000, 10000, 50000].map((amount) => (
-                <button
-                  key={amount}
-                  onClick={() => addAmount(amount)}
-                  className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
-                >
-                  +{amount.toLocaleString()}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-text-secondary mt-2">
-              {opponentProfile?.nickname || '상대방'}에게 코인을 송금합니다
-            </p>
-          </div>
+          <TransferMenu
+            userId={user?.id}
+            currentCoin={user?.coin || 0}
+            recipientId={roomInfo?.opponentId}
+            recipientName={opponentProfile?.nickname || '상대방'}
+          />
         )}
 
         {/* 메시지 영역 */}
@@ -265,7 +221,7 @@ function ChatRoom() {
               {opponentProfile?.nickname || '알 수 없음'}
             </span>
             <button
-              onClick={toggleTransferMenu}
+              onClick={() => setShowTransferMenu(!showTransferMenu)}
               className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
             >
               {user?.coin.toLocaleString()} C
@@ -274,39 +230,12 @@ function ChatRoom() {
 
           {/* 송금 메뉴 (데스크톱) */}
           {showTransferMenu && (
-            <div className="px-4 py-3 bg-bg-box border-b border-border-base">
-              <div className="flex items-center gap-2 mb-2">
-                <Input
-                  type="number"
-                  placeholder="송금할 금액"
-                  value={transferAmount}
-                  onChange={(e) => setTransferAmount(e.target.value)}
-                  className="flex-1 !py-2 !px-3 text-sm"
-                />
-                <Button
-                  onClick={handleTransfer}
-                  disabled={transferring || !transferAmount}
-                  size="sm"
-                  className="whitespace-nowrap"
-                >
-                  {transferring ? '송금 중...' : '송금'}
-                </Button>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {[1000, 5000, 10000, 50000].map((amount) => (
-                  <button
-                    key={amount}
-                    onClick={() => addAmount(amount)}
-                    className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
-                  >
-                    +{amount.toLocaleString()}
-                  </button>
-                ))}
-              </div>
-              <p className="text-xs text-text-secondary mt-2">
-                {opponentProfile?.nickname || '상대방'}에게 코인을 송금합니다
-              </p>
-            </div>
+            <TransferMenu
+              userId={user?.id}
+              currentCoin={user?.coin || 0}
+              recipientId={roomInfo?.opponentId}
+              recipientName={opponentProfile?.nickname || '상대방'}
+            />
           )}
 
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1 bg-bg-base">

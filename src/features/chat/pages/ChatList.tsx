@@ -6,23 +6,6 @@ import { fetchChatRooms, ChatRoom } from '@/features/chat/api/chatApi';
 import { useUser } from '@/features/user/hooks/useUser';
 import { useChatStore } from '@/shared/store/chatStore';
 
-function formatTime(dateString: string | null): string {
-  if (!dateString) return '';
-
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffMins < 1) return '방금 전';
-  if (diffMins < 60) return `${diffMins}분 전`;
-  if (diffHours < 24) return `${diffHours}시간 전`;
-  if (diffDays < 7) return `${diffDays}일 전`;
-  return date.toLocaleDateString();
-}
-
 function ChatList() {
   const { isLoggedIn, isLoading: userLoading, needsOnboarding } = useUser();
   const { setTotalUnreadCount } = useChatStore();
@@ -96,16 +79,10 @@ function ChatList() {
   return (
     <PageContainer title="채팅">
       <div className="flex flex-col">
-        {rooms.map((room) => (
+        {rooms.map((room : ChatRoom) => (
           <ChatRoomItem
             key={room.room_id}
-            room={{
-              id: room.room_id,
-              partnerId: room.opponent_id,
-              lastMessage: room.last_message || '',
-              time: formatTime(room.last_message_at),
-              unread: room.unread_count,
-            }}
+            room={room}
           />
         ))}
       </div>

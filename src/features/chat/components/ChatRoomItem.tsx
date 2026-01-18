@@ -1,13 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
+import { ChatRoom } from '@/features/chat/api/chatApi'; 
 
-interface ChatRoom {
-  id: string | number;
-  partnerId: string;
-  lastMessage: string;
-  time: string;
-  unread: number;
+function formatTime(dateString: string | null): string {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 1) return '방금 전';
+  if (diffMins < 60) return `${diffMins}분 전`;
+  if (diffHours < 24) return `${diffHours}시간 전`;
+  if (diffDays < 7) return `${diffDays}일 전`;
+  return date.toLocaleDateString();
 }
 
 interface ChatRoomItemProps {
@@ -16,12 +26,15 @@ interface ChatRoomItemProps {
 
 function ChatRoomItem({ room }: ChatRoomItemProps) {
   const navigate = useNavigate();
-  const { profile } = useUserProfile(room.partnerId);
+  const { profile } = useUserProfile(room.opponent_id);
+
+  const displayTime = formatTime(room.last_message_at);
+  const displayMessage = room.last_message || '';
 
   return (
     <div
       className="p-4 border-b border-border-base cursor-pointer flex items-center gap-3 hover:bg-bg-box-light transition-colors"
-      onClick={() => navigate(`/chat/${room.id}`)}
+      onClick={() => navigate(`/chat/${room.room_id}`)}
     >
       <Avatar
         src={profile?.profile_image || undefined}
@@ -30,13 +43,13 @@ function ChatRoomItem({ room }: ChatRoomItemProps) {
       />
       <div className="flex-1 min-w-0">
         <div className="font-bold mb-1.5 truncate">{profile?.nickname || '알 수 없음'}</div>
-        <div className="text-text-secondary text-sm truncate">{room.lastMessage}</div>
+        <div className="text-text-secondary text-sm truncate">{displayMessage}</div>
       </div>
       <div className="text-right flex flex-col items-end min-w-[60px]">
-        <div className="text-text-secondary text-xs mb-1.5">{room.time}</div>
-        {room.unread > 0 && (
+        <div className="text-text-secondary text-xs mb-1.5">{displayTime}</div>
+        {room.unread_count > 0 && (
           <span className="bg-primary text-white px-2.5 py-1 rounded-full text-xs font-bold inline-block min-w-[24px] text-center">
-            {room.unread}
+            {room.unread_count}
           </span>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Avatar from '@/shared/ui/Avatar';
+import { Avatar } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
 
 interface ChatRoom {

@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/features/user/hooks/useUser';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '@/shared/ui';
 
 export function OnboardingBanner() {
   const { user, needsOnboarding } = useUser();

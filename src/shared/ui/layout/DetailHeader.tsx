@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '../display/Button';
 
 export function DetailHeader() {
   const navigate = useNavigate();

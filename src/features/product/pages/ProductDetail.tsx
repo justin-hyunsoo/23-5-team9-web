@@ -3,13 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import { useUser, useUserProfile } from "@/features/user/hooks/useUser";
 import { createOrGetRoom } from "@/features/chat/api/chatApi";
-import { Loading, ErrorMessage, EmptyState } from "@/shared/ui/StatusMessage";
 import { PageContainer } from "@/shared/layouts/PageContainer";
-import { Button } from "@/shared/ui/Button";
-import { DetailHeader } from "@/shared/ui/DetailHeader";
-import { DetailSection } from "@/shared/ui/DetailSection";
-import Badge from "@/shared/ui/Badge";
-import Avatar from "@/shared/ui/Avatar";
+import { Loading, ErrorMessage, EmptyState, Button, DetailHeader, DetailSection, Badge, Avatar } from '@/shared/ui';
 
 function ProductDetail() {
   const { id } = useParams();

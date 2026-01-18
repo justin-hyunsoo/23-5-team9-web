@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMyProducts } from '@/features/product/hooks/useProducts';
-import { Button } from '@/shared/ui/Button';
-import { Loading, ErrorMessage, EmptyState } from '@/shared/ui/StatusMessage';
-import Badge from '@/shared/ui/Badge';
+import { Button, Loading, ErrorMessage, EmptyState, Badge } from '@/shared/ui';
 
 const formatPrice = (price: number) => price.toLocaleString() + '원';
 

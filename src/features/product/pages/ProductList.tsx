@@ -6,10 +6,8 @@ import { useUser } from '@/features/user/hooks/useUser';
 import { PRODUCT_CATEGORIES } from "@/shared/constants/data";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
-import Badge from "@/shared/ui/Badge";
-import { Button } from "@/shared/ui/Button";
-import { Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequired } from '@/shared/ui/StatusMessage';
-import { TabBar, Tab } from '@/shared/ui/TabBar';
+import { Badge, Button, Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequired, TabBar } from '@/shared/ui';
+import type { Tab } from '@/shared/ui';
 
 const formatPrice = (price: number) => price.toLocaleString() + '원';
 

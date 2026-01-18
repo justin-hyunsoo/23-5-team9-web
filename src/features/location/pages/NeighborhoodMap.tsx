@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Loading } from '@/shared/ui/StatusMessage';
 import { PageContainer } from '@/shared/layouts/PageContainer';
-import { StatCard } from '@/shared/ui/Stat';
+import { Loading, StatCard } from '@/shared/ui';
 
 // Fix for default marker icon in leaflet with vite
 // We need to import the images directly to ensure they are bundled correctly

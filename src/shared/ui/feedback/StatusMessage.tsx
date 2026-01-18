@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from './Button';
+import { Button } from '../display/Button';
 
 export const Loading = () => (
   <div className="flex flex-col items-center justify-center py-10 w-full">

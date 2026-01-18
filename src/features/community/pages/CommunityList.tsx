@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import CommunityCard from "@/features/community/components/CommunityCard";
 import LocationSelector from "@/features/location/components/LocationSelector";
-import CategorySelector from "@/shared/ui/CategorySelector";
-import Badge from "@/shared/ui/Badge";
+import { CategorySelector, Badge } from '@/shared/ui';
 import { useCommunity, COMMUNITY_CATEGORIES, LOCATION_FILTERS } from "@/features/community/hooks/useCommunity";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";

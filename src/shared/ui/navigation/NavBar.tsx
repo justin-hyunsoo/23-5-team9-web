@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/shared/store/themeStore';
 import { useChatStore } from '@/shared/store/chatStore';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '../display/Button';
 
 const MENUS = [
   { id: 'products', label: '중고거래', path: '/products' },

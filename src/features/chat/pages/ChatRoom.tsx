@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Loading, ErrorMessage } from '@/shared/ui/StatusMessage';
 import { fetchMessages, sendMessage, markMessagesAsRead, fetchChatRooms, Message, ChatRoom as ChatRoomType } from '@/features/chat/api/chatApi';
 import { useUser, useUserProfile, userKeys } from '@/features/user/hooks/useUser';
-import Avatar from '@/shared/ui/Avatar';
-import { DetailHeader } from '@/shared/ui/DetailHeader';
-import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
+import { Loading, ErrorMessage, Avatar, DetailHeader, Button, Input } from '@/shared/ui';
 import { payApi } from '@/features/pay/api/payApi';
 import { useQueryClient } from '@tanstack/react-query';
 

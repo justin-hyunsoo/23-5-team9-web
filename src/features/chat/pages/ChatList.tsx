@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ChatRoomItem from '@/features/chat/components/ChatRoomItem';
 import { PageContainer } from '@/shared/layouts/PageContainer';
-import { Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequired } from '@/shared/ui/StatusMessage';
+import { Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequired } from '@/shared/ui';
 import { fetchChatRooms, ChatRoom } from '@/features/chat/api/chatApi';
 import { useUser } from '@/features/user/hooks/useUser';
 import { useChatStore } from '@/shared/store/chatStore';

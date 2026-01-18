@@ -1,4 +1,4 @@
-import { Button } from '@/shared/ui/Button';
+import { Button } from './Button';
 
 export interface SelectOption {
   value: string;

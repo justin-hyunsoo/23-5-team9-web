@@ -4,9 +4,8 @@ import CoinTab from '@/features/user/components/CoinTab';
 import PasswordTab from '@/features/user/components/PasswordTab';
 import { useMyCarrotData } from '@/features/user/hooks/useMyCarrotData';
 import { useAuth } from '@/shared/store/authStore';
-import { Loading } from "@/shared/ui/StatusMessage";
-import { Button } from '@/shared/ui/Button';
-import { TabBar, Tab } from '@/shared/ui/TabBar';
+import { Loading, Button, TabBar } from '@/shared/ui';
+import type { Tab } from '@/shared/ui';
 
 type TabType = 'profile' | 'coin' | 'password';
 

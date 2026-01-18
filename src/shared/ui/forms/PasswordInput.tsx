@@ -1,5 +1,5 @@
 import { useState, forwardRef } from 'react';
-import { Button } from '@/shared/ui/Button';
+import { Button } from '../display/Button';
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;

@@ -3,11 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '@/features/auth/api/auth';
 import { useAuth } from '@/shared/store/authStore';
 import { userApi } from '@/features/user/api/user';
-import PasswordInput from '@/shared/ui/PasswordInput';
 import { PageContainer } from '@/shared/layouts/PageContainer';
-import { Input } from '@/shared/ui/Input';
-import { Button } from '@/shared/ui/Button';
-import { GoogleIcon } from '@/shared/ui/Icons';
+import { Input, PasswordInput, Button, GoogleIcon } from '@/shared/ui';
 
 // 이메일 형식 검증 함수
 const isValidEmail = (email: string): boolean => {

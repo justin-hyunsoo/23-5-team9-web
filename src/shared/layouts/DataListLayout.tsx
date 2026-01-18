@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loading, ErrorMessage } from '@/shared/ui/StatusMessage';
+import { Loading, ErrorMessage } from '@/shared/ui';
 
 interface DataListLayoutProps {
   isLoading: boolean;

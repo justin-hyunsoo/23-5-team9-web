@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { User } from '@/features/user/api/user';
-import { Button } from '@/shared/ui/Button';
-import { StatCard } from '@/shared/ui/Stat';
+import { Button, StatCard } from '@/shared/ui';
 
 interface CoinTabProps {
   user: User;

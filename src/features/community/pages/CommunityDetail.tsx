@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import { useCommunityPost, Comment } from "@/features/community/hooks/useCommunity";
-import { Loading } from "@/shared/ui/StatusMessage";
 import { PageContainer } from "@/shared/layouts/PageContainer";
-import { Button } from "@/shared/ui/Button";
-import { DetailHeader } from "@/shared/ui/DetailHeader";
-import { DetailSection } from "@/shared/ui/DetailSection";
-import { DetailImage } from "@/shared/ui/DetailImage";
-import { CommentForm } from "@/shared/ui/CommentForm";
+import { Loading, Button, DetailHeader, DetailSection, DetailImage, CommentForm } from '@/shared/ui';
 
 function CommunityDetail() {
   const { id } = useParams();

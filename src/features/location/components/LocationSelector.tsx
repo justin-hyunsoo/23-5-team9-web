@@ -1,5 +1,5 @@
 import { LOCATION_FILTERS } from '@/shared/constants/data';
-import CategorySelector from '@/shared/ui/CategorySelector';
+import { CategorySelector } from '@/shared/ui';
 
 interface LocationSelectorProps {
   selected: string;

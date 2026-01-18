@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input } from '@/shared/ui/Input';
-import { Button } from '@/shared/ui/Button';
+import { Input } from './Input';
+import { Button } from '../display/Button';
 
 interface CommentFormProps {
   value: string;

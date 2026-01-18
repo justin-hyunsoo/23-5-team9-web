@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '@/features/product/api/productApi';
-import { Card, CardContent, CardTitle } from '@/shared/ui/Card';
-import Badge from '@/shared/ui/Badge';
-import { Button } from '@/shared/ui/Button';
-import { StatGroup } from '@/shared/ui/Stat';
-import Avatar from '@/shared/ui/Avatar';
+import { Card, CardContent, CardTitle, Badge, Button, StatGroup, Avatar } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
 
 const formatPrice = (price: number) => price.toLocaleString() + '원';

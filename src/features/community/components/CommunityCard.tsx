@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CommunityPost } from '../hooks/useCommunity';
-import { Button } from '@/shared/ui/Button';
-import { Card, CardImage, CardContent, CardTitle, CardMeta } from '@/shared/ui/Card';
-import Badge from '@/shared/ui/Badge';
-import { Stat, StatGroup } from '@/shared/ui/Stat';
+import { Button, Card, CardImage, CardContent, CardTitle, CardMeta, Badge, Stat, StatGroup } from '@/shared/ui';
 
 interface CommunityCardProps {
   post: CommunityPost;

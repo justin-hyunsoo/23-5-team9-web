@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { regionApi } from '@/features/location/api/region';
 import { useGeoLocation } from '@/features/location/hooks/useGeoLocation';
-import { Button } from "@/shared/ui/Button";
-import { Input } from "@/shared/ui/Input";
-import { Select } from "@/shared/ui/Select";
-import Avatar from "@/shared/ui/Avatar";
+import { Button, Input, Select, Avatar } from '@/shared/ui';
 
 interface Region {
   id: string;

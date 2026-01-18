@@ -1,5 +1,4 @@
-import PasswordInput from '@/shared/ui/PasswordInput';
-import { Button } from "@/shared/ui/Button"; // 추가
+import { PasswordInput, Button } from '@/shared/ui';
 
 const PasswordTab = () => {
   const handleSubmit = (e: React.FormEvent) => {

@@ -21,7 +21,7 @@ interface MyCarrotProps {
 }
 
 function MyCarrot({ initialTab = 'profile' }: MyCarrotProps) {
-  const { user, updateProfile, chargeCoin } = useMyCarrotData();
+  const { user, updateProfile, depositCoin, withdrawCoin } = useMyCarrotData();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -46,7 +46,7 @@ function MyCarrot({ initialTab = 'profile' }: MyCarrotProps) {
             onSubmit={updateProfile}
           />
         )}
-        {initialTab === 'coin' && <CoinTab user={user} onCharge={chargeCoin} />}
+        {initialTab === 'coin' && <CoinTab user={user} onDeposit={depositCoin} onWithdraw={withdrawCoin} />}
         {initialTab === 'password' && <PasswordTab />}
       </div>
     </div>

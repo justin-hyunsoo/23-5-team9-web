@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchMessages, sendMessage, markMessagesAsRead, fetchChatRooms, Message, ChatRoom as ChatRoomType } from '@/features/chat/api/chatApi';
-import { useUser, useUserProfile, userKeys } from '@/features/user/hooks/useUser';
+import { useUser, useUserProfile } from '@/features/user/hooks/useUser';
 import { Loading, ErrorMessage, Avatar, DetailHeader, Button, Input } from '@/shared/ui';
-import { payApi } from '@/features/pay/api/payApi';
-import { useQueryClient } from '@tanstack/react-query';
+import { useTransfer } from '@/features/pay/hooks/useTransfer';
 
 function formatMessageTime(dateString: string): string {
   const date = new Date(dateString);
@@ -14,7 +13,6 @@ function formatMessageTime(dateString: string): string {
 function ChatRoom() {
   const { chatId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { user, isLoggedIn, isLoading: userLoading } = useUser();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -25,41 +23,24 @@ function ChatRoom() {
   const mobileMessagesEndRef = useRef<HTMLDivElement>(null);
   const desktopMessagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Transfer feature states
-  const [showTransferMenu, setShowTransferMenu] = useState(false);
-  const [transferAmount, setTransferAmount] = useState('');
-  const [transferring, setTransferring] = useState(false);
-
   const { profile: opponentProfile } = useUserProfile(roomInfo?.opponentId);
 
-  const handleTransfer = async () => {
-    const amount = parseInt(transferAmount, 10);
-    if (!user?.id || !roomInfo?.opponentId || !amount || amount <= 0) {
-      alert('올바른 금액을 입력해주세요.');
-      return;
-    }
-    if (user.coin < amount) {
-      alert('잔액이 부족합니다.');
-      return;
-    }
+  const {
+    showTransferMenu,
+    transferAmount,
+    transferring,
+    setTransferAmount,
+    transfer,
+    toggleTransferMenu,
+    addAmount,
+  } = useTransfer({
+    userId: user?.id,
+    currentCoin: user?.coin || 0,
+  });
 
-    setTransferring(true);
-    try {
-      await payApi.transfer(String(user.id), {
-        amount,
-        description: `${opponentProfile?.nickname || '상대방'}에게 ${amount.toLocaleString()}원 송금`,
-        receive_user_id: roomInfo.opponentId,
-      });
-      queryClient.invalidateQueries({ queryKey: userKeys.me() });
-      setTransferAmount('');
-      setShowTransferMenu(false);
-      alert(`${amount.toLocaleString()}원을 송금했습니다.`);
-    } catch (err) {
-      console.error('송금 실패:', err);
-      alert('송금에 실패했습니다.');
-    } finally {
-      setTransferring(false);
-    }
+  const handleTransfer = async () => {
+    if (!roomInfo?.opponentId) return;
+    await transfer(roomInfo.opponentId, opponentProfile?.nickname || undefined);
   };
 
   const scrollToBottom = () => {
@@ -169,7 +150,7 @@ function ChatRoom() {
             {opponentProfile?.nickname || '알 수 없음'}
           </span>
           <button
-            onClick={() => setShowTransferMenu(!showTransferMenu)}
+            onClick={toggleTransferMenu}
             className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
           >
             {user?.coin.toLocaleString()} C
@@ -200,7 +181,7 @@ function ChatRoom() {
               {[1000, 5000, 10000, 50000].map((amount) => (
                 <button
                   key={amount}
-                  onClick={() => setTransferAmount(String((parseInt(transferAmount, 10) || 0) + amount))}
+                  onClick={() => addAmount(amount)}
                   className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
                 >
                   +{amount.toLocaleString()}
@@ -284,7 +265,7 @@ function ChatRoom() {
               {opponentProfile?.nickname || '알 수 없음'}
             </span>
             <button
-              onClick={() => setShowTransferMenu(!showTransferMenu)}
+              onClick={toggleTransferMenu}
               className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
             >
               {user?.coin.toLocaleString()} C
@@ -315,7 +296,7 @@ function ChatRoom() {
                 {[1000, 5000, 10000, 50000].map((amount) => (
                   <button
                     key={amount}
-                    onClick={() => setTransferAmount(String((parseInt(transferAmount, 10) || 0) + amount))}
+                    onClick={() => addAmount(amount)}
                     className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
                   >
                     +{amount.toLocaleString()}

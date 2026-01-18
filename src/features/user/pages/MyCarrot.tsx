@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import ProfileEditForm from '@/features/user/components/ProfileEditForm';
-import CoinTab from '@/features/user/components/CoinTab';
+import CoinTab from '@/features/pay/components/CoinTab';
 import PasswordTab from '@/features/user/components/PasswordTab';
 import { useMyCarrotData } from '@/features/user/hooks/useMyCarrotData';
 import { useAuth } from '@/shared/store/authStore';

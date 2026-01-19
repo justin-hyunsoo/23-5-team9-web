@@ -2,7 +2,6 @@ import { Button, Input } from '@/shared/ui';
 import { useTransfer } from '@/features/pay/hooks/useTransfer';
 
 interface TransferMenuProps {
-  userId: string | number | undefined;
   currentCoin: number;
   recipientId: string | undefined;
   recipientName?: string;
@@ -11,7 +10,6 @@ interface TransferMenuProps {
 const PRESET_AMOUNTS = [1000, 5000, 10000, 50000];
 
 const TransferMenu = ({
-  userId,
   currentCoin,
   recipientId,
   recipientName = '상대방',
@@ -22,7 +20,7 @@ const TransferMenu = ({
     setTransferAmount,
     transfer,
     addAmount,
-  } = useTransfer({ userId, currentCoin });
+  } = useTransfer({ currentCoin });
 
   const handleTransfer = async () => {
     if (!recipientId) return;

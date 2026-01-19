@@ -13,7 +13,7 @@ function formatMessageTime(dateString: string): string {
 function ChatRoom() {
   const { chatId } = useParams();
   const navigate = useNavigate();
-  const { user, isLoggedIn, isLoading: userLoading } = useUser();
+  const { user, isLoggedIn, isLoading: userLoading, refetch: refetchUser } = useUser();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -68,6 +68,7 @@ function ChatRoom() {
         const data = await fetchMessages(chatId);
         setMessages(data);
         await markMessagesAsRead(chatId);
+        refetchUser();
       } catch (err) {
         console.error('메시지 갱신 실패:', err);
       }
@@ -143,7 +144,6 @@ function ChatRoom() {
         {/* 송금 메뉴 */}
         {showTransferMenu && (
           <TransferMenu
-            userId={user?.id}
             currentCoin={user?.coin || 0}
             recipientId={roomInfo?.opponent_id}
             recipientName={opponentProfile?.nickname || '상대방'}
@@ -231,7 +231,6 @@ function ChatRoom() {
           {/* 송금 메뉴 (데스크톱) */}
           {showTransferMenu && (
             <TransferMenu
-              userId={user?.id}
               currentCoin={user?.coin || 0}
               recipientId={roomInfo?.opponent_id}
               recipientName={opponentProfile?.nickname || '상대방'}

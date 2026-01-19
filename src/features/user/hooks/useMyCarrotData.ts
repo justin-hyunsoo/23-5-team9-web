@@ -1,10 +1,13 @@
+import { useRef } from 'react';
 import { useUser, useOnboarding } from '@/features/user/hooks/useUser';
 import { usePay } from '@/features/pay/hooks/usePay';
 
 export const useMyCarrotData = () => {
   const { user } = useUser();
   const onboardingMutation = useOnboarding();
-  const { deposit, withdraw } = usePay(user?.id);
+  const { deposit, withdraw } = usePay();
+  const depositKeyRef = useRef<string>(crypto.randomUUID());
+  const withdrawKeyRef = useRef<string>(crypto.randomUUID());
 
   const updateProfile = async (data: any) => {
     if (!user) return;
@@ -18,12 +21,18 @@ export const useMyCarrotData = () => {
   };
 
   const depositCoin = async (amount: number) => {
-    await deposit(amount);
+    const success = await deposit(amount, depositKeyRef.current);
+    if (success) {
+      depositKeyRef.current = crypto.randomUUID();
+    }
   };
 
   const withdrawCoin = async (amount: number) => {
     if (!user) return;
-    await withdraw(amount, user.coin);
+    const success = await withdraw(amount, user.coin, withdrawKeyRef.current);
+    if (success) {
+      withdrawKeyRef.current = crypto.randomUUID();
+    }
   };
 
   return { user, updateProfile, depositCoin, withdrawCoin };

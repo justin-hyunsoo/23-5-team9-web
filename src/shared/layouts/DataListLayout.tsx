@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Loading, ErrorMessage } from '@/shared/ui';
 
 interface DataListLayoutProps {
@@ -20,6 +20,26 @@ export function DataListLayout({
   children,
   className = ''
 }: DataListLayoutProps) {
+  const [isFilterVisible, setIsFilterVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // 스크롤을 내리면 필터 숨김, 올리면 필터 표시
+      if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+        setIsFilterVisible(false);
+      } else {
+        setIsFilterVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (isLoading) {
     return (
@@ -42,7 +62,11 @@ export function DataListLayout({
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
       {filters && (
-        <div className="sticky top-0 z-10 bg-bg-page/95 backdrop-blur-sm py-2">
+        <div
+          className={`sticky top-0 z-10 bg-bg-page/95 backdrop-blur-sm py-2 transition-all duration-300 ${
+            isFilterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
+          }`}
+        >
           {filters}
         </div>
       )}

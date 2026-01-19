@@ -66,7 +66,7 @@ const ProductForm = ({ onSuccess }: { onSuccess: () => void }) => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={3}
-              className="w-full rounded-xl bg-bg-box p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:bg-bg-box-hover focus:ring-2 focus:ring-gray-300 resize-none"
+              className="w-full rounded-xl bg-bg-page border border-border-medium p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none"
               placeholder="상품 설명을 입력하세요"
             />
           </div>
@@ -144,7 +144,7 @@ const EditProductForm = ({ product, onSuccess, onCancel }: { product: Product; o
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={3}
-              className="w-full rounded-xl bg-bg-box p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:bg-bg-box-hover focus:ring-2 focus:ring-gray-300 resize-none"
+              className="w-full rounded-xl bg-bg-page border border-border-medium p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none"
               placeholder="상품 설명을 입력하세요"
             />
           </div>
@@ -229,10 +229,10 @@ function ProductFilters({
         {/* 검색창 영역 */}
         <div className="relative" ref={dropdownRef}>
           {/* 검색창 컨테이너 - shared/ui Input 스타일 적용 */}
-          <div className="flex items-center bg-bg-box rounded-xl overflow-hidden transition-all focus-within:bg-bg-box-hover focus-within:ring-2 focus-within:ring-gray-300">
+          <div className="flex items-center bg-bg-page border border-border-medium rounded-xl overflow-hidden transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium text-text-body hover:bg-bg-box-hover transition-colors whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium text-text-body hover:bg-gray-50 transition-colors whitespace-nowrap"
             >
               {selectedLabel}
               <span className={`text-[10px] text-text-secondary transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}>
@@ -253,7 +253,7 @@ function ProductFilters({
 
           {/* 드롭다운 메뉴 */}
           {isDropdownOpen && (
-            <div className="absolute left-0 top-[calc(100%+4px)] w-full bg-bg-box rounded-xl z-50 overflow-hidden shadow-lg">
+            <div className="absolute left-0 top-[calc(100%+4px)] w-full bg-bg-page border border-border-medium rounded-xl z-50 overflow-hidden shadow-lg">
               <div className="max-h-60 overflow-y-auto py-1 custom-scrollbar">
                 {PRODUCT_CATEGORIES.map((cat) => (
                   <button
@@ -265,7 +265,7 @@ function ProductFilters({
                     className={`w-full px-3 py-2 text-left text-sm transition-colors ${
                       filterCategory === cat.value
                         ? 'bg-primary/10 text-primary font-medium'
-                        : 'text-text-body hover:bg-bg-box-hover'
+                        : 'text-text-body hover:bg-gray-50'
                     }`}
                   >
                     {cat.label}

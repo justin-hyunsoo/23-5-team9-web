@@ -108,7 +108,7 @@ const ProductForm = ({ onSuccess }: { onSuccess: () => void }) => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={3}
-              className="w-full rounded-xl bg-bg-box p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:bg-bg-box-hover focus:ring-2 focus:ring-gray-300 resize-none"
+              className="w-full rounded-xl bg-bg-page border border-border-medium p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none"
               placeholder="상품 설명을 입력하세요"
             />
           </div>

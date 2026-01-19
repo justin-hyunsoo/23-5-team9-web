@@ -18,8 +18,8 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             ref={ref}
             type={show ? "text" : "password"}
             autoComplete="off"
-            className={`w-full rounded-xl bg-bg-box p-4 pr-[50px] text-base outline-none transition-all placeholder:text-text-placeholder focus:bg-bg-box-hover focus:ring-2 focus:ring-gray-300 ${
-              error ? 'ring-2 ring-status-error/20 bg-red-50' : ''
+            className={`w-full rounded-xl bg-bg-page border border-border-medium p-4 pr-[50px] text-base outline-none transition-all placeholder:text-text-placeholder focus:border-primary focus:ring-1 focus:ring-primary/20 ${
+              error ? 'border-status-error/50 ring-1 ring-status-error/20' : ''
             } ${className}`}
             {...props}
           />

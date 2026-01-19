@@ -118,7 +118,7 @@ function ChatRoom() {
       {/* 모바일: 전체 화면 (navbar 높이 64px 제외) */}
       <div className="flex flex-col h-[calc(100dvh-64px)] bg-bg-base md:hidden">
         {/* 헤더 */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-bg-box border-b border-border-base">
+        <div className="flex items-center gap-3 px-4 py-3 bg-bg-page border-b border-border-medium">
           <button
             onClick={() => navigate(-1)}
             className="p-1 -ml-1 text-text-secondary hover:text-text-heading transition-colors"
@@ -174,8 +174,8 @@ function ChatRoom() {
                   <div
                     className={`max-w-[75%] px-3 py-2 text-[15px] leading-relaxed break-words ${
                       isMe
-                        ? 'bg-primary text-white rounded-2xl rounded-br-sm'
-                        : 'bg-bg-box text-text-heading rounded-2xl rounded-bl-sm'
+                        ? 'bg-primary text-white rounded-lg'
+                        : 'bg-bg-page text-text-heading rounded-lg border border-border-medium'
                     }`}
                   >
                     {msg.content}
@@ -193,18 +193,18 @@ function ChatRoom() {
         </div>
 
         {/* 입력 영역 */}
-        <form onSubmit={handleSend} className="flex items-center gap-2 px-3 py-2 bg-bg-box border-t border-border-base">
+        <form onSubmit={handleSend} className="flex items-center gap-2 px-3 py-2 bg-bg-page border-t border-border-medium">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="메시지를 입력하세요"
-            className="flex-1 px-4 py-2.5 bg-bg-base rounded-full text-sm text-text-heading placeholder:text-text-tertiary focus:outline-none"
+            className="flex-1 px-4 py-2.5 bg-bg-page rounded-lg text-sm text-text-heading placeholder:text-text-tertiary focus:outline-none border border-border-medium focus:border-primary"
           />
           <button
             type="submit"
             disabled={!newMessage.trim() || sending}
-            className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-full disabled:opacity-50 transition-opacity"
+            className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-opacity"
           >
             전송
           </button>
@@ -215,8 +215,8 @@ function ChatRoom() {
       <div className="hidden md:block w-full max-w-[1000px] mx-auto px-4 py-6 min-h-[calc(100vh-60px)]">
         <DetailHeader />
 
-        <div className="bg-bg-page rounded-2xl border border-border-base shadow-sm overflow-hidden flex flex-col" style={{ height: '70vh' }}>
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-border-base">
+        <div className="bg-bg-page rounded-lg border border-border-medium overflow-hidden flex flex-col" style={{ height: '70vh' }}>
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-border-medium">
             <div
               className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1"
               onClick={() => roomInfo?.opponent_id && navigate(`/user/${roomInfo.opponent_id}`)}
@@ -265,7 +265,7 @@ function ChatRoom() {
                     <div
                       className={`max-w-[75%] px-3 py-2 text-[15px] leading-relaxed break-words ${
                         isMe
-                          ? 'bg-primary text-white rounded-2xl rounded-br-sm'
+                          ? 'bg-primary text-white rounded-lg'
                           : 'bg-bg-page text-text-heading rounded-2xl rounded-bl-sm border border-border-base'
                       }`}
                     >
@@ -283,18 +283,18 @@ function ChatRoom() {
             <div ref={desktopMessagesEndRef} />
           </div>
 
-          <form onSubmit={handleSend} className="flex items-center gap-2 px-3 py-3 border-t border-border-base bg-bg-page">
+          <form onSubmit={handleSend} className="flex items-center gap-2 px-3 py-3 border-t border-border-medium bg-bg-page">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="메시지를 입력하세요"
-              className="flex-1 px-4 py-2.5 bg-bg-base rounded-full text-sm text-text-heading placeholder:text-text-tertiary focus:outline-none border border-border-base"
+              className="flex-1 px-4 py-2.5 bg-bg-page rounded-lg text-sm text-text-heading placeholder:text-text-tertiary focus:outline-none border border-border-medium focus:border-primary"
             />
             <button
               type="submit"
               disabled={!newMessage.trim() || sending}
-              className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-full disabled:opacity-50 transition-opacity"
+              className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-opacity"
             >
               전송
             </button>

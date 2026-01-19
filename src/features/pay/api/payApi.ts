@@ -23,26 +23,29 @@ export interface PayTransaction {
 export interface DepositRequest {
   amount: number;
   description: string;
+  request_key: string;
 }
 
 export interface WithdrawRequest {
   amount: number;
   description: string;
+  request_key: string;
 }
 
 export interface TransferRequest {
   amount: number;
   description: string;
+  request_key: string;
   receive_user_id: string;
 }
 
 export const payApi = {
-  deposit: (userId: string, data: DepositRequest) =>
-    client.post<PayTransaction>(`/api/pay/${userId}/deposit`, data),
+  deposit: (data: DepositRequest) =>
+    client.post<PayTransaction>('/api/pay/deposit', data),
 
-  withdraw: (userId: string, data: WithdrawRequest) =>
-    client.post<PayTransaction>(`/api/pay/${userId}/withdraw`, data),
+  withdraw: (data: WithdrawRequest) =>
+    client.post<PayTransaction>('/api/pay/withdraw', data),
 
-  transfer: (userId: string, data: TransferRequest) =>
-    client.post<PayTransaction>(`/api/pay/${userId}/transfer`, data),
+  transfer: (data: TransferRequest) =>
+    client.post<PayTransaction>('/api/pay/transfer', data),
 };

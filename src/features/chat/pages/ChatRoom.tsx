@@ -143,7 +143,6 @@ function ChatRoom() {
         {/* 송금 메뉴 */}
         {showTransferMenu && (
           <TransferMenu
-            userId={user?.id}
             currentCoin={user?.coin || 0}
             recipientId={roomInfo?.opponent_id}
             recipientName={opponentProfile?.nickname || '상대방'}
@@ -231,7 +230,6 @@ function ChatRoom() {
           {/* 송금 메뉴 (데스크톱) */}
           {showTransferMenu && (
             <TransferMenu
-              userId={user?.id}
               currentCoin={user?.coin || 0}
               recipientId={roomInfo?.opponent_id}
               recipientName={opponentProfile?.nickname || '상대방'}

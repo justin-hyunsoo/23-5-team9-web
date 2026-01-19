@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../display/Button';
 
 export const Loading = () => (
@@ -16,6 +16,8 @@ export const EmptyState = ({ message }: { message: string }) => (
 
 export const LoginRequired = ({ message = "로그인하고 이용해주세요" }: { message?: string }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname + location.search;
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="w-16 h-16 mb-4 rounded-full bg-bg-elevated flex items-center justify-center">
@@ -24,13 +26,15 @@ export const LoginRequired = ({ message = "로그인하고 이용해주세요" }
         </svg>
       </div>
       <p className="text-text-muted mb-4">{message}</p>
-      <Button onClick={() => navigate('/auth/login')} size="sm">로그인</Button>
+      <Button onClick={() => navigate(`/auth/login?redirect=${encodeURIComponent(currentPath)}`)} size="sm">로그인</Button>
     </div>
   );
 };
 
 export const OnboardingRequired = ({ message = "닉네임과 지역 설정을 완료해주세요" }: { message?: string }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname + location.search;
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="w-16 h-16 mb-4 rounded-full bg-bg-elevated flex items-center justify-center">
@@ -39,7 +43,7 @@ export const OnboardingRequired = ({ message = "닉네임과 지역 설정을 �
         </svg>
       </div>
       <p className="text-text-muted mb-4">{message}</p>
-      <Button onClick={() => navigate('/auth/onboarding')} size="sm">설정하러 가기</Button>
+      <Button onClick={() => navigate(`/auth/onboarding?redirect=${encodeURIComponent(currentPath)}`)} size="sm">설정하러 가기</Button>
     </div>
   );
 };

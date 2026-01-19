@@ -6,7 +6,14 @@ import { useUserProfile } from '@/features/user/hooks/useUser';
 
 const formatPrice = (price: number) => price.toLocaleString() + '원';
 
-export default function ProductCard({ product }: { product: Product }) {
+interface ProductCardProps {
+  product: Product;
+  showActions?: boolean;
+  onEdit?: (product: Product) => void;
+  onDelete?: (product: Product) => void;
+}
+
+export default function ProductCard({ product, showActions, onEdit, onDelete }: ProductCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(product.like_count);
   const { profile: sellerProfile } = useUserProfile(product.owner_id);
@@ -62,6 +69,34 @@ export default function ProductCard({ product }: { product: Product }) {
               <span>{likeCount}</span>
             </Button>
           </StatGroup>
+          {showActions && (
+            <div className="flex gap-2 mt-3 pt-3 border-t border-border-base">
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onEdit?.(product);
+                }}
+                variant="secondary"
+                size="sm"
+                className="flex-1"
+              >
+                수정
+              </Button>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onDelete?.(product);
+                }}
+                variant="ghost"
+                size="sm"
+                className="flex-1 text-red-500 hover:bg-red-50"
+              >
+                삭제
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>

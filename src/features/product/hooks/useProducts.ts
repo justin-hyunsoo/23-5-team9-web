@@ -3,10 +3,12 @@ import {
   fetchProducts,
   fetchMyProducts,
   createProduct,
+  updateProduct,
+  deleteProduct,
   Product,
 } from '@/features/product/api/productApi';
 
-export type { Product, CreateProductRequest } from '@/features/product/api/productApi';
+export type { Product, CreateProductRequest, UpdateProductRequest, DeleteProductRequest } from '@/features/product/api/productApi';
 
 export function useProducts(selectedCategory?: string, searchQuery?: string) {
   const { data, isLoading, error } = useQuery({
@@ -57,6 +59,32 @@ export function useCreateProduct() {
 
   return useMutation({
     mutationFn: createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['myProducts'] });
+    },
+  });
+}
+
+// 상품 수정
+export function useUpdateProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['myProducts'] });
+    },
+  });
+}
+
+// 상품 삭제
+export function useDeleteProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['myProducts'] });

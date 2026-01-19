@@ -18,9 +18,31 @@ export interface CreateProductRequest {
   category_id: string;
 }
 
+export interface UpdateProductRequest {
+  id: string;
+  title: string;
+  content: string;
+  price: number;
+  category_id: string;
+  is_sold: boolean;
+}
+
+export interface DeleteProductRequest {
+  id: string;
+}
+
 export async function fetchProducts(): Promise<Product[]> {
-  const response = await client.get<Product[]>('/api/product/');
-  return response.data;
+  try {
+    const response = await client.get<Product[]>('/api/product/');
+    return response.data;
+  } catch {
+    try {
+      const response = await client.get<Product[]>('/api/product/me');
+      return response.data;
+    } catch {
+      return [];
+    }
+  }
 }
 
 // 내 상품 목록 조회
@@ -32,5 +54,17 @@ export async function fetchMyProducts(): Promise<Product[]> {
 // 상품 등록
 export async function createProduct(data: CreateProductRequest): Promise<Product> {
   const response = await client.post<Product>('/api/product/me', data);
+  return response.data;
+}
+
+// 상품 수정
+export async function updateProduct(data: UpdateProductRequest): Promise<Product> {
+  const response = await client.patch<Product>('/api/product/me', data);
+  return response.data;
+}
+
+// 상품 삭제
+export async function deleteProduct(data: DeleteProductRequest): Promise<Product> {
+  const response = await client.delete<Product>('/api/product/me', { data });
   return response.data;
 }

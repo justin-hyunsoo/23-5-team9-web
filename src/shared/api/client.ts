@@ -41,9 +41,8 @@ client.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // 로그인 요청이나 refresh 요청 자체가 401이면 토큰 갱신 시도하지 않고 에러 반환
-      if (originalRequest.url?.includes('/api/auth/tokens')) {
-        // 로그인 요청(/api/auth/tokens) 또는 refresh 요청(/api/auth/tokens/refresh)은 토큰 갱신 시도하지 않음
+      // 로그인/refresh 요청이나 상품 목록 요청은 401이어도 리다이렉션하지 않음
+      if (originalRequest.url?.includes('/api/auth/tokens') || originalRequest.url?.includes('/api/product')) {
         return Promise.reject(error);
       }
 
@@ -64,7 +63,7 @@ client.interceptors.response.use(
 
       if (!refreshToken) {
         localStorage.removeItem('token');
-        window.location.href = '/auth/login';
+        window.location.href = `${import.meta.env.BASE_URL}auth/login`;
         return Promise.reject(error);
       }
 
@@ -86,7 +85,7 @@ client.interceptors.response.use(
         processQueue(refreshError as AxiosError, null);
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/auth/login';
+        window.location.href = `${import.meta.env.BASE_URL}auth/login`;
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

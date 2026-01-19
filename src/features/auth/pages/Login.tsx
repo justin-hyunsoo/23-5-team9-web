@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { authApi } from '@/features/auth/api/auth';
 import { useAuth } from '@/shared/store/authStore';
 import { userApi } from '@/features/user/api/user';
@@ -14,8 +14,10 @@ const isValidEmail = (email: string): boolean => {
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
+  const redirect = searchParams.get('redirect') || '/products';
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -58,9 +60,9 @@ export default function Login() {
       const needsOnboarding = !user.nickname || !user.region;
 
       if (needsOnboarding) {
-        navigate('/auth/onboarding');
+        navigate(`/auth/onboarding?redirect=${encodeURIComponent(redirect)}`);
       } else {
-        navigate('/products');
+        navigate(redirect);
       }
     } catch (err: any) {
       // 다양한 형태의 에러 응답 처리

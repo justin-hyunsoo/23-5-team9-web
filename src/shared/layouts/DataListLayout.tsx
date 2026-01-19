@@ -41,23 +41,10 @@ export function DataListLayout({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-20">
-        <Loading />
-      </div>
-    );
-  }
-
-  if (error) {
-    // error 객체에서 메시지 추출 시도
-    const msg = typeof error === 'string' ? error : error?.message || '오류가 발생했습니다.';
-    return (
-      <div className="flex justify-center items-center py-20">
-         <ErrorMessage message={msg} />
-      </div>
-    );
-  }
+  // error 객체에서 메시지 추출
+  const errorMsg = error
+    ? (typeof error === 'string' ? error : error?.message || '오류가 발생했습니다.')
+    : null;
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
@@ -71,12 +58,24 @@ export function DataListLayout({
         </div>
       )}
 
-      {children}
-      {isEmpty && (
-        <div className="flex flex-col items-center justify-center py-20 text-text-muted">
-           <div className="text-4xl mb-2">📭</div>
-           <p>{emptyMessage}</p>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loading />
         </div>
+      ) : errorMsg ? (
+        <div className="flex justify-center items-center py-20">
+          <ErrorMessage message={errorMsg} />
+        </div>
+      ) : (
+        <>
+          {children}
+          {isEmpty && (
+            <div className="flex flex-col items-center justify-center py-20 text-text-muted">
+              <div className="text-4xl mb-2">📭</div>
+              <p>{emptyMessage}</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

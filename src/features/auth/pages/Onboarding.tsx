@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import { useOnboarding } from '@/features/user/hooks/useUser';
 
 export default function Onboarding() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/community';
   const onboardingMutation = useOnboarding();
 
   const handleOnboardingSubmit = async (data: { nickname: string; region_id: string; profile_image: string }) => {
@@ -18,7 +20,7 @@ export default function Onboarding() {
 
       try {
         await onboardingMutation.mutateAsync(data);
-        navigate('/community'); // Main page after onboarding
+        navigate(redirect);
       } catch (err: any) {
         const detail = err.response?.data?.detail || '온보딩에 실패했습니다.';
         throw new Error(detail);

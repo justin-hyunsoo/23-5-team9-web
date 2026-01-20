@@ -47,13 +47,13 @@ export async function fetchProducts(): Promise<Product[]> {
 
 // 내 상품 목록 조회
 export async function fetchMyProducts(): Promise<Product[]> {
-  const response = await client.get<Product[]>('/api/product/me');
+  const response = await client.get<Product[]>('/api/product/?seller=me');
   return response.data;
 }
 
 // 상품 등록
 export async function createProduct(data: CreateProductRequest): Promise<Product> {
-  const response = await client.post<Product>('/api/product/me', data);
+  const response = await client.post<Product>('/api/product/', data);
   return response.data;
 }
 

@@ -24,5 +24,5 @@ export const PRODUCT_CATEGORIES = [
   { value: '반려동물용품', label: '반려동물용품' },
   { value: '도서', label: '도서' },
   { value: '티켓/교환권', label: '티켓/교환권' },
-  { value: '기타 중고물품', label: '기타 중고물품' }
+  { value: '1', label: '기타 중고물품' }
 ];

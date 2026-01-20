@@ -41,12 +41,6 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 }
 
-// 내 상품 목록 조회
-export async function fetchMyProducts(): Promise<Product[]> {
-  const response = await client.get<Product[]>('/api/product/?seller=me');
-  return response.data;
-}
-
 // User의 상품 조회
 export async function fetchUserProducts(user_id: string): Promise<Product[]> {
   const response = await client.get<Product[]>(`/api/product/?seller=${user_id}`);

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import ProductCard from "@/features/product/components/ProductCard";
-import { useProducts, useMyProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from "@/features/product/hooks/useProducts";
+import { useProducts, useUserProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from "@/features/product/hooks/useProducts";
 import { useUser } from '@/features/user/hooks/useUser';
 import { PRODUCT_CATEGORIES } from "@/shared/constants/data";
 import { PageContainer } from "@/shared/layouts/PageContainer";
@@ -333,7 +333,7 @@ function ProductContent({ isMyProducts = false, activeTab }: ProductContentProps
   const deleteProduct = useDeleteProduct();
 
   const allProductsQuery = useProducts(filterCategory, searchQuery);
-  const myProductsQuery = useMyProducts({ enabled: isMyProducts && isLoggedIn && !needsOnboarding });
+  const myProductsQuery = useUserProducts('me');
 
   const filteredMyProducts = myProductsQuery.products.filter(product => {
     if (filterCategory && filterCategory !== 'all') {

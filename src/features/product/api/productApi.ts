@@ -28,17 +28,8 @@ export interface UpdateProductRequest {
 
 
 export async function fetchProducts(): Promise<Product[]> {
-  try {
-    const response = await client.get<Product[]>('/api/product/');
-    return response.data;
-  } catch {
-    try {
-      const response = await client.get<Product[]>('/api/product/me');
-      return response.data;
-    } catch {
-      return [];
-    }
-  }
+  const response = await client.get<Product[]>('/api/product/');
+  return response.data;
 }
 
 // User의 상품 조회

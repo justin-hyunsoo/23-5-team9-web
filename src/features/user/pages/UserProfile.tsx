@@ -15,7 +15,9 @@ function UserProfile() {
   const { products, loading: productsLoading } = useUserProducts(userId!);
   const [chatLoading, setChatLoading] = useState(false);
 
-  const isMyProfile = user?.id && String(user.id) === userId;
+  console.log(userId)
+
+  const isMyProfile = (user?.id && String(user.id) === userId) || userId === 'me';
 
   const handleChatClick = async () => {
     if (!isLoggedIn) {

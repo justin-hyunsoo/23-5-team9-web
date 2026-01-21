@@ -69,7 +69,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
             <button
               key={item.id}
               onClick={() => navigate(item.to)}
-              className="flex items-center justify-between w-full p-4 text-left bg-white border border-border-base rounded-xl hover:bg-bg-secondary transition-colors"
+              className="flex items-center justify-between w-full p-4 text-left bg-bg-secondary dark:bg-bg-box border border-border-base rounded-xl hover:bg-bg-secondary/80 dark:hover:bg-bg-box-hover transition-colors"
             >
               <span className="text-base font-medium text-text-heading">{item.label}</span>
               <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">

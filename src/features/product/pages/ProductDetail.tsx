@@ -53,7 +53,7 @@ function ProductDetail() {
   // Data Fetching
   const { product, loading: productLoading, error: productError } = useProduct(id!);
   const { profile: sellerProfile } = useUserProfile(product?.owner_id);
-  const { products, loading: productsLoading } = useUserProducts(product?.owner_id!); 
+  const { products, loading: productsLoading, error: productsError } = useUserProducts(product?.owner_id!); 
 
   // Local State
   const [isLiked, setIsLiked] = useState(false);
@@ -81,7 +81,7 @@ function ProductDetail() {
     }
   };
 
-  if (productLoading || productsLoading) return <Loading />;
+  if (productLoading) return <Loading />;
   if (productError) return <ErrorMessage message="상품 정보를 불러올 수 없습니다." />;
   if (!product) return <EmptyState message="상품 정보가 없습니다." />;
 

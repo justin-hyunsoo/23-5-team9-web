@@ -25,10 +25,11 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
   failedQueue = [];
 };
 
-// 요청 인터셉터: 모든 요청에 자동으로 토큰 주입
-client.interceptors.request.use((config) => {
+client.interceptors.request.use((config: any) => { // TS 에러 방지를 위해 any 사용 혹은 타입 확장
   const token = localStorage.getItem('token');
-  if (token) {
+  
+  // ✅ 수정된 부분: token이 있고, config에 skipAuth가 true가 아닐 때만 헤더 주입
+  if (token && !config.skipAuth) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

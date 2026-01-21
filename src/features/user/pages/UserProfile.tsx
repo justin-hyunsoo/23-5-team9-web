@@ -145,7 +145,7 @@ function UserProfile() {
   // Hooks
   const { profile, isLoading: profileLoading, error: profileError } = useUserProfile(userId);
   const { user, isLoggedIn, needsOnboarding } = useUser();
-  const { products, loading: productsLoading } = useUserProducts(userId!);
+  const { products, loading: productsLoading, error: productsError} = useUserProducts(userId!);
   const deleteProduct = useDeleteProduct();
 
   // Local State
@@ -164,7 +164,7 @@ function UserProfile() {
     }
   }, [isMyProfile, userId, navigate]);
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn && isMyProfile) {
       return (
         <PageContainer title="중고거래">
           <LoginRequired/>
@@ -172,7 +172,7 @@ function UserProfile() {
       );
     }
   
-    if (needsOnboarding) {
+    if (needsOnboarding && isMyProfile) {
       return (
         <PageContainer title="중고거래">
           <OnboardingRequired />

@@ -26,14 +26,23 @@ export interface UpdateProductRequest {
   is_sold: boolean;
 }
 
-
 export async function fetchProducts(): Promise<Product[]> {
-  const response = await client.get<Product[]>('/api/product/');
+  const response = await client.get<Product[]>('/api/product/', {
+    skipAuth: true,
+  } as any); 
+  
   return response.data;
 }
 
 // User의 상품 조회
 export async function fetchUserProducts(user_id: string): Promise<Product[]> {
+  
+  if (user_id !== 'me') {
+    const response = await client.get<Product[]>(`/api/product/?seller=${user_id}`, {
+      skipAuth: true,
+    } as any); 
+    return response.data;
+  }
   const response = await client.get<Product[]>(`/api/product/?seller=${user_id}`);
   return response.data;
 }

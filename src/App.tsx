@@ -13,6 +13,7 @@ import UserProfile from '@/features/user/pages/UserProfile';
 import NeighborhoodMap from '@/features/location/pages/NeighborhoodMap';
 import ProductList from '@/features/product/pages/ProductList';
 import ProductDetail from '@/features/product/pages/ProductDetail';
+import ProductNew from '@/features/product/pages/ProductNew';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/products" element={<Navigate to="/products/all" replace />} />
           <Route path="/products/all" element={<ProductList initialTab="all" />} />
           <Route path="/products/me" element={<ProductList initialTab="my" />} />
+          <Route path="/products/new" element={<ProductNew />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/map" element={<NeighborhoodMap/>}/>
           <Route path="/chat" element={<ChatList />} />

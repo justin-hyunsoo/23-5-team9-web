@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useProduct, useUserProducts } from "@/features/product/hooks/useProducts";
+import { useProduct, useUserProducts, useDeleteProduct, useUpdateProduct } from "@/features/product/hooks/useProducts";
 import { useUser, useUserProfile } from "@/features/user/hooks/useUser";
 import { createOrGetRoom } from "@/features/chat/api/chatApi";
 import { PageContainer } from "@/shared/layouts/PageContainer";
@@ -13,8 +13,8 @@ import ProductCard from "@/features/product/components/ProductCard";
 
 // 판매자 프로필 카드 (원래 디자인의 hover 효과 및 여백 복구)
 const SellerProfileCard = ({ profile, onClick }: { profile: any, onClick: () => void }) => (
-  <div 
-    onClick={onClick} 
+  <div
+    onClick={onClick}
     className="flex items-center gap-3 cursor-pointer hover:bg-bg-base rounded-lg p-2 -m-2 transition-colors"
   >
     <Avatar src={profile?.profile_image} alt={profile?.nickname} size="sm" />
@@ -28,7 +28,7 @@ const SellerProfileCard = ({ profile, onClick }: { profile: any, onClick: () => 
 // 판매자 물품 리스트
 const SellerProductList = ({ products, currentOwnerId, nickname }: { products: any[], currentOwnerId: string, nickname?: string }) => {
   const sellerProducts = products.filter(p => p.owner_id === currentOwnerId).slice(0, 4);
-  
+
   if (sellerProducts.length === 0) return null;
 
   return (
@@ -49,15 +49,39 @@ function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, isLoggedIn } = useUser();
-  
+
   // Data Fetching
   const { product, loading: productLoading, error: productError } = useProduct(id!);
   const { profile: sellerProfile } = useUserProfile(product?.owner_id);
-  const { products, loading: productsLoading, error: productsError } = useUserProducts(product?.owner_id!); 
+  const { products } = useUserProducts(product?.owner_id!);
+  const deleteProduct = useDeleteProduct();
+  const updateProduct = useUpdateProduct();
 
   // Local State
   const [isLiked, setIsLiked] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    price: '',
+    content: '',
+    is_sold: false,
+  });
+
+  // Initialize edit form when product loads
+  useEffect(() => {
+    if (product) {
+      setEditForm({
+        title: product.title,
+        price: String(product.price),
+        content: product.content,
+        is_sold: product.is_sold,
+      });
+    }
+  }, [product]);
+
+  // Check if current user is the owner
+  const isOwner = product && String(user?.id) === product.owner_id;
 
   // Handlers
   const handleLikeClick = () => {
@@ -81,6 +105,64 @@ function ProductDetail() {
     }
   };
 
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    if (product) {
+      setEditForm({
+        title: product.title,
+        price: String(product.price),
+        content: product.content,
+        is_sold: product.is_sold,
+      });
+    }
+    setIsEditing(false);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!product) return;
+
+    if (!editForm.title.trim() || !editForm.content.trim() || !editForm.price) {
+      alert('모든 필드를 입력해주세요.');
+      return;
+    }
+
+    try {
+      await updateProduct.mutateAsync({
+        id: product.id,
+        data: {
+          title: editForm.title.trim(),
+          content: editForm.content.trim(),
+          price: Number(editForm.price),
+          category_id: product.category_id,
+          is_sold: editForm.is_sold,
+        },
+      });
+      alert('상품이 수정되었습니다.');
+      setIsEditing(false);
+    } catch {
+      alert('상품 수정에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    if (!product) return;
+    if (!confirm('정말로 이 상품을 삭제하시겠습니까?')) return;
+    try {
+      await deleteProduct.mutateAsync(product.id);
+      alert('상품이 삭제되었습니다.');
+      navigate('/products');
+    } catch {
+      alert('상품 삭제에 실패했습니다.');
+    }
+  };
+
+  const handleFormChange = (field: string, value: string | boolean) => {
+    setEditForm(prev => ({ ...prev, [field]: value }));
+  };
+
   if (productLoading) return <Loading />;
   if (productError) return <ErrorMessage message="상품 정보를 불러올 수 없습니다." />;
   if (!product) return <EmptyState message="상품 정보가 없습니다." />;
@@ -91,9 +173,9 @@ function ProductDetail() {
 
       {/* 섹션 1: 판매자 정보 (mb-4 여백 복구) */}
       <DetailSection className="mb-4">
-        <SellerProfileCard 
-          profile={sellerProfile} 
-          onClick={() => navigate(`/user/${product.owner_id}`)} 
+        <SellerProfileCard
+          profile={sellerProfile}
+          onClick={() => navigate(`/user/${product.owner_id}`)}
         />
       </DetailSection>
 
@@ -101,23 +183,74 @@ function ProductDetail() {
       <DetailSection>
         {/* 판매완료 배지 */}
         <div className="flex items-center gap-2 mb-4">
-          {product.is_sold && <Badge variant="secondary" className="text-xs">판매완료</Badge>}
+          {isEditing ? (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={editForm.is_sold}
+                onChange={(e) => handleFormChange('is_sold', e.target.checked)}
+                className="w-4 h-4 accent-primary"
+              />
+              <span className={`text-xs px-2 py-1 rounded ${editForm.is_sold ? 'bg-gray-200 text-gray-600' : 'text-primary'}`}>
+                {editForm.is_sold ? '판매완료' : '판매중'}
+              </span>
+            </label>
+          ) : (
+            product.is_sold && <Badge variant="secondary" className="text-xs">판매완료</Badge>
+          )}
         </div>
 
         {/* 제목 및 가격 */}
-        <h2 className="text-2xl font-bold mb-2 text-text-heading">{product.title}</h2>
-        <h3 className="text-3xl font-bold mb-6 text-primary">{product.price.toLocaleString()}원</h3>
+        {isEditing ? (
+          <>
+            <input
+              type="text"
+              value={editForm.title}
+              onChange={(e) => handleFormChange('title', e.target.value)}
+              placeholder="상품 제목"
+              className="w-full text-2xl font-bold mb-2 text-text-heading bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1"
+            />
+            <div className="flex items-baseline gap-1 mb-6">
+              <input
+                type="number"
+                value={editForm.price}
+                onChange={(e) => handleFormChange('price', e.target.value)}
+                placeholder="가격"
+                min="0"
+                className="text-3xl font-bold text-primary bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1 w-40"
+              />
+              <span className="text-3xl font-bold text-primary">원</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold mb-2 text-text-heading">{product.title}</h2>
+            <h3 className="text-3xl font-bold mb-6 text-primary">{product.price.toLocaleString()}원</h3>
+          </>
+        )}
 
         {/* 본문 (상단 구분선 border-t 복구) */}
-        <div className="mt-6 whitespace-pre-wrap leading-relaxed text-text-body border-t border-border-base pt-6">
-          {product.content}
+        <div className="mt-6 border-t border-border-base pt-6">
+          {isEditing ? (
+            <textarea
+              value={editForm.content}
+              onChange={(e) => handleFormChange('content', e.target.value)}
+              rows={6}
+              className="w-full bg-transparent text-text-body leading-relaxed outline-none border-b border-dashed border-border-medium focus:border-primary resize-none"
+              placeholder="상품 설명을 입력하세요"
+            />
+          ) : (
+            <div className="whitespace-pre-wrap leading-relaxed text-text-body">
+              {product.content}
+            </div>
+          )}
         </div>
 
         {/* 좋아요 버튼 (상단 구분선 border-t 복구) */}
         <div className="flex gap-4 pt-6 mt-6 border-t border-border-base">
-          <Button 
-            variant={isLiked ? "primary" : "outline"} 
-            size="sm" 
+          <Button
+            variant={isLiked ? "primary" : "outline"}
+            size="sm"
             onClick={handleLikeClick}
           >
             <span className="mr-2">{isLiked ? '♥' : '♡'}</span>
@@ -127,18 +260,40 @@ function ProductDetail() {
       </DetailSection>
 
       {/* 하단 버튼 */}
-      <div className="mt-6">
-        <Button size="lg" fullWidth onClick={handleChatClick} disabled={chatLoading}>
-          {chatLoading ? '채팅방 연결 중...' : '채팅하기'}
-        </Button>
+      <div className="mt-6 space-y-3">
+        {isOwner ? (
+          isEditing ? (
+            <div className="flex gap-3">
+              <Button size="lg" fullWidth variant="secondary" onClick={handleCancelEdit}>
+                취소
+              </Button>
+              <Button size="lg" fullWidth onClick={handleSaveEdit} disabled={updateProduct.isPending}>
+                {updateProduct.isPending ? '저장 중...' : '저장하기'}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <Button size="lg" fullWidth variant="secondary" onClick={handleEditClick}>
+                수정하기
+              </Button>
+              <Button size="lg" fullWidth variant="ghost" onClick={handleDeleteClick} disabled={deleteProduct.isPending}>
+                {deleteProduct.isPending ? '삭제 중...' : '삭제하기'}
+              </Button>
+            </div>
+          )
+        ) : (
+          <Button size="lg" fullWidth onClick={handleChatClick} disabled={chatLoading}>
+            {chatLoading ? '채팅방 연결 중...' : '채팅하기'}
+          </Button>
+        )}
       </div>
 
       {/* 판매자의 다른 상품 */}
-      {products && (
-        <SellerProductList 
-          products={products} 
-          currentOwnerId={product.owner_id} 
-          nickname={sellerProfile?.nickname || ''} 
+      {!isEditing && products && (
+        <SellerProductList
+          products={products}
+          currentOwnerId={product.owner_id}
+          nickname={sellerProfile?.nickname || ''}
         />
       )}
     </PageContainer>

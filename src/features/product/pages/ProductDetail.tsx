@@ -11,17 +11,36 @@ import ProductCard from "@/features/product/components/ProductCard";
 // 1. UI Components (디자인 복구됨)
 // ----------------------------------------------------------------------
 
-// 판매자 프로필 카드 (원래 디자인의 hover 효과 및 여백 복구)
-const SellerProfileCard = ({ profile, onClick }: { profile: any, onClick: () => void }) => (
-  <div
-    onClick={onClick}
-    className="flex items-center gap-3 cursor-pointer hover:bg-bg-base rounded-lg p-2 -m-2 transition-colors"
-  >
+// 판매자 프로필 카드
+const SellerProfileCard = ({ profile }: { profile: any }) => (
+  <div className="flex items-center gap-3">
     <Avatar src={profile?.profile_image} alt={profile?.nickname} size="sm" />
     <div>
       <div className="font-semibold text-text-heading">{profile?.nickname || '알 수 없음'}</div>
       <div className="text-sm text-text-secondary">판매자</div>
     </div>
+  </div>
+);
+
+// 판매자 섹션 (프로필 + 채팅 버튼)
+const SellerSection = ({
+  profile,
+  onChatClick,
+  chatLoading,
+  showChatButton
+}: {
+  profile: any,
+  onChatClick: () => void,
+  chatLoading: boolean,
+  showChatButton: boolean
+}) => (
+  <div className="flex items-center justify-between">
+    <SellerProfileCard profile={profile} />
+    {showChatButton && (
+      <Button size="sm" onClick={onChatClick} disabled={chatLoading}>
+        {chatLoading ? '연결 중...' : '채팅하기'}
+      </Button>
+    )}
   </div>
 );
 
@@ -171,11 +190,13 @@ function ProductDetail() {
     <PageContainer>
       <DetailHeader />
 
-      {/* 섹션 1: 판매자 정보 (mb-4 여백 복구) */}
+      {/* 섹션 1: 판매자 정보 + 채팅 버튼 */}
       <DetailSection className="mb-4">
-        <SellerProfileCard
+        <SellerSection
           profile={sellerProfile}
-          onClick={() => navigate(`/user/${product.owner_id}`)}
+          onChatClick={handleChatClick}
+          chatLoading={chatLoading}
+          showChatButton={!isOwner}
         />
       </DetailSection>
 
@@ -277,15 +298,6 @@ function ProductDetail() {
           )}
         </div>
       </DetailSection>
-
-      {/* 하단 버튼 - 비로그인/다른 사용자용 채팅 버튼 */}
-      {!isOwner && (
-        <div className="mt-6">
-          <Button size="lg" fullWidth onClick={handleChatClick} disabled={chatLoading}>
-            {chatLoading ? '채팅방 연결 중...' : '채팅하기'}
-          </Button>
-        </div>
-      )}
 
       {/* 판매자의 다른 상품 */}
       {products && (

@@ -13,7 +13,6 @@ import UserProfile from '@/features/user/pages/UserProfile';
 import NeighborhoodMap from '@/features/location/pages/NeighborhoodMap';
 import ProductList from '@/features/product/pages/ProductList';
 import ProductDetail from '@/features/product/pages/ProductDetail';
-import ProductNew from '@/features/product/pages/ProductNew';
 
 function App() {
   return (
@@ -25,15 +24,12 @@ function App() {
           <Route path="/" element={<Navigate to="/products" replace />} />
 
           {/* 기존 메인 서비스 */}
-          <Route path="/products" element={<Navigate to="/products/all" replace />} />
-          <Route path="/products/all" element={<ProductList initialTab="all" />} />
-          <Route path="/products/me" element={<ProductList initialTab="my" />} />
-          <Route path="/products/new" element={<ProductNew />} />
+          <Route path="/products" element={<ProductList />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/map" element={<NeighborhoodMap/>}/>
           <Route path="/chat" element={<ChatList />} />
           <Route path="/chat/:chatId" element={<ChatRoom />} />
-          <Route path="/user/:userId" element={<UserProfile />} />
+          <Route path="/user/me" element={<UserProfile />} />
           <Route path="/my" element={<Navigate to="/my/profile" replace />} />
           <Route path="/my/profile" element={<MyCarrot initialTab="profile" />} />
           <Route path="/my/coin" element={<MyCarrot initialTab="coin" />} />

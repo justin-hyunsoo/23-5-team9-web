@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useCreateProduct } from "@/features/product/hooks/useProducts";
 import { PageContainer } from "@/shared/layouts/PageContainer";
-import { Button, DetailHeader, DetailSection, Input, LoginRequired, OnboardingRequired } from '@/shared/ui';
+import { Button, DetailHeader, DetailSection, LoginRequired, OnboardingRequired } from '@/shared/ui';
 
 function ProductNew() {
   const navigate = useNavigate();
@@ -36,8 +36,7 @@ function ProductNew() {
     );
   }
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleSubmit = async () => {
     const { title, content, price } = formState;
 
     if (!title.trim() || !content.trim() || !price) {
@@ -69,58 +68,53 @@ function ProductNew() {
     <PageContainer>
       <DetailHeader />
 
-      <DetailSection className="mb-4">
-        <h2 className="text-2xl font-bold text-text-heading">새 상품 등록</h2>
-      </DetailSection>
-
+      {/* 상품 상세 정보 - ProductDetail 편집 모드와 동일한 디자인 */}
       <DetailSection>
-        <form onSubmit={handleSubmit}>
-          {/* 제목 */}
-          <div className="mb-6">
-            <label className="block text-sm text-text-secondary mb-2">제목</label>
-            <Input
-              type="text"
-              value={formState.title}
-              onChange={(e) => handleChange('title', e.target.value)}
-              placeholder="상품 제목을 입력하세요"
-            />
-          </div>
+        {/* 제목 */}
+        <input
+          type="text"
+          value={formState.title}
+          onChange={(e) => handleChange('title', e.target.value)}
+          placeholder="상품 제목을 입력하세요"
+          className="w-full text-2xl font-bold text-text-heading bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1 mb-2"
+        />
 
-          {/* 가격 */}
-          <div className="mb-6">
-            <label className="block text-sm text-text-secondary mb-2">가격 (원)</label>
-            <Input
-              type="number"
-              value={formState.price}
-              onChange={(e) => handleChange('price', e.target.value)}
-              placeholder="가격을 입력하세요"
-              min="0"
-            />
-          </div>
+        {/* 가격 */}
+        <div className="flex items-baseline gap-1 mb-6">
+          <input
+            type="number"
+            value={formState.price}
+            onChange={(e) => handleChange('price', e.target.value)}
+            placeholder="가격"
+            min="0"
+            className="text-3xl font-bold text-primary bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1 w-40"
+          />
+          <span className="text-3xl font-bold text-primary">원</span>
+        </div>
 
-          {/* 내용 (상단 구분선) */}
-          <div className="mt-6 border-t border-border-base pt-6">
-            <label className="block text-sm text-text-secondary mb-2">상품 설명</label>
-            <textarea
-              value={formState.content}
-              onChange={(e) => handleChange('content', e.target.value)}
-              rows={6}
-              className="w-full rounded-xl bg-bg-page border border-border-medium p-4 text-base outline-none transition-all placeholder:text-text-placeholder focus:border-primary focus:ring-1 focus:ring-primary/20 resize-none"
-              placeholder="상품 설명을 입력하세요"
-            />
+        {/* 본문 (상단 구분선) */}
+        <div className="mt-6 border-t border-border-base pt-6">
+          <textarea
+            value={formState.content}
+            onChange={(e) => handleChange('content', e.target.value)}
+            rows={6}
+            className="w-full bg-transparent text-text-body leading-relaxed outline-none border-b border-dashed border-border-medium focus:border-primary resize-none"
+            placeholder="상품 설명을 입력하세요"
+          />
+        </div>
+
+        {/* 하단 버튼 - 좋아요 위치에 취소/등록 버튼 */}
+        <div className="flex items-center justify-end pt-6 mt-6 border-t border-border-base">
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => navigate(-1)}>
+              취소
+            </Button>
+            <Button size="sm" onClick={handleSubmit} disabled={isPending}>
+              {isPending ? '등록 중...' : '등록'}
+            </Button>
           </div>
-        </form>
+        </div>
       </DetailSection>
-
-      {/* 하단 버튼 */}
-      <div className="mt-6 flex gap-3">
-        <Button size="lg" fullWidth variant="secondary" onClick={() => navigate(-1)}>
-          취소
-        </Button>
-        <Button size="lg" fullWidth onClick={handleSubmit} disabled={isPending}>
-          {isPending ? '등록 중...' : '상품 등록'}
-        </Button>
-      </div>
     </PageContainer>
   );
 }

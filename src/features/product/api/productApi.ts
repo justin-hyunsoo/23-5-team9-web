@@ -38,6 +38,12 @@ export async function fetchUserProducts(user_id: string): Promise<Product[]> {
   return response.data;
 }
 
+// 상품 조회
+export async function fetchProduct(product_id: string): Promise<Product>{
+  const response = await client.get<Product>(`/api/product/${product_id}`);
+  return response.data;
+}
+
 
 // 상품 등록
 export async function createProduct(data: CreateProductRequest): Promise<Product> {
@@ -53,6 +59,6 @@ export async function updateProduct(product_id: string, data: UpdateProductReque
 
 // 상품 삭제
 export async function deleteProduct(product_id: string): Promise<Product> {
-  const response = await client.delete<Product>(`/api/product/${product_id}`, { });
+  const response = await client.delete<Product>(`/api/product/${product_id}`);
   return response.data;
 }

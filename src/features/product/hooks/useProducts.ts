@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import {
+  fetchProduct, 
   fetchProducts,
   fetchUserProducts,
   createProduct,
@@ -9,6 +10,18 @@ import {
   Product,
   UpdateProductRequest
 } from '@/features/product/api/productApi';
+
+
+export const productKeys = {
+  all: ['products'] as const,
+
+  lists: () => [...productKeys.all, 'list'] as const,
+  listAll: () => [...productKeys.lists(), 'all'] as const,
+  listBySeller: (userId: string) => [...productKeys.lists(), 'seller', userId] as const,
+
+  details: () => [...productKeys.all, 'detail'] as const,
+  detail: (productId: string) => [...productKeys.details(), productId] as const,
+};
 
 
 export function isProductMatched(
@@ -35,7 +48,7 @@ export function isProductMatched(
 
 export function useProducts(selectedCategory?: string, searchQuery?: string) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['products'],
+    queryKey: productKeys.listAll(), // ['products', 'list', 'all']
     queryFn: fetchProducts,
   });
 
@@ -54,8 +67,9 @@ export function useProducts(selectedCategory?: string, searchQuery?: string) {
 
 export function useUserProducts(user_id: string, selectedCategory?: string, searchQuery?: string) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['products', user_id],
+    queryKey: productKeys.listBySeller(user_id), // ['products', 'list', 'seller', user_id]
     queryFn: () => fetchUserProducts(user_id),
+    enabled: !!user_id,
   });
 
   const filteredProducts = useMemo(() => {
@@ -71,6 +85,20 @@ export function useUserProducts(user_id: string, selectedCategory?: string, sear
   };
 }
 
+// 상품 확인
+export function useProduct(productId : string) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: productKeys.detail(productId), // ['products', 'detail', productId]
+    queryFn: () => fetchProduct(productId),
+  });
+
+  return {
+    product: data,
+    loading: isLoading,
+    error: error ? (error as Error).message : null
+  };
+}
+
 // 상품 등록
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -78,8 +106,7 @@ export function useCreateProduct() {
   return useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['products', 'me'] });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
     },
   });
 }
@@ -89,11 +116,11 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // 두 개의 인자를 하나의 객체({ id, data })로 받아서 updateProduct에 전달합니다.
     mutationFn: ({ id, data }: { id: string; data: UpdateProductRequest }) => updateProduct(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['products', 'me'] });
+    onSuccess: (updatedProduct) => {
+      // 1. 목록 갱신
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.detail(updatedProduct.id) });
     },
   });
 }
@@ -103,10 +130,9 @@ export function useDeleteProduct() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id : string) => deleteProduct(id),
+    mutationFn: deleteProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['products', 'me'] });
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
     },
   });
 }

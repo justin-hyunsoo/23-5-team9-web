@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useProducts } from "@/features/product/hooks/useProducts";
+import { useProduct, useUserProducts } from "@/features/product/hooks/useProducts";
 import { useUser, useUserProfile } from "@/features/user/hooks/useUser";
 import { createOrGetRoom } from "@/features/chat/api/chatApi";
 import { PageContainer } from "@/shared/layouts/PageContainer";
@@ -10,10 +10,11 @@ import ProductCard from "@/features/product/components/ProductCard";
 function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, loading, error } = useProducts();
   const { user, isLoggedIn } = useUser();
-  const product = products.find(p => p.id === id);
+  
+  const { product, loading : productLoading, error : productError } = useProduct(id!);
   const { profile: sellerProfile } = useUserProfile(product?.owner_id);
+  const { products, loading, error } = useUserProducts(product?.owner_id!); 
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -25,9 +26,9 @@ function ProductDetail() {
     }
   }, [product]);
 
-  if (loading) return <Loading />;
-  if (error) return <ErrorMessage message={error} />;
-  if (!product) return <EmptyState message="상품 정보가 없습니다." />;
+  if (loading || productLoading) return <Loading />;
+  if (error || productError) return <ErrorMessage message="error" />;
+  if (!product || !products) return <EmptyState message="상품 정보가 없습니다." />;
 
   const handleLikeClick = () => {
     setIsLiked(!isLiked);

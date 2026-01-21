@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from "react-router-dom"; // useNavigate 추가
 import ProductCard from "@/features/product/components/ProductCard";
-import { useProducts } from "@/features/product/hooks/useProducts"; // useUserProducts 등 제거
+import { useProducts } from "@/features/product/hooks/useProducts";
 import { PRODUCT_CATEGORIES } from "@/shared/constants/data";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
-import { Button } from '@/shared/ui'; // 불필요한 import 제거
 
 // ----------------------------------------------------------------------
 // 1. Sub-components (Logic & UI Separation)
@@ -75,9 +73,9 @@ const CategoryDropdown = ({
 };
 
 /**
- * 필터 바 (검색, 카테고리, 내 프로필 이동 버튼)
+ * 검색 바 컴포넌트 (타이틀 옆에 배치)
  */
-const ProductFilterBar = ({
+const SearchBar = ({
   filterCategory,
   setFilterCategory,
   searchQuery,
@@ -88,40 +86,17 @@ const ProductFilterBar = ({
   searchQuery: string;
   setSearchQuery: (val: string) => void;
 }) => {
-  const navigate = useNavigate();
-
   return (
-    <div className="flex flex-col bg-bg-page">
-      {/* 탭바 제거됨 */}
-
-      <div className="flex flex-col md:flex-row justify-center items-center mb-6 gap-3 px-4 pt-4">
-        <div className="relative w-full md:w-auto flex-1 max-w-2xl">
-          <div className="flex items-center bg-bg-page border border-border-medium rounded-xl overflow-hidden transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 w-full">
-            
-            <CategoryDropdown currentValue={filterCategory} onSelect={setFilterCategory} />
-
-            <div className="w-px h-4 bg-gray-300" />
-
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="검색어를 입력해주세요"
-              className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent min-w-[180px] text-text-primary placeholder:text-text-placeholder"
-            />
-          </div>
-        </div>
-
-        {/* 내 프로필 / 상품 관리 버튼 추가 */}
-        <Button 
-          onClick={() => navigate('/user/me')} 
-          variant="outline"
-          size="sm"
-          className="rounded-xl whitespace-nowrap w-full md:w-auto h-[42px]"
-        >
-          내 프로필 / 상품 관리
-        </Button>
-      </div>
+    <div className="flex items-center bg-bg-page border border-border-medium rounded-xl overflow-hidden transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 w-[300px] sm:w-[400px]">
+      <CategoryDropdown currentValue={filterCategory} onSelect={setFilterCategory} />
+      <div className="w-px h-4 bg-gray-300" />
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="검색어를 입력해주세요"
+        className="flex-1 px-3 py-2.5 text-sm outline-none bg-transparent min-w-[120px] text-text-primary placeholder:text-text-placeholder"
+      />
     </div>
   );
 };
@@ -163,19 +138,19 @@ function ProductList() {
 
   return (
     <PageContainer title="중고거래">
+      <div className="mb-6 flex justify-center">
+        <SearchBar
+          filterCategory={filterCategory}
+          setFilterCategory={setFilterCategory}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+      </div>
       <DataListLayout
         isLoading={loading}
         error={error}
         isEmpty={products.length === 0}
         emptyMessage={searchQuery ? "검색 결과가 없습니다." : "등록된 상품이 없습니다."}
-        filters={
-          <ProductFilterBar
-            filterCategory={filterCategory}
-            setFilterCategory={setFilterCategory}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
-        }
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map(product => (

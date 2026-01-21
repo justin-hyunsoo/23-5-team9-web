@@ -11,7 +11,8 @@ import { useUser } from '@/features/user/hooks/useUser';
 
 type TabType = 'profile' | 'coin' | 'password';
 
-const MENU_ITEMS: { id: TabType; label: string; to: string }[] = [
+const MENU_ITEMS: { id: TabType | 'products'; label: string; to: string }[] = [
+  { id: 'products', label: '내 상품 관리', to: '/my/products' },
   { id: 'profile', label: '프로필 수정', to: '/my/profile' },
   { id: 'coin', label: '코인 관리', to: '/my/coin' },
   { id: 'password', label: '비밀번호 변경', to: '/my/password' },

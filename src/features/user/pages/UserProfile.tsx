@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@/features/user/hooks/useUser";
 import { useUserProducts, useCreateProduct } from "@/features/product/hooks/useProducts";
 import { PageContainer } from "@/shared/layouts/PageContainer";
-import { Loading, EmptyState, Button, DetailHeader, DetailSection, Avatar } from '@/shared/ui';
+import { Loading, EmptyState, Button, DetailHeader, DetailSection } from '@/shared/ui';
 import ProductCard from "@/features/product/components/ProductCard";
 import { LoginRequired, OnboardingRequired } from '@/shared/ui';
 
@@ -32,10 +32,6 @@ function UserProfile() {
   const isPending = createProduct.isPending;
 
   // Handlers
-  const handleProfileEditClick = () => {
-    navigate('/my/profile');
-  };
-
   const handleChange = (field: string, value: string) => {
     setFormState(prev => ({ ...prev, [field]: value }));
   };
@@ -96,30 +92,14 @@ function UserProfile() {
     <PageContainer>
       <DetailHeader />
 
-      {/* 프로필 정보 - 가운데 정렬 */}
-      <DetailSection>
-        <div className="flex flex-col items-center py-6">
-          <Avatar
-            src={user.profile_image || undefined}
-            alt={user.nickname || '사용자'}
-            size="lg"
-          />
-          <div className="mt-4 text-center">
-            <div className="text-xl font-semibold text-text-heading">{user.nickname || '알 수 없음'}</div>
-            <div className="text-sm text-text-secondary">내 프로필</div>
-          </div>
-
-          {/* 버튼 */}
-          <div className="flex gap-3 mt-6">
-            <Button size="sm" variant="secondary" onClick={handleProfileEditClick}>
-              프로필 수정
-            </Button>
-            <Button size="sm" onClick={() => setShowForm(true)}>
-              + 상품 등록
-            </Button>
-          </div>
+      {/* 상품 등록 버튼 */}
+      {!showForm && (
+        <div className="flex justify-end mb-4">
+          <Button size="sm" onClick={() => setShowForm(true)}>
+            + 상품 등록
+          </Button>
         </div>
-      </DetailSection>
+      )}
 
       {/* 상품 등록 폼 - 버튼 클릭 시에만 표시 */}
       {showForm && (

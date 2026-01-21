@@ -28,10 +28,11 @@ export function useAuth() {
     queryClient.invalidateQueries({ queryKey: userKeys.me() });
   };
 
-  const logout = () => {
+ const logout = () => {
     storeLogout();
     queryClient.setQueryData(userKeys.me(), null);
     queryClient.removeQueries({ queryKey: userKeys.me() });
+    queryClient.removeQueries({ queryKey: userKeys.profile('me') });
   };
 
   return { login, logout };

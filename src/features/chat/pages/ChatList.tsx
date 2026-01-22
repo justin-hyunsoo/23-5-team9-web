@@ -9,7 +9,7 @@ function ChatList() {
 
   const canFetch = isLoggedIn && !needsOnboarding;
   const { rooms, isLoading: loading, error } = useChatRooms({
-    refetchInterval: canFetch ? 3000 : false,
+    refetchInterval: canFetch ? 30000 : false,
     enabled: canFetch,
   });
 

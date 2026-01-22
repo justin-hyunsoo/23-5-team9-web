@@ -21,7 +21,7 @@ function ChatRoom() {
 
   // Hooks
   const { room: roomInfo } = useChatRoom(chatId);
-  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: 3000 });
+  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: 30000 });
   const sendMessageMutation = useSendMessage(chatId || '');
   const markAsReadMutation = useMarkAsRead(chatId || '');
 

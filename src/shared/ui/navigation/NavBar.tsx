@@ -19,7 +19,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   // 로그인 상태일 때 읽지 않은 메시지 수 폴링 (React Query handles caching & deduplication)
   const { totalUnreadCount } = useChatRooms({
-    refetchInterval: isLoggedIn ? 3000 : false,
+    refetchInterval: isLoggedIn ? 30000 : false,
     enabled: isLoggedIn,
   });
 

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Badge } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
-import { ChatRoom } from '@/features/chat/api/chatApi'; 
+import { ChatRoom } from '@/features/chat/hooks/useChat'; 
 
 function formatTime(dateString: string | null): string {
   if (!dateString) return '';

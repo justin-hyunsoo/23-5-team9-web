@@ -1,0 +1,116 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  fetchChatRooms,
+  fetchMessages,
+  createOrGetRoom,
+  sendMessage,
+  markMessagesAsRead,
+  Message,
+} from '@/features/chat/api/chatApi';
+
+// Re-export types for convenience
+export type { ChatRoom, Message } from '@/features/chat/api/chatApi';
+
+export const chatKeys = {
+  all: ['chat'] as const,
+  rooms: () => [...chatKeys.all, 'rooms'] as const,
+  messages: (roomId: string) => [...chatKeys.all, 'messages', roomId] as const,
+};
+
+interface UseChatRoomsOptions {
+  refetchInterval?: number | false;
+  enabled?: boolean;
+}
+
+export function useChatRooms(options: UseChatRoomsOptions = {}) {
+  const { refetchInterval = false, enabled = true } = options;
+
+  const { data: rooms, isLoading, error, refetch } = useQuery({
+    queryKey: chatKeys.rooms(),
+    queryFn: fetchChatRooms,
+    staleTime: 1000 * 60, // 1분
+    refetchInterval,
+    enabled,
+  });
+
+  // Compute total unread count
+  const totalUnreadCount = rooms?.reduce((sum, room) => sum + room.unread_count, 0) ?? 0;
+
+  return {
+    rooms: rooms ?? [],
+    isLoading,
+    error,
+    refetch,
+    totalUnreadCount,
+  };
+}
+
+// Get a single room from the cached list
+export function useChatRoom(roomId: string | undefined) {
+  const { rooms, isLoading } = useChatRooms();
+  const room = rooms.find(r => r.room_id === roomId) ?? null;
+  return { room, isLoading };
+}
+
+interface UseMessagesOptions {
+  refetchInterval?: number | false;
+}
+
+export function useMessages(roomId: string | undefined, options: UseMessagesOptions = {}) {
+  const { refetchInterval = false } = options;
+
+  const { data: messages, isLoading, error, refetch } = useQuery({
+    queryKey: chatKeys.messages(roomId || ''),
+    queryFn: () => fetchMessages(roomId!),
+    enabled: !!roomId,
+    staleTime: 1000 * 30, // 30초
+    refetchInterval,
+  });
+
+  return {
+    messages: messages ?? [],
+    isLoading,
+    error,
+    refetch,
+  };
+}
+
+export function useCreateRoom() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (opponentId: string) => createOrGetRoom(opponentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: chatKeys.rooms() });
+    },
+  });
+}
+
+export function useSendMessage(roomId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (content: string) => sendMessage(roomId, content),
+    onSuccess: (newMessage) => {
+      // 메시지 목록에 새 메시지 추가 (optimistic update 대신 캐시 직접 업데이트)
+      queryClient.setQueryData<Message[]>(
+        chatKeys.messages(roomId),
+        (old) => (old ? [...old, newMessage] : [newMessage])
+      );
+      // 채팅방 목록도 갱신 (last_message 업데이트를 위해)
+      queryClient.invalidateQueries({ queryKey: chatKeys.rooms() });
+    },
+  });
+}
+
+export function useMarkAsRead(roomId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => markMessagesAsRead(roomId),
+    onSuccess: () => {
+      // 채팅방 목록의 unread_count 갱신
+      queryClient.invalidateQueries({ queryKey: chatKeys.rooms() });
+    },
+  });
+}

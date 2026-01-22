@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/shared/store/themeStore';
-import { useChatStore } from '@/shared/store/chatStore';
+import { useChatRooms } from '@/features/chat/hooks/useChat';
 import { Button } from '../display/Button';
 import { Badge } from '../feedback';
 
@@ -15,21 +15,13 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const { totalUnreadCount, fetchUnreadCount, setTotalUnreadCount } = useChatStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 로그인 상태일 때 읽지 않은 메시지 수 폴링
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      setTotalUnreadCount(0);
-      return;
-    }
-
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 3000);
-    return () => clearInterval(interval);
-  }, [isLoggedIn, fetchUnreadCount, setTotalUnreadCount]);
+  // 로그인 상태일 때 읽지 않은 메시지 수 폴링 (React Query handles caching & deduplication)
+  const { totalUnreadCount } = useChatRooms({
+    refetchInterval: isLoggedIn ? 3000 : false,
+    enabled: isLoggedIn,
+  });
 
   const handleNav = (path: string) => {
     navigate(path);

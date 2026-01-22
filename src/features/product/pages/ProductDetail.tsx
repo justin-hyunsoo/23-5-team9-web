@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProduct, useUserProducts, useDeleteProduct, useUpdateProduct } from "@/features/product/hooks/useProducts";
 import { useUser, useUserProfile } from "@/features/user/hooks/useUser";
-import { createOrGetRoom } from "@/features/chat/api/chatApi";
+import { useCreateRoom } from "@/features/chat/hooks/useChat";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { Loading, ErrorMessage, EmptyState, Button, DetailHeader, DetailSection, Badge, Avatar } from '@/shared/ui';
 import ProductCard from "@/features/product/components/ProductCard";
@@ -75,10 +75,10 @@ function ProductDetail() {
   const { products } = useUserProducts(product?.owner_id!);
   const deleteProduct = useDeleteProduct();
   const updateProduct = useUpdateProduct();
+  const createRoom = useCreateRoom();
 
   // Local State
   const [isLiked, setIsLiked] = useState(false);
-  const [chatLoading, setChatLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     title: '',
@@ -107,21 +107,15 @@ function ProductDetail() {
     setIsLiked(prev => !prev);
   };
 
-  const handleChatClick = async () => {
+  const handleChatClick = () => {
     if (!product) return;
     if (!isLoggedIn) return navigate('/auth/login');
     if (String(user?.id) === product.owner_id) return alert('본인의 상품입니다.');
 
-    setChatLoading(true);
-    try {
-      const roomId = await createOrGetRoom(product.owner_id);
-      navigate(`/chat/${roomId}`);
-    } catch (err) {
-      console.error(err);
-      alert('채팅방을 열 수 없습니다.');
-    } finally {
-      setChatLoading(false);
-    }
+    createRoom.mutate(product.owner_id, {
+      onSuccess: (roomId) => navigate(`/chat/${roomId}`),
+      onError: () => alert('채팅방을 열 수 없습니다.'),
+    });
   };
 
   const handleEditClick = () => {
@@ -195,7 +189,7 @@ function ProductDetail() {
         <SellerSection
           profile={sellerProfile}
           onChatClick={handleChatClick}
-          chatLoading={chatLoading}
+          chatLoading={createRoom.isPending}
           showChatButton={!isOwner}
         />
       </DetailSection>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchMessages, sendMessage, markMessagesAsRead, fetchChatRooms, Message, ChatRoom as ChatRoomType } from '@/features/chat/api/chatApi';
+import { useMessages, useSendMessage, useMarkAsRead, useChatRoom } from '@/features/chat/hooks/useChat';
 import { useUser, useUserProfile } from '@/features/user/hooks/useUser';
 import { Loading, ErrorMessage, Avatar, DetailHeader } from '@/shared/ui';
 import TransferMenu from '@/features/pay/components/TransferMenu';
@@ -13,93 +13,55 @@ function formatMessageTime(dateString: string): string {
 function ChatRoom() {
   const { chatId } = useParams();
   const navigate = useNavigate();
-  const { user, isLoggedIn, isLoading: userLoading, refetch: refetchUser } = useUser();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { user, isLoggedIn, isLoading: userLoading } = useUser();
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
-  const [roomInfo, setRoomInfo] = useState<ChatRoomType | null>(null);
   const mobileMessagesEndRef = useRef<HTMLDivElement>(null);
   const desktopMessagesEndRef = useRef<HTMLDivElement>(null);
+  const [showTransferMenu, setShowTransferMenu] = useState(false);
+
+  // Hooks
+  const { room: roomInfo } = useChatRoom(chatId);
+  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: 3000 });
+  const sendMessageMutation = useSendMessage(chatId || '');
+  const markAsReadMutation = useMarkAsRead(chatId || '');
 
   const { profile: opponentProfile } = useUserProfile(roomInfo?.opponent_id);
-  const [showTransferMenu, setShowTransferMenu] = useState(false);
 
   const scrollToBottom = () => {
     mobileMessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     desktopMessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Redirect if not logged in
   useEffect(() => {
-    if (userLoading) return;
-
-    if (!isLoggedIn) {
+    if (!userLoading && !isLoggedIn) {
       navigate('/auth/login');
-      return;
     }
+  }, [userLoading, isLoggedIn, navigate]);
 
-    if (!chatId) return;
-
-    const loadData = async () => {
-      try {
-        const [messagesData, roomsData] = await Promise.all([
-          fetchMessages(chatId),
-          fetchChatRooms(),
-        ]);
-        setMessages(messagesData);
-        const currentRoom = roomsData.find(r => r.room_id === chatId);
-        if (currentRoom) {
-          setRoomInfo(currentRoom);
-        }
-        await markMessagesAsRead(chatId);
-      } catch (err) {
-        console.error('메시지 조회 실패:', err);
-        setError('메시지를 불러올 수 없습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-
-    const interval = setInterval(async () => {
-      try {
-        const data = await fetchMessages(chatId);
-        setMessages(data);
-        await markMessagesAsRead(chatId);
-        refetchUser();
-      } catch (err) {
-        console.error('메시지 갱신 실패:', err);
-      }
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [chatId, isLoggedIn, userLoading, navigate]);
-
+  // Mark messages as read when entering and periodically
   useEffect(() => {
-    // DOM 렌더링 후 스크롤이 적용되도록 약간의 딜레이 추가
+    if (chatId && isLoggedIn && messages.length > 0) {
+      markAsReadMutation.mutate();
+    }
+  }, [chatId, isLoggedIn, messages.length]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
     const timer = setTimeout(() => {
       scrollToBottom();
     }, 100);
     return () => clearTimeout(timer);
   }, [messages]);
 
-  const handleSend = async (e: React.FormEvent) => {
+  const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !chatId || sending) return;
+    if (!newMessage.trim() || !chatId || sendMessageMutation.isPending) return;
 
-    setSending(true);
-    try {
-      const sentMessage = await sendMessage(chatId, newMessage.trim());
-      setMessages((prev) => [...prev, sentMessage]);
-      setNewMessage('');
-    } catch (err) {
-      console.error('메시지 전송 실패:', err);
-      alert('메시지를 전송할 수 없습니다.');
-    } finally {
-      setSending(false);
-    }
+    sendMessageMutation.mutate(newMessage.trim(), {
+      onSuccess: () => setNewMessage(''),
+      onError: () => alert('메시지를 전송할 수 없습니다.'),
+    });
   };
 
   // 연속 메시지 그룹핑: 같은 사람의 마지막 메시지에만 시간 표시
@@ -111,7 +73,7 @@ function ChatRoom() {
   };
 
   if (userLoading || loading) return <Loading />;
-  if (error) return <ErrorMessage message={error} />;
+  if (error) return <ErrorMessage message="메시지를 불러올 수 없습니다." />;
 
   return (
     <>
@@ -203,7 +165,7 @@ function ChatRoom() {
           />
           <button
             type="submit"
-            disabled={!newMessage.trim() || sending}
+            disabled={!newMessage.trim() || sendMessageMutation.isPending}
             className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-opacity"
           >
             전송
@@ -293,7 +255,7 @@ function ChatRoom() {
             />
             <button
               type="submit"
-              disabled={!newMessage.trim() || sending}
+              disabled={!newMessage.trim() || sendMessageMutation.isPending}
               className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-opacity"
             >
               전송

@@ -8,7 +8,11 @@ export const userKeys = {
   profile: (userId: string) => [...userKeys.all, 'profile', userId] as const,
 };
 
-export function useUser() {
+interface UseUserOptions {
+  refetchInterval?: number | false;
+}
+
+export function useUser(options: UseUserOptions = {}) {
   const token = localStorage.getItem('token');
   const queryClient = useQueryClient();
 
@@ -30,6 +34,7 @@ export function useUser() {
     enabled: !!token,
     staleTime: 1000 * 60 * 5, // 5분
     retry: false,
+    refetchInterval: options.refetchInterval,
   });
 
   const isLoggedIn = !!user;

@@ -4,6 +4,7 @@ import { useTheme } from '@/shared/store/themeStore';
 import { useChatRooms } from '@/features/chat/hooks/useChat';
 import { Button } from '../display/Button';
 import { Badge } from '../feedback';
+import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 
 const MENUS = [
   { id: 'products', label: '중고거래', path: '/products' },
@@ -19,7 +20,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   // 로그인 상태일 때 읽지 않은 메시지 수 폴링 (React Query handles caching & deduplication)
   const { totalUnreadCount } = useChatRooms({
-    refetchInterval: isLoggedIn ? 30000 : false,
+    refetchInterval: getPollingInterval(POLLING_CONFIG.UNREAD_COUNT, isLoggedIn),
     enabled: isLoggedIn,
   });
 

@@ -3,13 +3,14 @@ import { PageContainer } from '@/shared/layouts/PageContainer';
 import { Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequired } from '@/shared/ui';
 import { useChatRooms, ChatRoom } from '@/features/chat/hooks/useChat';
 import { useUser } from '@/features/user/hooks/useUser';
+import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 
 function ChatList() {
   const { isLoggedIn, isLoading: userLoading, needsOnboarding } = useUser();
 
   const canFetch = isLoggedIn && !needsOnboarding;
   const { rooms, isLoading: loading, error } = useChatRooms({
-    refetchInterval: canFetch ? 30000 : false,
+    refetchInterval: getPollingInterval(POLLING_CONFIG.CHAT_ROOMS, canFetch),
     enabled: canFetch,
   });
 

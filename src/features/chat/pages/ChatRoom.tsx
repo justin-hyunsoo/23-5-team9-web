@@ -4,6 +4,7 @@ import { useMessages, useSendMessage, useMarkAsRead, useChatRoom } from '@/featu
 import { useUser, useUserProfile } from '@/features/user/hooks/useUser';
 import { Loading, ErrorMessage, Avatar, DetailHeader } from '@/shared/ui';
 import TransferMenu from '@/features/pay/components/TransferMenu';
+import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 
 function formatMessageTime(dateString: string): string {
   const date = new Date(dateString);
@@ -13,15 +14,17 @@ function formatMessageTime(dateString: string): string {
 function ChatRoom() {
   const { chatId } = useParams();
   const navigate = useNavigate();
-  const { user, isLoggedIn, isLoading: userLoading } = useUser();
+  const [showTransferMenu, setShowTransferMenu] = useState(false);
+  const { user, isLoggedIn, isLoading: userLoading } = useUser({
+    refetchInterval: getPollingInterval(POLLING_CONFIG.USER_BALANCE, showTransferMenu),
+  });
   const [newMessage, setNewMessage] = useState('');
   const mobileMessagesEndRef = useRef<HTMLDivElement>(null);
   const desktopMessagesEndRef = useRef<HTMLDivElement>(null);
-  const [showTransferMenu, setShowTransferMenu] = useState(false);
 
   // Hooks
   const { room: roomInfo } = useChatRoom(chatId);
-  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: 30000 });
+  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: POLLING_CONFIG.CHAT_MESSAGES });
   const sendMessageMutation = useSendMessage(chatId || '');
   const markAsReadMutation = useMarkAsRead(chatId || '');
 

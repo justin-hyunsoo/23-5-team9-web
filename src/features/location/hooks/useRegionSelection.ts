@@ -55,7 +55,7 @@ export function useRegionSelection() {
 
   return {
     currentRegionId,
-    currentRegionName: regionName,
+    currentRegionName: regionName || DEFAULT_REGION_NAME,
     isModalOpen,
     openModal,
     closeModal,

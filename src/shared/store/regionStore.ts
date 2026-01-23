@@ -16,9 +16,13 @@ const getInitialRegion = (): { id: string; name: string } => {
   }
   const savedId = localStorage.getItem('selectedRegionId');
   const savedName = localStorage.getItem('selectedRegionName');
+  // ID와 Name 둘 다 있어야 저장된 값 사용
   if (savedId && savedName) {
     return { id: savedId, name: savedName };
   }
+  // 하나라도 없으면 기본값으로 초기화
+  localStorage.setItem('selectedRegionId', DEFAULT_REGION_ID);
+  localStorage.setItem('selectedRegionName', DEFAULT_REGION_NAME);
   return { id: DEFAULT_REGION_ID, name: DEFAULT_REGION_NAME };
 };
 

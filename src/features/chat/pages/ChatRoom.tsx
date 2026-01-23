@@ -180,7 +180,7 @@ function ChatRoom() {
       <div className="hidden md:block w-full max-w-[1000px] mx-auto px-4 py-6 min-h-[calc(100vh-60px)]">
         <DetailHeader />
 
-        <div className="bg-bg-page rounded-lg border border-border-medium overflow-hidden flex flex-col" style={{ height: '70vh' }}>
+        <div className="bg-bg-page rounded-lg border border-border-medium overflow-hidden flex flex-col h-[70vh]">
           <div className="flex items-center gap-3 px-4 py-3 border-b border-border-medium">
             <div
               className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1"

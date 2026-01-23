@@ -51,7 +51,7 @@ const TransferMenu = ({
           <button
             key={amount}
             onClick={() => addAmount(amount)}
-            className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+            className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-primary-light transition-colors"
           >
             +{amount.toLocaleString()}
           </button>

@@ -87,7 +87,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
       </nav>
 
       {/* 모바일 메뉴 오버레이 */}
-      <div className={`fixed inset-0 z-2000 bg-black/50 transition-opacity ${isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`} onClick={() => setIsMenuOpen(false)}>
+      <div className={`fixed inset-0 z-2000 bg-bg-overlay transition-opacity ${isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`} onClick={() => setIsMenuOpen(false)}>
         <div
           className={`absolute right-0 h-full w-[70%] max-w-75 bg-bg-page shadow-xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
           onClick={e => e.stopPropagation()}

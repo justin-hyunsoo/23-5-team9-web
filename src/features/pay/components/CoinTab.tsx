@@ -75,8 +75,8 @@ const CoinTab = ({ user, onDeposit, onWithdraw }: CoinTabProps) => {
             variant="outline"
             className={
               mode === 'deposit'
-                ? 'hover:border-primary hover:text-primary hover:bg-orange-50 dark:hover:bg-orange-950/30'
-                : 'hover:border-red-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30'
+                ? 'hover:border-primary hover:text-primary hover:bg-primary-light'
+                : 'hover:border-status-error hover:text-status-error hover:bg-status-error-hover'
             }
           >
             {mode === 'deposit' ? '+' : '-'}{amount.toLocaleString()}

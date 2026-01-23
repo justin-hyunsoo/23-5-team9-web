@@ -91,7 +91,7 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
                 }}
                 variant="ghost"
                 size="sm"
-                className="flex-1 text-red-500 hover:bg-red-50"
+                className="flex-1 text-status-error hover:bg-status-error-hover"
               >
                 삭제
               </Button>

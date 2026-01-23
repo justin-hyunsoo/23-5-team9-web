@@ -8,6 +8,7 @@ export interface Product {
   price: number;
   like_count: number;
   category_id: string;
+  region_id: string;
   is_sold: boolean;
 }
 
@@ -23,6 +24,7 @@ export interface UpdateProductRequest {
   content: string;
   price: number;
   category_id: string;
+  region_id: string;
   is_sold: boolean;
 }
 

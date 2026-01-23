@@ -156,6 +156,7 @@ function ProductDetail() {
           content: editForm.content.trim(),
           price: Number(editForm.price),
           category_id: product.category_id,
+          region_id: product.region_id,
           is_sold: editForm.is_sold,
         },
       });

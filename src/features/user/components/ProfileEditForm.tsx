@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  fetchSidoList, 
-  fetchSigugunList, 
-  fetchDongList, 
+import {
+  fetchSidoList,
+  fetchSigugunList,
+  fetchDongList,
   fetchRegionById,
   Region,
-  DongEntry 
+  DongEntry
 } from '@/features/location/api/region';
 import { useGeoLocation } from '@/features/location/hooks/useGeoLocation';
+import { useUser } from '@/features/user/hooks/useUser';
 import { Button, Input, Select, Avatar } from '@/shared/ui';
 
 interface ProfileEditFormProps {
@@ -42,6 +43,7 @@ export default function ProfileEditForm({
   const [selectedDongId, setSelectedDongId] = useState(initialRegionId); // 최종적으로 전송할 ID
 
   const { detectRegion, detecting } = useGeoLocation();
+  const { user, isLoggedIn } = useUser();
 
   // 1. 초기 데이터 세팅 (프로필 이미지, 닉네임)
   useEffect(() => {
@@ -149,6 +151,14 @@ export default function ProfileEditForm({
   // 내 위치 찾기 핸들러
   const handleDetectLocation = async () => {
     try {
+      // 로그인한 유저이고 저장된 지역이 있으면 그것을 사용
+      if (isLoggedIn && user?.region) {
+        await syncRegionState(user.region.id);
+        alert(`저장된 위치('${user.region.full_name}')로 설정되었습니다.`);
+        return;
+      }
+
+      // 그렇지 않으면 GPS로 위치 찾기
       const detectedRegion = await detectRegion(); // API 호출
       await syncRegionState(detectedRegion.id);    // 드롭다운 상태 동기화
       alert(`현재 위치('${detectedRegion.full_name}')로 설정되었습니다.`);

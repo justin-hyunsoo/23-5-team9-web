@@ -8,6 +8,7 @@ import {
   DongEntry
 } from '@/features/location/api/region';
 import { useGeoLocation } from '@/features/location/hooks/useGeoLocation';
+import { useUser } from '@/features/user/hooks/useUser';
 import { Button, Select } from '@/shared/ui';
 import { Modal } from '@/shared/ui/feedback';
 
@@ -34,6 +35,7 @@ export default function RegionSelectModal({
   const [selectedDongName, setSelectedDongName] = useState('');
 
   const { detectRegion, detecting } = useGeoLocation();
+  const { user, isLoggedIn } = useUser();
 
   // 모달 열릴 때 시/도 목록 불러오기
   useEffect(() => {
@@ -129,6 +131,13 @@ export default function RegionSelectModal({
   // 내 위치 찾기
   const handleDetectLocation = async () => {
     try {
+      // 로그인한 유저이고 저장된 지역이 있으면 그것을 사용
+      if (isLoggedIn && user?.region) {
+        await syncRegionState(user.region.id);
+        return;
+      }
+
+      // 그렇지 않으면 GPS로 위치 찾기
       const detectedRegion = await detectRegion();
       await syncRegionState(detectedRegion.id);
     } catch (error: any) {

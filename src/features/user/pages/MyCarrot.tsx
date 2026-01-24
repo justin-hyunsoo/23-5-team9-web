@@ -11,6 +11,7 @@ import { PageContainer } from '@/shared/layouts/PageContainer';
 import { useOnboarding } from '@/features/user/hooks/useUser';
 import { useUser } from '@/features/user/hooks/useUser';
 import { useRegionStore } from '@/shared/store/regionStore';
+import { POLLING_CONFIG } from '@/shared/config/polling';
 import { fetchRegionById } from '@/features/location/api/region';
 
 type TabType = 'products' | 'profile' | 'coin' | 'password';
@@ -27,7 +28,7 @@ interface MyCarrotProps {
 }
 
 function MyCarrot({ initialTab }: MyCarrotProps) {
-  const { user } = useUser();
+  const { user } = useUser({ refetchInterval: POLLING_CONFIG.USER_BALANCE });
   const { depositCoin, withdrawCoin } = useMyPay();
   const { logout } = useAuth();
   const navigate = useNavigate();

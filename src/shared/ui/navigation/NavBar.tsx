@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/shared/store/themeStore';
+import { useLanguage } from '@/shared/store/languageStore';
 import { useChatRooms } from '@/features/chat/hooks/useChat';
 import { Button } from '../display/Button';
 import { Badge } from '../feedback';
@@ -15,6 +16,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 로그인 상태일 때 읽지 않은 메시지 수 폴링 (React Query handles caching & deduplication)
@@ -69,6 +71,16 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* 언어 토글 */}
+          <Button
+            onClick={toggleLanguage}
+            variant="ghost"
+            className="p-2 text-sm font-medium"
+            aria-label="언어 전환"
+          >
+            {language === 'ko' ? 'EN' : '한글'}
+          </Button>
+
           {/* 다크모드 토글 */}
           <Button
             onClick={toggleTheme}
@@ -95,6 +107,14 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
           <div className="flex items-center justify-between p-4">
             <span className="text-lg font-bold text-primary">당근마켓</span>
             <div className="flex items-center gap-2">
+              <Button
+                onClick={toggleLanguage}
+                variant="ghost"
+                className="p-2 text-sm font-medium"
+                aria-label="언어 전환"
+              >
+                {language === 'ko' ? 'EN' : '한글'}
+              </Button>
               <Button
                 onClick={toggleTheme}
                 variant="ghost"

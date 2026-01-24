@@ -39,7 +39,15 @@ export interface TransferRequest {
   receive_user_id: string;
 }
 
+export interface GetTransactionsParams {
+  limit?: number;
+  offset?: number;
+}
+
 export const payApi = {
+  getTransactions: (params?: GetTransactionsParams) =>
+    client.get<PayTransaction[]>('/api/pay/', { params }),
+
   deposit: (data: DepositRequest) =>
     client.post<PayTransaction>('/api/pay/deposit', data),
 

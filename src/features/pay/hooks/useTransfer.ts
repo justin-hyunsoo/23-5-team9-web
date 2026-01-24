@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { payApi } from '@/features/pay/api/payApi';
 import { useQueryClient } from '@tanstack/react-query';
 import { userKeys } from '@/features/user/hooks/useUser';
+import { transactionKeys } from '@/features/pay/hooks/useTransactions';
 
 interface UseTransferOptions {
   currentCoin: number;
@@ -34,6 +35,7 @@ export const useTransfer = ({ currentCoin }: UseTransferOptions) => {
         receive_user_id: receiveUserId,
       });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      queryClient.invalidateQueries({ queryKey: transactionKeys.all });
       setTransferAmount('');
       setShowTransferMenu(false);
       alert(`${amount.toLocaleString()}원을 송금했습니다.`);

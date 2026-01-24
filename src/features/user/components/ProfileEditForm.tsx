@@ -17,6 +17,7 @@ interface ProfileEditFormProps {
   initialRegionId?: string;
   initialProfileImage?: string;
   submitButtonText?: string;
+  forceGPS?: boolean; // true면 저장된 위치 대신 항상 GPS 사용
   onSubmit: (data: { nickname: string; region_id: string; profile_image: string }) => Promise<void>;
 }
 
@@ -26,6 +27,7 @@ export default function ProfileEditForm({
   initialRegionId = '',
   initialProfileImage = '',
   submitButtonText = '저장하기',
+  forceGPS = false,
   onSubmit
 }: ProfileEditFormProps) {
 
@@ -151,16 +153,16 @@ export default function ProfileEditForm({
   // 내 위치 찾기 핸들러
   const handleDetectLocation = async () => {
     try {
-      // 로그인한 유저이고 저장된 지역이 있으면 그것을 사용
-      if (isLoggedIn && user?.region) {
+      // forceGPS가 false이고, 로그인한 유저이고 저장된 지역이 있으면 그것을 사용
+      if (!forceGPS && isLoggedIn && user?.region) {
         await syncRegionState(user.region.id);
         alert(`저장된 위치('${user.region.full_name}')로 설정되었습니다.`);
         return;
       }
 
-      // 그렇지 않으면 GPS로 위치 찾기
-      const detectedRegion = await detectRegion(); // API 호출
-      await syncRegionState(detectedRegion.id);    // 드롭다운 상태 동기화
+      // GPS로 위치 찾기
+      const detectedRegion = await detectRegion();
+      await syncRegionState(detectedRegion.id);
       alert(`현재 위치('${detectedRegion.full_name}')로 설정되었습니다.`);
     } catch (error: any) {
       console.error("Error detecting location:", error);

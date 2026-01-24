@@ -37,6 +37,7 @@ export default function Onboarding() {
       <ProfileEditForm
             initialProfileImage=""
             submitButtonText="시작하기"
+            forceGPS={true}
             onSubmit={async (data) => {
                 try {
                     await handleOnboardingSubmit(data);

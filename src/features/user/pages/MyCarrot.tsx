@@ -111,6 +111,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
             initialNickname={user.nickname || ''}
             initialRegionId={user.region?.id || ''}
             initialProfileImage={user.profile_image || ''}
+            forceGPS={true}
             onSubmit={updateProfile}
           />
         )}

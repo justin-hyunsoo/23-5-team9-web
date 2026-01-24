@@ -1,6 +1,7 @@
 import { payApi } from '@/features/pay/api/payApi';
 import { useQueryClient } from '@tanstack/react-query';
 import { userKeys } from '@/features/user/hooks/useUser';
+import { transactionKeys } from '@/features/pay/hooks/useTransactions';
 
 export const usePay = () => {
   const queryClient = useQueryClient();
@@ -13,6 +14,7 @@ export const usePay = () => {
         request_key: requestKey,
       });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      queryClient.invalidateQueries({ queryKey: transactionKeys.all });
       return true;
     } catch (err) {
       console.error(err);
@@ -33,6 +35,7 @@ export const usePay = () => {
         request_key: requestKey,
       });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      queryClient.invalidateQueries({ queryKey: transactionKeys.all });
       return true;
     } catch (err) {
       console.error(err);

@@ -3,6 +3,7 @@ import { User } from '@/features/user/api/user';
 import { Button, StatCard } from '@/shared/ui';
 
 import { useUser } from '@/features/user/hooks/useUser';
+import { useTransactions } from '@/features/pay/hooks/useTransactions';
 import { PageContainer } from '@/shared/layouts/PageContainer';
 import { OnboardingRequired } from '@/shared/ui';
 
@@ -16,6 +17,7 @@ type Mode = 'deposit' | 'withdraw';
 
 const CoinTab = ({ user, onDeposit, onWithdraw }: CoinTabProps) => {
   const [mode, setMode] = useState<Mode>('deposit');
+  const { transactions, isLoading: transactionsLoading, loadMore, hasMore } = useTransactions();
 
   const handleAction = (amount: number) => {
     if (mode === 'deposit') {
@@ -82,6 +84,64 @@ const CoinTab = ({ user, onDeposit, onWithdraw }: CoinTabProps) => {
             {mode === 'deposit' ? '+' : '-'}{amount.toLocaleString()}
           </Button>
         ))}
+      </div>
+
+      <div className="mt-8 border-t border-border pt-6">
+        <h4 className="mb-4 text-text-secondary font-bold text-left">거래 내역</h4>
+        {transactionsLoading && transactions.length === 0 ? (
+          <p className="text-text-tertiary text-sm">로딩 중...</p>
+        ) : transactions.length === 0 ? (
+          <p className="text-text-tertiary text-sm">거래 내역이 없습니다.</p>
+        ) : (
+          <div className="space-y-2">
+            {transactions.map((tx) => (
+              <div
+                key={tx.id}
+                className={`flex items-center gap-3 p-3 rounded-lg border-l-4 ${
+                  tx.type === 'DEPOSIT'
+                    ? 'bg-primary/5 border-l-primary'
+                    : 'bg-status-error/5 border-l-status-error'
+                }`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                    tx.type === 'DEPOSIT' ? 'bg-primary' : 'bg-status-error'
+                  }`}
+                >
+                  {tx.type === 'DEPOSIT' ? '↓' : '↑'}
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-text-primary">
+                    {tx.type === 'DEPOSIT' ? '충전' : '출금'}
+                  </p>
+                  <p className="text-xs text-text-tertiary">
+                    {new Date(tx.details.time).toLocaleString('ko-KR')}
+                  </p>
+                </div>
+                <span
+                  className={`font-bold text-lg ${
+                    tx.type === 'DEPOSIT' ? 'text-primary' : 'text-status-error'
+                  }`}
+                >
+                  {tx.type === 'DEPOSIT' ? '+' : '-'}
+                  {tx.details.amount.toLocaleString()}C
+                </span>
+              </div>
+            ))}
+            {hasMore && (
+              <Button
+                onClick={loadMore}
+                variant="outline"
+                size="sm"
+                fullWidth
+                disabled={transactionsLoading}
+                className="mt-3"
+              >
+                {transactionsLoading ? '로딩 중...' : '더보기'}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -10,6 +10,8 @@ import { PageContainer } from '@/shared/layouts/PageContainer';
 
 import { useOnboarding } from '@/features/user/hooks/useUser';
 import { useUser } from '@/features/user/hooks/useUser';
+import { useRegionStore } from '@/shared/store/regionStore';
+import { fetchRegionById } from '@/features/location/api/region';
 
 type TabType = 'products' | 'profile' | 'coin' | 'password';
 
@@ -30,6 +32,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const onboardingMutation = useOnboarding();
+  const { setRegion } = useRegionStore();
 
   if (!user) return <Loading />;
 
@@ -37,6 +40,13 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
     if (!user) return;
     try {
       await onboardingMutation.mutateAsync(data);
+
+      // 지역이 변경된 경우 regionStore도 업데이트
+      if (data.region_id) {
+        const region = await fetchRegionById(data.region_id);
+        setRegion(region.id, `${region.sigugun} ${region.dong}`);
+      }
+
       alert('정보가 수정되었습니다.');
     } catch (err) {
       console.error(err);

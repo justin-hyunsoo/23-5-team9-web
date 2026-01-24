@@ -14,12 +14,13 @@ import { useRegionStore } from '@/shared/store/regionStore';
 import { POLLING_CONFIG } from '@/shared/config/polling';
 import { fetchRegionById } from '@/features/location/api/region';
 
-type TabType = 'products' | 'profile' | 'coin' | 'password';
+type TabType = 'products' | 'profile' | 'coin' | 'transactions' | 'password';
 
 const MENU_ITEMS: { id: TabType; label: string; to: string }[] = [
   { id: 'products', label: '내 상품 관리', to: '/my/products' },
   { id: 'profile', label: '프로필 수정', to: '/my/profile' },
   { id: 'coin', label: '코인 관리', to: '/my/coin' },
+  { id: 'transactions', label: '거래 내역', to: '/my/transactions' },
   { id: 'password', label: '비밀번호 변경', to: '/my/password' },
 ];
 

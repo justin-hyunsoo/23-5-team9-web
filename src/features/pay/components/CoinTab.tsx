@@ -84,18 +84,6 @@ const CoinTab = ({ user, onDeposit, onWithdraw }: CoinTabProps) => {
           </Button>
         ))}
       </div>
-
-      <div className="mt-8 pt-4">
-        <button
-          onClick={() => navigate('/my/transactions')}
-          className="inline-flex items-center justify-center gap-1 text-sm text-text-secondary hover:text-text-heading transition-colors"
-        >
-          <span>거래 내역 보기</span>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 };

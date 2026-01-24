@@ -86,7 +86,7 @@ export const en: TranslationKeys = {
     soldOut: 'Sold',
     enterSearchQuery: 'Enter search query',
     like: 'Like',
-    translate: 'Translate to English',
+    translate: 'Translate',
     showOriginal: 'Show Original',
     translating: 'Translating...',
     translateFailed: 'Translation failed.',

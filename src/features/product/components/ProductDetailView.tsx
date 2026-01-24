@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Badge } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
+import { useLanguage } from '@/shared/store/languageStore';
 import { translateMultiple } from '@/shared/lib/translate';
 import type { Product } from '@/features/product/api/productApi';
 
@@ -24,10 +25,15 @@ export function ProductDetailView({
   onDelete,
 }: ProductDetailViewProps) {
   const t = useTranslation();
+  const { language } = useLanguage();
   const [isTranslated, setIsTranslated] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translatedTitle, setTranslatedTitle] = useState('');
   const [translatedContent, setTranslatedContent] = useState('');
+
+  // 현재 언어에 따라 번역 방향 결정: ko → en, en → ko
+  const targetLang = language === 'en' ? 'en' : 'ko';
+  const sourceLang = language === 'en' ? 'ko' : 'en';
 
   const handleTranslate = async () => {
     if (isTranslated) {
@@ -42,7 +48,7 @@ export function ProductDetailView({
 
     setIsTranslating(true);
     try {
-      const results = await translateMultiple([product.title, product.content]);
+      const results = await translateMultiple([product.title, product.content], targetLang, sourceLang);
       setTranslatedTitle(results[0].translatedText);
       setTranslatedContent(results[1].translatedText);
       setIsTranslated(true);

@@ -84,7 +84,7 @@ export const ko = {
     soldOut: '판매완료',
     enterSearchQuery: '검색어를 입력해주세요',
     like: '좋아요',
-    translate: '영어로 번역',
+    translate: '번역하기',
     showOriginal: '원문 보기',
     translating: '번역 중...',
     translateFailed: '번역에 실패했습니다.',

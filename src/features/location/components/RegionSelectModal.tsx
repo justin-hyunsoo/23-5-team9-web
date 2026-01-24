@@ -11,6 +11,7 @@ import { useGeoLocation } from '@/features/location/hooks/useGeoLocation';
 import { useUser } from '@/features/user/hooks/useUser';
 import { Button, Select } from '@/shared/ui';
 import { Modal } from '@/shared/ui/feedback';
+import { useTranslation } from '@/shared/i18n';
 
 interface RegionSelectModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export default function RegionSelectModal({
   onSelect,
   initialRegionId
 }: RegionSelectModalProps) {
+  const t = useTranslation();
   const [sidoList, setSidoList] = useState<string[]>([]);
   const [sigugunList, setSigugunList] = useState<string[]>([]);
   const [dongList, setDongList] = useState<DongEntry[]>([]);
@@ -45,12 +47,12 @@ export default function RegionSelectModal({
           const list = await fetchSidoList();
           setSidoList(list);
         } catch (e) {
-          console.error("시/도 목록 로드 실패", e);
+          console.error(t.location.sidoLoadFailed, e);
         }
       };
       loadSido();
     }
-  }, [isOpen]);
+  }, [isOpen, t.location.sidoLoadFailed]);
 
   // 초기 지역 ID가 있으면 드롭다운 상태 복원
   const syncRegionState = async (regionId: string) => {
@@ -68,7 +70,7 @@ export default function RegionSelectModal({
       setSelectedDongId(regionData.id);
       setSelectedDongName(`${regionData.sigugun} ${regionData.dong}`);
     } catch (e) {
-      console.error("지역 정보 동기화 실패", e);
+      console.error(t.location.syncFailed, e);
     }
   };
 
@@ -142,14 +144,14 @@ export default function RegionSelectModal({
       await syncRegionState(detectedRegion.id);
     } catch (error: any) {
       console.error("Error detecting location:", error);
-      alert(error.message || "위치 감지 실패");
+      alert(error.message || t.user.locationFailed);
     }
   };
 
   // 확인 버튼
   const handleConfirm = () => {
     if (!selectedDongId) {
-      alert("지역(동)까지 모두 선택해주세요.");
+      alert(t.user.selectAllRegion);
       return;
     }
     onSelect(selectedDongId, selectedDongName);
@@ -158,22 +160,22 @@ export default function RegionSelectModal({
 
   // 옵션 배열
   const sidoOptions = [
-    { value: '', label: '시/도 선택' },
+    { value: '', label: t.location.selectSido },
     ...sidoList.map(s => ({ value: s, label: s }))
   ];
 
   const sigugunOptions = [
-    { value: '', label: '시/구/군 선택' },
+    { value: '', label: t.location.selectSigugun },
     ...sigugunList.map(s => ({ value: s, label: s }))
   ];
 
   const dongOptions = [
-    { value: '', label: '읍/면/동 선택' },
+    { value: '', label: t.location.selectDong },
     ...dongList.map(d => ({ value: d.id, label: d.dong }))
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="지역 설정">
+    <Modal isOpen={isOpen} onClose={onClose} title={t.location.regionSettings}>
       <div className="flex flex-col gap-4">
         {/* 내 위치로 찾기 버튼 */}
         <Button
@@ -183,12 +185,12 @@ export default function RegionSelectModal({
           onClick={handleDetectLocation}
           disabled={detecting}
         >
-          {detecting ? "위치 찾는 중..." : "내 위치로 찾기"}
+          {detecting ? t.location.findingLocation : t.user.findMyLocation}
         </Button>
 
         <div className="relative flex items-center my-2">
           <div className="flex-grow border-t border-border-light"></div>
-          <span className="flex-shrink mx-4 text-text-secondary text-sm">또는 직접 선택</span>
+          <span className="flex-shrink mx-4 text-text-secondary text-sm">{t.location.orSelectDirectly}</span>
           <div className="flex-grow border-t border-border-light"></div>
         </div>
 
@@ -221,7 +223,7 @@ export default function RegionSelectModal({
             fullWidth
             onClick={onClose}
           >
-            취소
+            {t.common.cancel}
           </Button>
           <Button
             type="button"
@@ -229,7 +231,7 @@ export default function RegionSelectModal({
             fullWidth
             onClick={handleConfirm}
           >
-            확인
+            {t.common.confirm}
           </Button>
         </div>
       </div>

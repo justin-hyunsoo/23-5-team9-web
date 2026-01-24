@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useProduct, useUserProducts, useDeleteProduct, useUpdateProduct } from "@/features/product/hooks/useProducts";
 import { useUser, useUserProfile } from "@/features/user/hooks/useUser";
 import { useCreateRoom } from "@/features/chat/hooks/useChat";
+import { useTranslation } from "@/shared/i18n";
 import type { UpdateProductRequest } from "@/features/product/api/productApi";
 import type { ProductFormData } from "@/features/product/schemas";
 
 export function useProductDetailLogic(productId: string) {
   const navigate = useNavigate();
+  const t = useTranslation();
   const { user, isLoggedIn } = useUser();
 
   // Data Fetching
@@ -39,28 +41,28 @@ export function useProductDetailLogic(productId: string) {
       return;
     }
     if (String(user?.id) === product.owner_id) {
-      alert('본인의 상품입니다.');
+      alert(t.product.ownProduct);
       return;
     }
 
     createRoom.mutate(product.owner_id, {
       onSuccess: (roomId) => navigate(`/chat/${roomId}`),
-      onError: () => alert('채팅방을 열 수 없습니다.'),
+      onError: () => alert(t.chat.cannotOpenRoom),
     });
-  }, [product, isLoggedIn, user?.id, navigate, createRoom]);
+  }, [product, isLoggedIn, user?.id, navigate, createRoom, t]);
 
   const handleDelete = useCallback(async () => {
     if (!product) return;
-    if (!confirm('정말로 이 상품을 삭제하시겠습니까?')) return;
+    if (!confirm(t.product.confirmDelete)) return;
 
     try {
       await deleteProduct.mutateAsync(product.id);
-      alert('상품이 삭제되었습니다.');
+      alert(t.product.deleted);
       navigate('/products');
     } catch {
-      alert('상품 삭제에 실패했습니다.');
+      alert(t.product.deleteFailed);
     }
-  }, [product, deleteProduct, navigate]);
+  }, [product, deleteProduct, navigate, t]);
 
   const handleEdit = useCallback(async (data: ProductFormData) => {
     if (!product) return;
@@ -76,12 +78,12 @@ export function useProductDetailLogic(productId: string) {
 
     try {
       await updateProduct.mutateAsync({ id: product.id, data: updateData });
-      alert('상품이 수정되었습니다.');
+      alert(t.product.updated);
       setIsEditing(false);
     } catch {
-      alert('상품 수정에 실패했습니다.');
+      alert(t.product.updateFailed);
     }
-  }, [product, updateProduct]);
+  }, [product, updateProduct, t]);
 
   const handleNavigateToSeller = useCallback(() => {
     if (product?.owner_id) {

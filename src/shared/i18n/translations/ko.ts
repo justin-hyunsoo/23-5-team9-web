@@ -13,6 +13,11 @@ export const ko = {
     noData: '데이터가 없습니다.',
     loadMore: '더보기',
     won: '원',
+    show: '보기',
+    hide: '숨기기',
+    random: '랜덤',
+    link: '링크',
+    user: '사용자',
   },
 
   // Navigation
@@ -91,6 +96,12 @@ export const ko = {
     registerProduct: '+ 상품 등록',
     mySalesItems: '나의 판매 물품',
     noSalesItems: '판매 중인 상품이 없습니다.',
+    ownProduct: '본인의 상품입니다.',
+    confirmDelete: '정말로 이 상품을 삭제하시겠습니까?',
+    deleted: '상품이 삭제되었습니다.',
+    deleteFailed: '상품 삭제에 실패했습니다.',
+    updated: '상품이 수정되었습니다.',
+    updateFailed: '상품 수정에 실패했습니다.',
   },
 
   // Product validation
@@ -134,6 +145,15 @@ export const ko = {
     withdrawCoins: '코인 출금하기',
     amountToTransfer: '송금할 금액',
     willTransferCoins: '에게 코인을 송금합니다',
+    depositError: '충전 오류',
+    withdrawError: '출금 오류',
+    insufficientBalance: '잔액이 부족합니다.',
+    invalidAmount: '올바른 금액을 입력해주세요.',
+    transferSuccess: '원을 송금했습니다.',
+    transferFailed: '송금에 실패했습니다.',
+    depositDesc: '충전',
+    withdrawDesc: '출금',
+    transferTo: '에게 송금',
   },
 
   // User
@@ -160,6 +180,13 @@ export const ko = {
     currentLocationSet: '현재 위치로 설정되었습니다.',
     locationFailed: '위치 감지 실패',
     selectAllRegion: '지역(동)까지 모두 선택해주세요.',
+    email: '이메일',
+    enterImageUrl: '이미지 URL을 입력하세요:',
+    saveProfile: '저장하기',
+    savedLocationSetPrefix: "저장된 위치('",
+    savedLocationSetSuffix: "')로 설정되었습니다.",
+    currentLocationSetPrefix: "현재 위치('",
+    currentLocationSetSuffix: "')로 설정되었습니다.",
   },
 
   // Location
@@ -172,6 +199,12 @@ export const ko = {
     findingLocation: '위치 찾는 중...',
     orSelectDirectly: '또는 직접 선택',
     regionSettings: '지역 설정',
+    browserNotSupported: '브라우저가 위치 정보를 지원하지 않습니다.',
+    serverLocationError: '서버에서 위치 정보를 찾을 수 없습니다.',
+    locationUnavailable: '위치 정보를 가져올 수 없습니다.',
+    permissionDenied: '위치 정보 권한이 거부되었습니다. 브라우저 설정에서 허용해주세요.',
+    positionUnavailable: '현재 위치 정보를 사용할 수 없습니다.',
+    timeout: '위치 정보 요청 시간이 초과되었습니다.',
   },
 
   // Layout

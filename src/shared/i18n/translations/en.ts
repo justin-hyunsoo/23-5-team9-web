@@ -15,6 +15,11 @@ export const en: TranslationKeys = {
     noData: 'No data.',
     loadMore: 'Load more',
     won: 'KRW',
+    show: 'Show',
+    hide: 'Hide',
+    random: 'Random',
+    link: 'Link',
+    user: 'User',
   },
 
   // Navigation
@@ -93,6 +98,12 @@ export const en: TranslationKeys = {
     registerProduct: '+ Add Product',
     mySalesItems: 'My Items',
     noSalesItems: 'No items for sale.',
+    ownProduct: 'This is your own product.',
+    confirmDelete: 'Are you sure you want to delete this product?',
+    deleted: 'Product deleted.',
+    deleteFailed: 'Failed to delete product.',
+    updated: 'Product updated.',
+    updateFailed: 'Failed to update product.',
   },
 
   // Product validation
@@ -136,6 +147,15 @@ export const en: TranslationKeys = {
     withdrawCoins: 'Withdraw Coins',
     amountToTransfer: 'Amount to transfer',
     willTransferCoins: ' coins',
+    depositError: 'Deposit error',
+    withdrawError: 'Withdrawal error',
+    insufficientBalance: 'Insufficient balance.',
+    invalidAmount: 'Please enter a valid amount.',
+    transferSuccess: ' coins transferred.',
+    transferFailed: 'Transfer failed.',
+    depositDesc: 'deposit',
+    withdrawDesc: 'withdraw',
+    transferTo: 'Transfer to',
   },
 
   // User
@@ -162,6 +182,13 @@ export const en: TranslationKeys = {
     currentLocationSet: 'Set to current location.',
     locationFailed: 'Location detection failed',
     selectAllRegion: 'Please select all region levels.',
+    email: 'Email',
+    enterImageUrl: 'Enter image URL:',
+    saveProfile: 'Save',
+    savedLocationSetPrefix: "Set to saved location ('",
+    savedLocationSetSuffix: "').",
+    currentLocationSetPrefix: "Set to current location ('",
+    currentLocationSetSuffix: "').",
   },
 
   // Location
@@ -174,6 +201,12 @@ export const en: TranslationKeys = {
     findingLocation: 'Finding location...',
     orSelectDirectly: 'or select directly',
     regionSettings: 'Region Settings',
+    browserNotSupported: 'Browser does not support geolocation.',
+    serverLocationError: 'Could not find location from server.',
+    locationUnavailable: 'Unable to retrieve location.',
+    permissionDenied: 'Location permission denied. Please allow in browser settings.',
+    positionUnavailable: 'Current position is unavailable.',
+    timeout: 'Location request timed out.',
   },
 
   // Layout

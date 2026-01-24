@@ -3,6 +3,7 @@ import { payApi } from '@/features/pay/api/payApi';
 import { useQueryClient } from '@tanstack/react-query';
 import { userKeys } from '@/features/user/hooks/useUser';
 import { transactionKeys } from '@/features/pay/hooks/useTransactions';
+import { useTranslation } from '@/shared/i18n';
 
 interface UseTransferOptions {
   currentCoin: number;
@@ -10,6 +11,7 @@ interface UseTransferOptions {
 
 export const useTransfer = ({ currentCoin }: UseTransferOptions) => {
   const queryClient = useQueryClient();
+  const t = useTranslation();
   const [showTransferMenu, setShowTransferMenu] = useState(false);
   const [transferAmount, setTransferAmount] = useState('');
   const [transferring, setTransferring] = useState(false);
@@ -18,11 +20,11 @@ export const useTransfer = ({ currentCoin }: UseTransferOptions) => {
   const transfer = async (receiveUserId: string, receiverNickname?: string) => {
     const amount = parseInt(transferAmount, 10);
     if (!receiveUserId || !amount || amount <= 0) {
-      alert('올바른 금액을 입력해주세요.');
+      alert(t.pay.invalidAmount);
       return false;
     }
     if (currentCoin < amount) {
-      alert('잔액이 부족합니다.');
+      alert(t.pay.insufficientBalance);
       return false;
     }
 
@@ -30,7 +32,7 @@ export const useTransfer = ({ currentCoin }: UseTransferOptions) => {
     try {
       await payApi.transfer({
         amount,
-        description: `${receiverNickname || '상대방'}에게 ${amount.toLocaleString()}원 송금`,
+        description: `${t.pay.transferTo} ${receiverNickname || t.chat.otherParty} ${amount.toLocaleString()}${t.common.won}`,
         request_key: requestKeyRef.current,
         receive_user_id: receiveUserId,
       });
@@ -38,12 +40,12 @@ export const useTransfer = ({ currentCoin }: UseTransferOptions) => {
       queryClient.invalidateQueries({ queryKey: transactionKeys.all });
       setTransferAmount('');
       setShowTransferMenu(false);
-      alert(`${amount.toLocaleString()}원을 송금했습니다.`);
+      alert(`${amount.toLocaleString()}${t.pay.transferSuccess}`);
       requestKeyRef.current = crypto.randomUUID();
       return true;
     } catch (err) {
-      console.error('송금 실패:', err);
-      alert('송금에 실패했습니다.');
+      console.error('Transfer failed:', err);
+      alert(t.pay.transferFailed);
       return false;
     } finally {
       setTransferring(false);

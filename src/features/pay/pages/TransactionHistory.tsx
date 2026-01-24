@@ -4,23 +4,30 @@ import { PageContainer } from '@/shared/layouts/PageContainer';
 import { Button, DetailHeader, Avatar } from '@/shared/ui';
 import { useUser } from '@/features/user/hooks/useUser';
 import { OnboardingRequired } from '@/shared/ui';
+import { useTranslation } from '@/shared/i18n';
 
-const TransactionItem = ({ tx, currentUserId }: { tx: PayTransaction; currentUserId?: string }) => {
+interface TransactionItemProps {
+  tx: PayTransaction;
+  currentUserId?: string;
+  t: ReturnType<typeof useTranslation>;
+}
+
+const TransactionItem = ({ tx, currentUserId, t }: TransactionItemProps) => {
   const isTransfer = tx.type === 'TRANSFER';
   const isSender = isTransfer && tx.details.user.id === currentUserId;
 
   const getTransactionInfo = () => {
     if (tx.type === 'DEPOSIT') {
-      return { label: '충전', icon: '↓', isPositive: true };
+      return { label: t.pay.charge, icon: '↓', isPositive: true };
     }
     if (tx.type === 'WITHDRAW') {
-      return { label: '출금', icon: '↑', isPositive: false };
+      return { label: t.pay.withdraw, icon: '↑', isPositive: false };
     }
     // TRANSFER
     if (isSender) {
-      return { label: '송금', icon: '→', isPositive: false };
+      return { label: t.pay.transfer, icon: '→', isPositive: false };
     }
-    return { label: '받음', icon: '←', isPositive: true };
+    return { label: t.pay.received, icon: '←', isPositive: true };
   };
 
   const { label, icon, isPositive } = getTransactionInfo();
@@ -41,15 +48,15 @@ const TransactionItem = ({ tx, currentUserId }: { tx: PayTransaction; currentUse
       >
         <Avatar
           src={otherParty?.profile_image}
-          alt={otherParty?.nickname || '사용자'}
+          alt={otherParty?.nickname || t.common.user}
           size="sm"
         />
         <div className="flex-1 text-left">
           <p className="text-sm font-medium text-text-primary">
-            {label} · {otherParty?.nickname || '알 수 없음'}
+            {label} · {otherParty?.nickname || t.common.unknown}
           </p>
           <p className="text-xs text-text-tertiary">
-            {new Date(tx.details.time).toLocaleString('ko-KR')}
+            {new Date(tx.details.time).toLocaleString()}
           </p>
         </div>
         <span
@@ -81,7 +88,7 @@ const TransactionItem = ({ tx, currentUserId }: { tx: PayTransaction; currentUse
       <div className="flex-1 text-left">
         <p className="text-sm font-medium text-text-primary">{label}</p>
         <p className="text-xs text-text-tertiary">
-          {new Date(tx.details.time).toLocaleString('ko-KR')}
+          {new Date(tx.details.time).toLocaleString()}
         </p>
       </div>
       <span
@@ -95,12 +102,13 @@ const TransactionItem = ({ tx, currentUserId }: { tx: PayTransaction; currentUse
 };
 
 function TransactionHistory() {
+  const t = useTranslation();
   const { user, needsOnboarding } = useUser();
   const { transactions, isLoading, loadMore, hasMore } = useTransactions();
 
   if (needsOnboarding) {
     return (
-      <PageContainer title="거래 내역">
+      <PageContainer title={t.pay.transactionHistory}>
         <OnboardingRequired />
       </PageContainer>
     );
@@ -109,16 +117,16 @@ function TransactionHistory() {
   return (
     <PageContainer>
       <DetailHeader />
-      <h2 className="text-2xl font-extrabold mb-6">거래 내역</h2>
+      <h2 className="text-2xl font-extrabold mb-6">{t.pay.transactionHistory}</h2>
 
       {isLoading && transactions.length === 0 ? (
-        <p className="text-text-tertiary text-sm text-center py-8">로딩 중...</p>
+        <p className="text-text-tertiary text-sm text-center py-8">{t.common.loading}</p>
       ) : transactions.length === 0 ? (
-        <p className="text-text-tertiary text-sm text-center py-8">거래 내역이 없습니다.</p>
+        <p className="text-text-tertiary text-sm text-center py-8">{t.pay.noTransactions}</p>
       ) : (
         <div className="space-y-3">
           {transactions.map((tx) => (
-            <TransactionItem key={tx.id} tx={tx} currentUserId={user?.id?.toString()} />
+            <TransactionItem key={tx.id} tx={tx} currentUserId={user?.id?.toString()} t={t} />
           ))}
           {hasMore && (
             <Button
@@ -129,7 +137,7 @@ function TransactionHistory() {
               disabled={isLoading}
               className="mt-4"
             >
-              {isLoading ? '로딩 중...' : '더보기'}
+              {isLoading ? t.common.loading : t.common.loadMore}
             </Button>
           )}
         </div>

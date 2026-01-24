@@ -85,7 +85,7 @@ const CoinTab = ({ user, onDeposit, onWithdraw }: CoinTabProps) => {
         ))}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-border">
+      <div className="mt-4 pt-2">
         <Button
           onClick={() => navigate('/my/transactions')}
           variant="outline"

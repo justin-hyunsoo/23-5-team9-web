@@ -3,6 +3,7 @@ import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import UserProfile from '@/features/user/components/UserProfile';
 import CoinTab from '@/features/pay/components/CoinTab';
 import PasswordTab from '@/features/user/components/PasswordTab';
+import TransactionTab from '@/features/pay/components/TransactionTab';
 import { useMyPay } from '@/features/pay/hooks/useMyPay';
 import { useAuth } from '@/shared/store/authStore';
 import { Loading, Button, Avatar, DetailHeader } from '@/shared/ui';
@@ -118,6 +119,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
           />
         )}
         {initialTab === 'coin' && <CoinTab user={user} onDeposit={depositCoin} onWithdraw={withdrawCoin} />}
+        {initialTab === 'transactions' && <TransactionTab />}
         {initialTab === 'password' && <PasswordTab />}
       </div>
     </PageContainer>

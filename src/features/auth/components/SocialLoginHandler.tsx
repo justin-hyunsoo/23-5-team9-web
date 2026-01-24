@@ -21,7 +21,7 @@ export function SocialLoginHandler() {
       login(accessToken, refreshToken);
 
       // 유저 정보 조회하여 온보딩 필요 여부 확인 후 리다이렉션
-      userApi.getMe().then(({ data: user }) => {
+      userApi.getMe().then((user) => {
         const needsOnboarding = !user.nickname || !user.region;
         if (needsOnboarding) {
           navigate('/auth/onboarding');

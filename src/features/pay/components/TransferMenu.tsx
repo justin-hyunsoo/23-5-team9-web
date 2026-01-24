@@ -35,7 +35,7 @@ const TransferMenu = ({
           placeholder="송금할 금액"
           value={transferAmount}
           onChange={(e) => setTransferAmount(e.target.value)}
-          className="flex-1 !py-2 !px-3 text-sm"
+          className="flex-1 py-2! px-3! text-sm"
         />
         <Button
           onClick={handleTransfer}

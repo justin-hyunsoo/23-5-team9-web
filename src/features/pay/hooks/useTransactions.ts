@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { payApi, PayTransaction } from '@/features/pay/api/payApi';
 
@@ -16,26 +16,35 @@ export function useTransactions() {
   const [allTransactions, setAllTransactions] = useState<PayTransaction[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const { isLoading, error, refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: transactionKeys.list(offset),
     queryFn: async () => {
       const { data } = await payApi.getTransactions({
         limit: ITEMS_PER_PAGE,
         offset,
       });
-
-      if (offset === 0) {
-        setAllTransactions(data);
-      } else {
-        setAllTransactions((prev) => [...prev, ...data]);
-      }
-
-      setHasMore(data.length === ITEMS_PER_PAGE);
       return data;
     },
     enabled: !!token,
     staleTime: 1000 * 60,
   });
+
+  // Sync query data to state
+  useEffect(() => {
+    if (data) {
+      if (offset === 0) {
+        setAllTransactions(data);
+      } else {
+        setAllTransactions((prev) => {
+          // Avoid duplicates
+          const existingIds = new Set(prev.map((t) => t.id));
+          const newItems = data.filter((t) => !existingIds.has(t.id));
+          return [...prev, ...newItems];
+        });
+      }
+      setHasMore(data.length === ITEMS_PER_PAGE);
+    }
+  }, [data, offset]);
 
   const loadMore = () => {
     if (hasMore && !isLoading) {

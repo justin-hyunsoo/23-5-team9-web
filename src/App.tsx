@@ -9,6 +9,7 @@ import Onboarding from '@/features/auth/pages/Onboarding';
 import ChatList from '@/features/chat/pages/ChatList';
 import ChatRoom from '@/features/chat/pages/ChatRoom';
 import MyCarrot from '@/features/user/pages/MyCarrot';
+import TransactionHistory from '@/features/pay/pages/TransactionHistory';
 import SellerProfile from '@/features/user/pages/SellerProfile';
 import ProductList from '@/features/product/pages/ProductList';
 import ProductDetail from '@/features/product/pages/ProductDetail';
@@ -32,6 +33,7 @@ function App() {
           <Route path="/my/products" element={<MyCarrot initialTab="products" />} />
           <Route path="/my/profile" element={<MyCarrot initialTab="profile" />} />
           <Route path="/my/coin" element={<MyCarrot initialTab="coin" />} />
+          <Route path="/my/transactions" element={<TransactionHistory />} />
           <Route path="/my/password" element={<MyCarrot initialTab="password" />} />
 
           {/* 인증 페이지도 이곳으로 통합 */}

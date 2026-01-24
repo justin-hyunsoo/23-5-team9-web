@@ -1,6 +1,7 @@
+import { useState } from "react";
 import ProductCard from "@/features/product/components/ProductCard";
 import SearchBar from "@/features/product/components/SearchBar";
-import { useProductFilterLogic } from "@/features/product/hooks/useProductFilterLogic";
+import { useProducts } from "@/features/product/hooks/useProducts";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
 import { useRegionSelection } from "@/features/location/hooks/useRegionSelection";
@@ -17,13 +18,8 @@ export default function ProductList() {
     handleRegionSelect,
   } = useRegionSelection();
 
-  const {
-    products,
-    loading,
-    error,
-    searchQuery,
-    setSearchQuery,
-  } = useProductFilterLogic(currentRegionId);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { products, loading, error } = useProducts(undefined, searchQuery, currentRegionId);
 
   return (
     <PageContainer title="중고거래">

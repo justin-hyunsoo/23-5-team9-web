@@ -34,7 +34,7 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
 
   return (
     <Link to={`/products/${product.id}`} className="group text-inherit no-underline">
-      <Card className="border border-border-base rounded-lg p-3">
+      <Card className="border border-border-medium rounded-lg p-3">
         <CardContent>
           {/* 판매자 프로필 */}
           <div className="flex items-center gap-2 mb-3">
@@ -68,7 +68,7 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
 
           {/* 액션 버튼 */}
           {showActions && (
-            <div className="flex gap-2 mt-3 pt-3 border-t border-border-base">
+            <div className="flex gap-2 mt-3 pt-3 border-t border-border-medium">
               <Button onClick={handleEdit} variant="secondary" size="sm" className="flex-1">{t.common.edit}</Button>
               <Button onClick={handleDelete} variant="ghost" size="sm" className="flex-1 text-status-error hover:bg-status-error-hover">{t.common.delete}</Button>
             </div>

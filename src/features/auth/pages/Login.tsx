@@ -1,3 +1,4 @@
+import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { authApi } from '@/features/auth/api/auth';
@@ -6,82 +7,41 @@ import { userApi } from '@/features/user/api/user';
 import { PageContainer } from '@/shared/layouts/PageContainer';
 import { Input, PasswordInput, Button, GoogleIcon } from '@/shared/ui';
 
-// 이메일 형식 검증 함수
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login } = useAuth();
-  const [form, setForm] = useState({ email: '', password: '' });
   const redirect = searchParams.get('redirect') || '/products';
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [serverError, setServerError] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    // 입력 중일 때는 에러 메시지 제거
-    if (error) setError('');
-  };
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    // 클라이언트 측 이메일 검증
-    if (!form.email.trim()) {
-      setError('이메일을 입력해주세요.');
-      setLoading(false);
-      return;
-    }
-
-    if (!isValidEmail(form.email)) {
-      setError('올바른 이메일 형식을 입력해주세요.');
-      setLoading(false);
-      return;
-    }
-
-    if (!form.password) {
-      setError('비밀번호를 입력해주세요.');
-      setLoading(false);
-      return;
-    }
-
+  const onSubmit = async (form: LoginForm) => {
+    setServerError('');
     try {
       const { data } = await authApi.login(form);
       login(data.access_token, data.refresh_token);
 
-      // 유저 정보 조회하여 온보딩 필요 여부 확인
       const { data: user } = await userApi.getMe();
       const needsOnboarding = !user.nickname || !user.region;
 
-      if (needsOnboarding) {
-        navigate(`/auth/onboarding?redirect=${encodeURIComponent(redirect)}`);
-      } else {
-        navigate(redirect);
-      }
+      navigate(needsOnboarding
+        ? `/auth/onboarding?redirect=${encodeURIComponent(redirect)}`
+        : redirect
+      );
     } catch (err: any) {
-      // 다양한 형태의 에러 응답 처리
-      let errorMessage = '이메일 또는 비밀번호가 올바르지 않습니다.';
-      
-      if (err.response?.data) {
-        // detail, message, error 등 다양한 필드명 확인
-        errorMessage = err.response.data.detail || 
-                      err.response.data.message || 
-                      err.response.data.error || 
-                      errorMessage;
-      } else if (err.message) {
-        // 네트워크 에러 등
-        errorMessage = '네트워크 오류가 발생했습니다. 다시 시도해주세요.';
-      }
-
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      const errData = err.response?.data;
+      setServerError(
+        errData?.detail ?? errData?.message ?? errData?.error ??
+        (err.message ? '네트워크 오류가 발생했습니다.' : '이메일 또는 비밀번호가 올바르지 않습니다.')
+      );
     }
   };
 
@@ -89,37 +49,34 @@ export default function Login() {
     <PageContainer>
       <div className="max-w-[420px] mx-auto w-full mt-10">
         <h2 className="mb-8 text-2xl font-bold text-text-primary">로그인</h2>
-          
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <Input 
-            name="email" type="email" placeholder="이메일" required
-            value={form.email} onChange={handleChange} 
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <Input
+            type="email"
+            placeholder="이메일"
+            {...register('email', {
+              required: '이메일을 입력해주세요.',
+              pattern: { value: EMAIL_REGEX, message: '올바른 이메일 형식을 입력해주세요.' }
+            })}
           />
+          {errors.email && <span className="text-sm text-status-error">{errors.email.message}</span>}
+
           <PasswordInput
-            name="password"
             placeholder="비밀번호"
-            required
-            value={form.password}
-            onChange={handleChange}
+            {...register('password', { required: '비밀번호를 입력해주세요.' })}
           />
-          
-          <Button 
-            type="submit" 
-            disabled={loading}
-            variant="primary"
-            fullWidth
-            className="mt-4 text-lg"
-          >
-            {loading ? '로그인 중...' : '로그인'}
+          {errors.password && <span className="text-sm text-status-error">{errors.password.message}</span>}
+
+          <Button type="submit" disabled={isSubmitting} variant="primary" fullWidth className="mt-4 text-lg">
+            {isSubmitting ? '로그인 중...' : '로그인'}
           </Button>
-          
-          {error && <div className="mt-3 text-center text-sm font-medium text-status-error">{error}</div>}
+
+          {serverError && <div className="mt-3 text-center text-sm font-medium text-status-error">{serverError}</div>}
         </form>
 
-        <Button 
+        <Button
           onClick={() => window.location.href = authApi.getGoogleLoginUrl()}
-          variant="outline"
-          fullWidth
+          variant="outline" fullWidth
           className="mt-6 flex items-center justify-center gap-2 bg-bg-page"
         >
           <GoogleIcon /> Google로 계속하기

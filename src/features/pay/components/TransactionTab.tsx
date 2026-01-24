@@ -93,9 +93,20 @@ const TransactionItem = ({ tx, currentUserId }: { tx: PayTransaction; currentUse
   );
 };
 
+import { PageContainer } from '@/shared/layouts/PageContainer';
+import { OnboardingRequired } from '@/shared/ui';
+
 export default function TransactionTab() {
-  const { user } = useUser();
+  const { user, needsOnboarding } = useUser();
   const { transactions, isLoading, loadMore, hasMore } = useTransactions();
+
+  if (needsOnboarding) {
+      return (
+        <PageContainer title="코인 관리">
+          <OnboardingRequired />
+        </PageContainer>
+      );
+    }
 
   if (isLoading && transactions.length === 0) {
     return <p className="text-text-tertiary text-sm text-center py-8">로딩 중...</p>;

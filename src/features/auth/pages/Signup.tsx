@@ -6,7 +6,7 @@ import { authApi } from '@/features/auth/api/auth';
 import { useAuth } from '@/features/auth/model';
 import { Input, PasswordInput, Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
-import { signupSchema, type SignupForm } from '../schemas';
+import { signupSchema, type SignupForm } from '../model/schemas';
 
 interface SignupPageProps {
   onSignup?: () => void;

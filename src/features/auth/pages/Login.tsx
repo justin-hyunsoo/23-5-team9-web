@@ -1,22 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { authApi } from '@/features/auth/api/auth';
-import { useAuth } from '@/features/auth/model';
-import { userApi } from '@/features/user/api/user';
 import { PageContainer } from '@/shared/layouts/PageContainer';
 import { Input, PasswordInput, Button, GoogleIcon } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
-import { loginSchema, type LoginForm } from '../schemas';
+import { useLogin } from '../hooks/useLogin';
+import { loginSchema, type LoginForm } from '../model/schemas';
 
 export default function Login() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { login } = useAuth();
+  const { login, serverError } = useLogin();
   const t = useTranslation();
-  const redirect = searchParams.get('redirect') || '/products';
-  const [serverError, setServerError] = useState('');
 
   const {
     register,
@@ -26,34 +20,12 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (form: LoginForm) => {
-    setServerError('');
-    try {
-      const data = await authApi.login(form);
-      login(data.access_token, data.refresh_token);
-
-      const user = await userApi.getMe();
-      const needsOnboarding = !user.nickname || !user.region;
-
-      navigate(needsOnboarding
-        ? `/auth/onboarding?redirect=${encodeURIComponent(redirect)}`
-        : redirect
-      );
-    } catch (err: any) {
-      const errData = err.response?.data;
-      setServerError(
-        errData?.detail ?? errData?.message ?? errData?.error ??
-        (err.message ? t.auth.networkError : t.auth.invalidCredentials)
-      );
-    }
-  };
-
   return (
     <PageContainer>
       <div className="max-w-105 mx-auto w-full mt-10">
         <h2 className="mb-8 text-2xl font-bold text-text-primary">{t.auth.login}</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit(login)} className="flex flex-col gap-3">
           <Input
             type="email"
             placeholder={t.auth.email}

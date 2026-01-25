@@ -5,7 +5,7 @@ import { useRegionStore, DEFAULT_REGION_ID, DEFAULT_REGION_NAME } from '@/shared
 import { fetchRegionById } from '@/features/location/api/region';
 
 export function useRegionSelection() {
-  const { user, isLoggedIn } = useUser();
+  const { user, isLoggedIn, isLoading } = useUser();
   // store는 이제 '상태 저장소'가 아니라 URL에 따른 '데이터 캐시/표시용'으로 사용됩니다.
   const { regionId, regionName, setRegion } = useRegionStore();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,6 +27,9 @@ export function useRegionSelection() {
   useEffect(() => {
     // 3-1. URL에 지역 정보가 아예 없는 경우 (진입 시점)
     if (!urlRegionId) {
+      // 로그인 유저의 경우 user 정보 로딩이 완료될 때까지 대기
+      if (isLoading) return;
+
       if (isLoggedIn && user?.region?.id) {
         // 로그인 유저라면 유저 지역으로 리다이렉트
         setSearchParams({ region: user.region.id }, { replace: true });
@@ -54,7 +57,7 @@ export function useRegionSelection() {
     };
 
     syncRegionData();
-  }, [urlRegionId, isLoggedIn, user, regionId, regionName, setRegion, setSearchParams]);
+  }, [urlRegionId, isLoggedIn, isLoading, user, regionId, regionName, setRegion, setSearchParams]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);

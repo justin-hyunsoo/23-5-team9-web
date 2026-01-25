@@ -10,7 +10,7 @@ export function ProductEditForm() {
 
   return (
     <ProductForm
-      initialData={product}
+      initialData={{ ...product, content: product.content ?? undefined }}
       onSubmit={handleEdit}
       onCancel={cancelEditing}
       submitLabel={t.common.save}

@@ -35,11 +35,12 @@ export function TransactionItem({ tx, currentUserId }: TransactionItemProps) {
   );
 
   // For transfer, show the other party's info
-  const otherParty = isTransfer
-    ? isSender
-      ? tx.details.receive_user
-      : tx.details.user
-    : null;
+  const otherParty =
+    isTransfer && 'receive_user' in tx.details
+      ? isSender
+        ? tx.details.receive_user
+        : tx.details.user
+      : null;
 
   if (isTransfer) {
     return (
@@ -51,7 +52,7 @@ export function TransactionItem({ tx, currentUserId }: TransactionItemProps) {
         }`}
       >
         <Avatar
-          src={otherParty?.profile_image}
+          src={otherParty?.profile_image ?? undefined}
           alt={otherParty?.nickname || t.common.unknown}
           size="sm"
         />

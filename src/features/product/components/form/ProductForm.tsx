@@ -32,7 +32,7 @@ const ProductForm = ({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       title: initialData?.title ?? '',
-      price: initialData?.price ?? 0,
+      price: initialData?.price,
       content: initialData?.content ?? '',
       is_sold: initialData?.is_sold ?? false,
     },

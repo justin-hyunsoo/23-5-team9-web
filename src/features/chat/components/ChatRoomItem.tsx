@@ -13,7 +13,7 @@ function ChatRoomItem({ room }: ChatRoomItemProps) {
   const { profile } = useUserProfile(room.opponent_id);
   const t = useTranslation();
 
-  const formatTime = (dateString: string | null): string => {
+  const formatTime = (dateString: string | null | undefined): string => {
     if (!dateString) return '';
 
     const date = new Date(dateString);

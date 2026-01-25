@@ -1,57 +1,43 @@
 import client from '@/shared/api/client';
-
-export interface User {
-    id?: number;
-    email: string;
-    nickname: string | null;
-    region: {
-        id: string;
-        sido: string;
-        sigugun: string;
-        dong: string;
-        full_name: string;
-    } | null;
-    profile_image: string | null;
-    coin: number;
-}
-
-export interface OnboardingParams {
-    nickname: string;
-    region_id: string;
-    profile_image?: string;
-}
-
-export interface PatchUserParams {
-    nickname?: string;
-    region_id?: string;
-    profile_image?: string;
-    coin?: number;
-}
-
-export interface PublicUserProfile {
-    id: string;
-    nickname: string | null;
-    profile_image: string | null;
-}
+import type {
+  UserResponse,
+  UserOnboardingRequest,
+  UserUpdateRequest,
+  PublicUserResponse,
+} from '@/shared/api/types';
 
 export const userApi = {
-    getMe: async (): Promise<User> => {
-        const response = await client.get<User>('/api/user/me');
-        return response.data;
-    },
+  getMe: async (): Promise<UserResponse> => {
+    const response = await client.get<UserResponse>('/api/user/me');
+    return response.data;
+  },
 
-    onboardMe: async (data: OnboardingParams): Promise<User> => {
-        const response = await client.post<User>('/api/user/me/onboard', data);
-        return response.data;
-    },
+  onboardMe: async (data: UserOnboardingRequest): Promise<UserResponse> => {
+    const response = await client.post<UserResponse>('/api/user/me/onboard', data);
+    return response.data;
+  },
 
-    patchMe: async (data: PatchUserParams): Promise<User> => {
-        const response = await client.patch<User>('/api/user/me', data);
-        return response.data;
-    },
+  patchMe: async (data: UserUpdateRequest): Promise<UserResponse> => {
+    const response = await client.patch<UserResponse>('/api/user/me', data);
+    return response.data;
+  },
 
-    getUser: async (userId: string): Promise<PublicUserProfile> => {
-        const response = await client.get<PublicUserProfile>(`/api/user/${userId}`);
-        return response.data;
-    },
+  getUser: async (userId: string): Promise<PublicUserResponse> => {
+    const response = await client.get<PublicUserResponse>(`/api/user/${userId}`);
+    return response.data;
+  },
 };
+
+// Re-export types for backward compatibility
+export type {
+  UserResponse,
+  UserOnboardingRequest,
+  UserUpdateRequest,
+  PublicUserResponse,
+} from '@/shared/api/types';
+
+// Alias for backward compatibility
+export type User = UserResponse;
+export type OnboardingParams = UserOnboardingRequest;
+export type PatchUserParams = UserUpdateRequest;
+export type PublicUserProfile = PublicUserResponse;

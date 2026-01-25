@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { fetchNearbyRegion, Region } from '@/features/location/api/region';
 import { useTranslation } from '@/shared/i18n';
+import { getErrorMessage } from '@/shared/api/types';
 
 export function useGeoLocation() {
   const [detecting, setDetecting] = useState(false);
@@ -25,9 +26,9 @@ export function useGeoLocation() {
             const data = await fetchNearbyRegion(latitude, longitude);
 
             resolve(data);
-          } catch (error: any) {
+          } catch (error) {
             // API 에러 처리
-            const msg = error.response?.data?.detail || t.location.serverLocationError;
+            const msg = getErrorMessage(error, t.location.serverLocationError);
             reject(new Error(msg));
           } finally {
             setDetecting(false);

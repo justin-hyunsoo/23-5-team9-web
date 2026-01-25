@@ -5,6 +5,7 @@ import { useAuth } from './store';
 import { userApi } from '@/features/user/api/user';
 import { useTranslation } from '@/shared/i18n';
 import type { LoginForm } from '../api/schemas';
+import { getErrorMessage } from '@/shared/api/types';
 
 export function useLogin() {
   const navigate = useNavigate();
@@ -28,12 +29,8 @@ export function useLogin() {
         ? `/auth/onboarding?redirect=${encodeURIComponent(redirect)}`
         : redirect
       );
-    } catch (err: any) {
-      const errData = err.response?.data;
-      setServerError(
-        errData?.detail ?? errData?.message ?? errData?.error ??
-        (err.message ? t.auth.networkError : t.auth.invalidCredentials)
-      );
+    } catch (err) {
+      setServerError(getErrorMessage(err, t.auth.invalidCredentials));
     }
   };
 

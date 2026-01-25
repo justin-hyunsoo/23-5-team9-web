@@ -162,9 +162,9 @@ export default function ProfileEditForm({
       const detectedRegion = await detectRegion();
       await syncRegionState(detectedRegion.id);
       alert(`${t.user.currentLocationSetPrefix}${detectedRegion.full_name}${t.user.currentLocationSetSuffix}`);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error detecting location:", error);
-      alert(error.message || t.user.locationFailed);
+      alert(error instanceof Error ? error.message : t.user.locationFailed);
     }
   };
 

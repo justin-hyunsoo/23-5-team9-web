@@ -142,9 +142,9 @@ export default function RegionSelectModal({
       // 그렇지 않으면 GPS로 위치 찾기
       const detectedRegion = await detectRegion();
       await syncRegionState(detectedRegion.id);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error detecting location:", error);
-      alert(error.message || t.user.locationFailed);
+      alert(error instanceof Error ? error.message : t.user.locationFailed);
     }
   };
 

@@ -1,56 +1,41 @@
 import client from '@/shared/api/client';
+import type {
+  ChatRoomRead,
+  ChatRoomListRead,
+  MessageRead,
+  OpponentStatus,
+} from '@/shared/api/types';
 
-export interface ChatRoom {
-  room_id: string;
-  opponent_id: string;
-  // opponent_nickname: string | null;      // 서버 데이터 문제로 미사용
-  // opponent_profile_image: string | null; // 서버 데이터 문제로 미사용
-  last_message: string | null;
-  last_message_at: string | null;
-  unread_count: number;
-}
-
-export interface Message {
-  id: number;
-  room_id: string;
-  sender_id: string;
-  content: string;
-  created_at: string;
-  is_read: boolean;
-}
-
-export interface CreateRoomResponse {
-  id: string;
-  user_one_id: string;
-  user_two_id: string;
-  created_at: string;
-}
+// Re-export types with aliases for backward compatibility
+export type ChatRoom = ChatRoomListRead;
+export type Message = MessageRead;
+export type CreateRoomResponse = ChatRoomRead;
 
 // 채팅방 생성 또는 기존 채팅방 조회
 export async function createOrGetRoom(opponent_id: string): Promise<string> {
-  const response = await client.post<CreateRoomResponse>(
+  const response = await client.post<ChatRoomRead>(
     `/api/chat/rooms?opponent_id=${opponent_id}`
   );
   return response.data.id;
 }
 
 // 채팅방 목록 조회
-export async function fetchChatRooms(): Promise<ChatRoom[]> {
-  const response = await client.get<ChatRoom[]>('/api/chat/rooms');
+export async function fetchChatRooms(): Promise<ChatRoomListRead[]> {
+  const response = await client.get<ChatRoomListRead[]>('/api/chat/rooms');
   return response.data;
 }
 
 // 메시지 목록 조회
-export async function fetchMessages(room_id: string): Promise<Message[]> {
-  const response = await client.get<Message[]>(
+export async function fetchMessages(room_id: string): Promise<MessageRead[]> {
+  const response = await client.get<MessageRead[]>(
     `/api/chat/rooms/${room_id}/messages`
   );
   return response.data;
 }
 
 // 메시지 전송
-export async function sendMessage(room_id: string, content: string): Promise<Message> {
-  const response = await client.post<Message>(
+export async function sendMessage(room_id: string, content: string): Promise<MessageRead> {
+  const response = await client.post<MessageRead>(
     `/api/chat/rooms/${room_id}/messages`,
     { content }
   );
@@ -60,4 +45,12 @@ export async function sendMessage(room_id: string, content: string): Promise<Mes
 // 메시지 읽음 처리
 export async function markMessagesAsRead(room_id: string): Promise<void> {
   await client.patch(`/api/chat/rooms/${room_id}/messages/read`);
+}
+
+// 상대방 상태 조회
+export async function fetchOpponentStatus(room_id: string): Promise<OpponentStatus> {
+  const response = await client.get<OpponentStatus>(
+    `/api/chat/rooms/${room_id}/status`
+  );
+  return response.data;
 }

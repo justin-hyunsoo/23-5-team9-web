@@ -13,7 +13,7 @@ export const productApi = {
     const response = await client.get<Product[]>('/api/product/', {
       params,
       skipAuth,
-    } as any);
+    });
     return response.data;
   },
 

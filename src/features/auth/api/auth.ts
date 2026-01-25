@@ -1,32 +1,25 @@
-// src/api/auth.ts
 import client from '@/shared/api/client';
 import { SOCIAL_LOGIN_API_URL } from '@/features/auth/api/config';
-
-export interface SignupRequest {
-  email: string; 
-  password: string;
-  nickname?: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  access_token: string;
-  refresh_token: string;
-}
+import type {
+  UserSigninRequest,
+  UserSignupRequest,
+  TokenResponse,
+  UserResponse,
+} from '@/shared/api/types';
 
 export const authApi = {
-  signup: async (data: SignupRequest) => {
-    const response = await client.post('/api/user/', data);
+  signup: async (data: UserSignupRequest): Promise<UserResponse> => {
+    const response = await client.post<UserResponse>('/api/user/', data);
     return response.data;
   },
 
-  login: async (data: LoginRequest) => {
-    const response = await client.post<LoginResponse>('/api/auth/tokens', data);
+  login: async (data: UserSigninRequest): Promise<TokenResponse> => {
+    const response = await client.post<TokenResponse>('/api/auth/tokens', data);
     return response.data;
+  },
+
+  logout: async (): Promise<void> => {
+    await client.delete('/api/auth/tokens');
   },
 
   getGoogleLoginUrl: (): string => `${SOCIAL_LOGIN_API_URL}/api/auth/oauth2/login/google`,

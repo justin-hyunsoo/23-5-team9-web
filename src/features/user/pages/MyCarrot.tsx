@@ -39,7 +39,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
 
   if (!user) return <Loading />;
 
-  const updateProfile = async (data: any) => {
+  const updateProfile = async (data: { nickname: string; region_id: string; profile_image: string }) => {
     if (!user) return;
     try {
       await onboardingMutation.mutateAsync(data);

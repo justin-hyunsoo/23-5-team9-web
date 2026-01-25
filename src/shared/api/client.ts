@@ -26,7 +26,7 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
   failedQueue = [];
 };
 
-client.interceptors.request.use((config: any) => { // TS 에러 방지를 위해 any 사용 혹은 타입 확장
+client.interceptors.request.use((config: InternalAxiosRequestConfig & { skipAuth?: boolean }) => {
   // Zustand store에서 토큰 조회 (Single Source of Truth)
   const token = useAuthStore.getState().token;
 

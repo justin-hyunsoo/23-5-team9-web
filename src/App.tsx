@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from '@/shared/layouts/MainLayout';
-import { SocialLoginHandler } from '@/features/auth/providers/SocialLoginHandler';
-import { AuthQuerySync } from '@/features/auth/providers/AuthQuerySync';
+import { useAuthQuerySync } from '@/features/auth/hooks/useAuthSync';
+import { useSocialLogin } from '@/features/auth/hooks/useSocialLogin';
 
 // Page Imports
 import Login from '@/features/auth/pages/Login';
@@ -15,11 +15,12 @@ import ProductList from '@/features/product/pages/ProductList';
 import ProductDetail from '@/features/product/pages/ProductDetail';
 
 function App() {
+  
+  useAuthQuerySync();
+  useSocialLogin();
+
   return (
-    <>
-      <AuthQuerySync />
-      <SocialLoginHandler />
-      <Routes>
+    <Routes>
         {/* 모든 페이지를 MainLayout 하나로 통합 */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/products" replace />} />
@@ -42,8 +43,7 @@ function App() {
           <Route path="/auth/signup" element={<Signup />} />
           <Route path="/auth/onboarding" element={<Onboarding />} />
         </Route>
-      </Routes>
-    </>
+    </Routes>
   );
 }
 

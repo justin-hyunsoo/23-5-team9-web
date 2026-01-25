@@ -59,7 +59,7 @@ export default function Avatar({ src, alt = 'Profile', size = 'md', className = 
       <img
         src={src}
         alt={alt}
-        className={`rounded-full object-cover border border-border-base bg-bg-box-alt ${sizeClasses[size]} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        className={`rounded-full object-cover border border-border-base bg-bg-box-alt ${sizeClasses[size]} ${isLoading ? 'invisible' : 'opacity-100'} transition-opacity duration-300`}
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);

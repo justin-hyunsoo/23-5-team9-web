@@ -3,42 +3,23 @@ import { Button, Badge } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { useLanguage } from '@/shared/store/languageStore';
 import { translateMultiple } from '@/shared/lib/translate';
-import type { Product } from '@/features/product/types';
+import { useProductDetail } from '../hooks/ProductDetailContext';
 
-interface ProductDetailViewProps {
-  product: Product;
-  isLiked: boolean;
-  isOwner: boolean;
-  isDeleting: boolean;
-  onLike: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-}
-
-export function ProductDetailView({
-  product,
-  isLiked,
-  isOwner,
-  isDeleting,
-  onLike,
-  onEdit,
-  onDelete,
-}: ProductDetailViewProps) {
+export function ProductDetailView() {
   const t = useTranslation();
   const { language } = useLanguage();
+  const { product, isLiked, isOwner, isDeleting, handleLike, startEditing, handleDelete } = useProductDetail();
+
   const [isTranslated, setIsTranslated] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [translatedTitle, setTranslatedTitle] = useState('');
   const [translatedContent, setTranslatedContent] = useState('');
 
-  // 게시물 언어 감지 (한글 포함 여부로 판단)
+  if (!product) return null;
+
   const hasKorean = /[가-힣]/.test(product.title + product.content);
   const postLang = hasKorean ? 'ko' : 'en';
-
-  // 게시물 언어와 사용자 언어가 다를 때만 번역 필요
   const needsTranslation = postLang !== language;
-
-  // 내 언어로 번역
   const targetLang = language;
   const sourceLang = postLang;
 
@@ -100,7 +81,7 @@ export function ProductDetailView({
         <Button
           variant={isLiked ? "primary" : "outline"}
           size="sm"
-          onClick={onLike}
+          onClick={handleLike}
         >
           <span className="mr-2">{isLiked ? '♥' : '♡'}</span>
           {t.product.like} {product.like_count + (isLiked ? 1 : 0)}
@@ -108,10 +89,10 @@ export function ProductDetailView({
 
         {isOwner && (
           <div className="flex gap-2">
-            <Button size="sm" onClick={onEdit}>
+            <Button size="sm" onClick={startEditing}>
               {t.common.edit}
             </Button>
-            <Button size="sm" variant="ghost" onClick={onDelete} disabled={isDeleting}>
+            <Button size="sm" variant="ghost" onClick={handleDelete} disabled={isDeleting}>
               {t.common.delete}
             </Button>
           </div>

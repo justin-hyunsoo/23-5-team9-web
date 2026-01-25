@@ -1,0 +1,21 @@
+import ProductForm from './ProductForm';
+import { useTranslation } from '@/shared/i18n';
+import { useProductDetail } from '../hooks/ProductDetailContext';
+
+export function ProductEditForm() {
+  const t = useTranslation();
+  const { product, handleEdit, cancelEditing, isUpdating } = useProductDetail();
+
+  if (!product) return null;
+
+  return (
+    <ProductForm
+      initialData={product}
+      onSubmit={handleEdit}
+      onCancel={cancelEditing}
+      submitLabel={t.common.save}
+      showIsSold={true}
+      isLoading={isUpdating}
+    />
+  );
+}

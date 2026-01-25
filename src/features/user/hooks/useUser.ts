@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi, OnboardingParams, PatchUserParams } from '@/features/user/api/user';
 import { useToken, useAuthStore } from '@/features/auth/hooks/store';
-import { isAuthError } from '@/features/auth/api/authErrorHandler';
 
 export const userKeys = {
   all: ['user'] as const,
@@ -25,7 +24,7 @@ export function useUser(options: UseUserOptions = {}) {
         return await userApi.getMe();
       } catch (err: any) {
         // 401 에러 시 로그아웃 처리 (AuthQuerySync가 캐시 정리)
-        if (isAuthError(err)) {
+        if (err.response?.status === 401) {
           logout();
         }
         throw err;

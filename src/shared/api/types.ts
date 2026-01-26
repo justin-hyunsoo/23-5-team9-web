@@ -153,6 +153,7 @@ export const ProductPostRequestSchema = z.object({
   title: z.string(),
   content: z.string(),
   price: z.number().int(),
+  image_ids: z.array(z.string()).optional(),
   category_id: z.string(),
 });
 
@@ -160,6 +161,7 @@ export const ProductPatchRequestSchema = z.object({
   title: z.string(),
   content: z.string(),
   price: z.number().int(),
+  image_ids: z.array(z.string()).optional(),
   category_id: z.string(),
   region_id: z.string(),
   is_sold: z.boolean(),
@@ -173,6 +175,7 @@ export const ProductResponseSchema = z.object({
   price: z.number().int(),
   like_count: z.number().int(),
   category_id: z.string(),
+  image_ids: z.array(z.string()).optional(),
   region_id: z.string(),
   is_sold: z.boolean(),
 });

@@ -17,7 +17,7 @@ export function ProductDetailView() {
 
   if (!product) return null;
 
-  const hasKorean = /[가-힣]/.test(product.title + product.content);
+  const hasKorean = /[가-힣]/.test(product.title + (product.content ?? ''));
   const postLang = hasKorean ? 'ko' : 'en';
   const needsTranslation = postLang !== language;
   const targetLang = language;
@@ -36,7 +36,7 @@ export function ProductDetailView() {
 
     setIsTranslating(true);
     try {
-      const results = await translateMultiple([product.title, product.content], targetLang, sourceLang);
+      const results = await translateMultiple([product.title, product.content ?? ''], targetLang, sourceLang);
       setTranslatedTitle(results[0].translatedText);
       setTranslatedContent(results[1].translatedText);
       setIsTranslated(true);
@@ -48,7 +48,7 @@ export function ProductDetailView() {
   };
 
   const displayTitle = isTranslated ? translatedTitle : product.title;
-  const displayContent = isTranslated ? translatedContent : product.content;
+  const displayContent = isTranslated ? translatedContent : (product.content ?? '');
 
   return (
     <>

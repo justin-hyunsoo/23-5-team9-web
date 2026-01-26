@@ -21,6 +21,7 @@ const UserProfile = () => {
   const handleSubmit = async (data: { title: string; price: number; content: string }) => {
     const newProduct = await createProduct.mutateAsync({
       ...data,
+      image_ids: [],
       category_id: '1',
     });
     alert(t.product.productRegistered);

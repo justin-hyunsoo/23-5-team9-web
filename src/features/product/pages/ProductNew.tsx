@@ -36,7 +36,7 @@ function ProductNew() {
         title: data.title,
         content: data.content,
         price: data.price,
-        image_ids: [],
+        image_ids: data.image_ids ?? [],
         category_id: '1',
       };
 

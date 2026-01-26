@@ -10,6 +10,7 @@ export const productFormSchema = z.object({
     .min(1, '상품 설명을 입력해주세요.')
     .transform((v) => v.trim()),
   is_sold: z.boolean().optional(),
+  image_ids: z.array(z.string()).optional(),
 });
 
 export type ProductFormData = z.infer<typeof productFormSchema>;

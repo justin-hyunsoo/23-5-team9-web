@@ -67,9 +67,13 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProductRequest }) =>
       productApi.update(id, data),
-    onSuccess: (result) => {
+    onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: productKeys.detail(result.id) });
+      const id = variables?.id ?? result?.id;
+      if (id) {
+        // Ensure active detail query is refetched so UI updates without a manual refresh
+        queryClient.invalidateQueries({ queryKey: productKeys.detail(id) });
+      }
     },
   });
 }

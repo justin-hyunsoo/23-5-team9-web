@@ -15,7 +15,9 @@ export function ProductDetailView() {
   const { product, isLiked, isOwner, isDeleting, handleLike, startEditing, handleDelete } = useProductDetail();
 
   const { data: images } = useQuery<ImageUploadResponse[]>({
-    queryKey: ['product', 'images', product?.id],
+    // include the product's image_ids in the key so this query refetches
+    // whenever the product's images change
+    queryKey: ['product', 'images', product?.id, product?.image_ids ?? []],
     queryFn: async () => {
       if (!product?.image_ids || product.image_ids.length === 0) return [];
       const results = await Promise.all(product.image_ids.map(id => imageApi.getById(id)));

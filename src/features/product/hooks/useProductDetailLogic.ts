@@ -72,7 +72,8 @@ export function useProductDetailLogic(productId: string) {
       content: data.content.trim(),
       price: data.price,
       category_id: product.category_id,
-      image_ids: product.image_ids ?? [],
+      // use image ids from the edited form so PATCH can add/remove images
+      image_ids: data.image_ids ?? [],
       region_id: product.region_id,
       is_sold: data.is_sold ?? false,
     };

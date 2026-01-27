@@ -75,41 +75,42 @@ export function ProductDetailView() {
         <div className="mb-4">
           <div className="relative">
             <DetailImage src={images[currentIndex].image_url} alt={product.title} />
-
-            <div className="absolute left-2 top-1/2 -translate-y-1/2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
-                disabled={currentIndex === 0}
-              >
-                ‹
-              </Button>
-            </div>
-
-            <div className="absolute right-2 top-1/2 -translate-y-1/2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setCurrentIndex((i) => Math.min(images.length - 1, i + 1))}
-                disabled={currentIndex === images.length - 1}
-              >
-                ›
-              </Button>
-            </div>
           </div>
 
           {images.length > 1 && (
             <div className="mt-3 flex items-center justify-center gap-3">
-              {images.map((img, idx) => (
-                <button
-                  key={img.id}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`rounded-md overflow-hidden ${idx === currentIndex ? 'ring-2 ring-primary' : ''}`}
-                >
-                  <Thumbnail src={img.image_url} alt={product.title} size={56} />
-                </button>
-              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
+                disabled={currentIndex === 0}
+                aria-label="previous image"
+              >
+                ‹
+              </Button>
+
+              <div className="flex items-center gap-3">
+                {images.map((img, idx) => (
+                  <button
+                    key={img.id}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`rounded-md overflow-hidden ${idx === currentIndex ? 'ring-2 ring-primary' : ''}`}
+                    aria-label={idx === currentIndex ? `image ${idx + 1} selected` : `select image ${idx + 1}`}
+                  >
+                    <Thumbnail src={img.image_url} alt={product.title} size={56} />
+                  </button>
+                ))}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentIndex((i) => Math.min(images.length - 1, i + 1))}
+                disabled={currentIndex === images.length - 1}
+                aria-label="next image"
+              >
+                ›
+              </Button>
             </div>
           )}
         </div>

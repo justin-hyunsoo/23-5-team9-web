@@ -11,9 +11,7 @@ import { useTranslation } from '@/shared/i18n';
 
 import { useOnboarding } from '@/features/user/hooks/useUser';
 import { useUser } from '@/features/user/hooks/useUser';
-import { useRegionStore } from '@/shared/store/regionStore';
 import { POLLING_CONFIG } from '@/shared/config/polling';
-import { fetchRegionById } from '@/features/location/api/region';
 
 type TabType = 'products' | 'profile' | 'coin' | 'transactions' | 'password';
 
@@ -26,7 +24,6 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const onboardingMutation = useOnboarding();
-  const { setRegion } = useRegionStore();
   const t = useTranslation();
 
   const MENU_ITEMS: { id: TabType; label: string; to: string }[] = [
@@ -43,13 +40,6 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
     if (!user) return;
     try {
       await onboardingMutation.mutateAsync(data);
-
-      // 지역이 변경된 경우 regionStore도 업데이트
-      if (data.region_id) {
-        const region = await fetchRegionById(data.region_id);
-        setRegion(region.id, `${region.sigugun} ${region.dong}`);
-      }
-
       alert(t.user.infoUpdated);
     } catch (err) {
       console.error(err);

@@ -210,6 +210,8 @@ export const en: TranslationKeys = {
     findingLocation: 'Finding location...',
     orSelectDirectly: 'or select directly',
     regionSettings: 'Region Settings',
+    allRegions: 'All Regions',
+    selectAtLeastSido: 'Please select at least a province.',
     browserNotSupported: 'Browser does not support geolocation.',
     serverLocationError: 'Could not find location from server.',
     locationUnavailable: 'Unable to retrieve location.',

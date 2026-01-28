@@ -208,6 +208,8 @@ export const ko = {
     findingLocation: '위치 찾는 중...',
     orSelectDirectly: '또는 직접 선택',
     regionSettings: '지역 설정',
+    allRegions: '전체 지역',
+    selectAtLeastSido: '시/도를 선택해주세요.',
     browserNotSupported: '브라우저가 위치 정보를 지원하지 않습니다.',
     serverLocationError: '서버에서 위치 정보를 찾을 수 없습니다.',
     locationUnavailable: '위치 정보를 가져올 수 없습니다.',

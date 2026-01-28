@@ -18,6 +18,8 @@ export default function AuctionList() {
   const {
     currentRegionId,
     currentRegionName,
+    currentSido,
+    currentSigugun,
     isModalOpen,
     openModal,
     closeModal,
@@ -28,8 +30,11 @@ export default function AuctionList() {
 
   const [categoryId] = useState<string | undefined>(undefined);
 
+  // 지역 필터: 동 단위, 시/구/군 단위, 시/도 단위 모두 지원
   const { auctions, loading, error } = useAuctions({
     regionId: currentRegionId,
+    sido: currentSido,
+    sigugun: currentSigugun,
     categoryId,
   });
 

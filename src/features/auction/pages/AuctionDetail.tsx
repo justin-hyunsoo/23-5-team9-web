@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { PageContainer } from '@/shared/layouts/PageContainer';
@@ -8,27 +8,36 @@ import { imageApi, ImageUploadResponse } from '@/features/product/api/imageApi';
 import { useTranslation } from '@/shared/i18n';
 import { useIsLoggedIn } from '@/features/auth/hooks/store';
 import { getErrorMessage } from '@/shared/api/types';
+import { useLanguage } from '@/shared/store/languageStore';
 
-function formatRemainingTime(endAt: string): string {
+type AuctionTranslations = {
+  timeEnded: string;
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
+};
+
+function formatRemainingTime(endAt: string, t: AuctionTranslations): string {
   const now = new Date();
   const end = new Date(endAt);
   const diff = end.getTime() - now.getTime();
 
-  if (diff <= 0) return '종료됨';
+  if (diff <= 0) return t.timeEnded;
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-  if (days > 0) return `${days}일 ${hours}시간 ${minutes}분`;
-  if (hours > 0) return `${hours}시간 ${minutes}분 ${seconds}초`;
-  return `${minutes}분 ${seconds}초`;
+  if (days > 0) return `${days}${t.days} ${hours}${t.hours} ${minutes}${t.minutes}`;
+  if (hours > 0) return `${hours}${t.hours} ${minutes}${t.minutes} ${seconds}${t.seconds}`;
+  return `${minutes}${t.minutes} ${seconds}${t.seconds}`;
 }
 
-function formatDateTime(dateStr: string): string {
+function formatDateTime(dateStr: string, locale: string): string {
   const date = new Date(dateStr);
-  return date.toLocaleString('ko-KR', {
+  return date.toLocaleString(locale === 'ko' ? 'ko-KR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -41,6 +50,7 @@ export default function AuctionDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const t = useTranslation();
+  const { language } = useLanguage();
   const isLoggedIn = useIsLoggedIn();
 
   const { auction, loading, error, refetch } = useAuction(id!);
@@ -50,19 +60,27 @@ export default function AuctionDetail() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [remainingTime, setRemainingTime] = useState('');
 
-  // 남은 시간 업데이트 (1초마다)
+  const auctionTimeTranslations = useMemo(() => ({
+    timeEnded: t.auction.timeEnded,
+    days: t.auction.days,
+    hours: t.auction.hours,
+    minutes: t.auction.minutes,
+    seconds: t.auction.seconds,
+  }), [t]);
+
+  // Update remaining time (every second)
   useEffect(() => {
     if (!auction) return;
 
     const updateTime = () => {
-      setRemainingTime(formatRemainingTime(auction.end_at));
+      setRemainingTime(formatRemainingTime(auction.end_at, auctionTimeTranslations));
     };
 
     updateTime();
     const interval = setInterval(updateTime, 1000);
 
     return () => clearInterval(interval);
-  }, [auction]);
+  }, [auction, auctionTimeTranslations]);
 
   // 이미지 조회
   const { data: images } = useQuery<ImageUploadResponse[]>({
@@ -86,12 +104,12 @@ export default function AuctionDetail() {
 
     const price = parseInt(bidPrice, 10);
     if (isNaN(price) || price <= 0) {
-      alert('유효한 금액을 입력해주세요.');
+      alert(t.auction.invalidAmount);
       return;
     }
 
     if (auction && price <= auction.current_price) {
-      alert(`현재가(${auction.current_price.toLocaleString()}원)보다 높은 금액을 입력해주세요.`);
+      alert(t.auction.bidHigherThanCurrent.replace('{price}', auction.current_price.toLocaleString()));
       return;
     }
 
@@ -102,9 +120,9 @@ export default function AuctionDetail() {
       });
       setBidPrice('');
       refetch();
-      alert('입찰이 완료되었습니다!');
+      alert(t.auction.bidPlaced);
     } catch (err) {
-      alert(getErrorMessage(err, '입찰에 실패했습니다.'));
+      alert(getErrorMessage(err, t.auction.bidFailed));
     }
   };
 
@@ -122,7 +140,7 @@ export default function AuctionDetail() {
     return (
       <PageContainer>
         <div className="text-center py-12">
-          <p className="text-text-muted">경매를 찾을 수 없습니다.</p>
+          <p className="text-text-muted">{t.auction.notFound}</p>
         </div>
       </PageContainer>
     );
@@ -136,19 +154,19 @@ export default function AuctionDetail() {
       <DetailHeader />
 
       <DetailSection className="mb-4">
-        {/* 경매 상태 */}
+        {/* Auction status */}
         <div className="flex items-center justify-between mb-4">
-          <Badge variant={isEnded ? 'secondary' : 'primary'} size="lg">
-            {isEnded ? '경매 종료' : '경매 진행중'}
+          <Badge variant={isEnded ? 'secondary' : 'primary'}>
+            {isEnded ? t.auction.auctionEnded : t.auction.active}
           </Badge>
           {!isEnded && (
-            <span className="text-status-error font-bold">{remainingTime} 남음</span>
+            <span className="text-status-error font-bold">{remainingTime} {t.auction.remaining}</span>
           )}
         </div>
 
-        {/* 종료 시간 */}
+        {/* End time */}
         <p className="text-sm text-text-muted mb-4">
-          종료: {formatDateTime(auction.end_at)}
+          {t.auction.endTime}: {formatDateTime(auction.end_at, language)}
         </p>
       </DetailSection>
 
@@ -207,35 +225,35 @@ export default function AuctionDetail() {
         {/* 상품 제목 */}
         <h2 className="text-2xl font-bold mb-4 text-text-heading">{auction.product.title}</h2>
 
-        {/* 가격 정보 */}
+        {/* Price info */}
         <div className="bg-bg-secondary rounded-lg p-4 mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-text-muted">시작가</span>
+            <span className="text-text-muted">{t.auction.startingPrice}</span>
             <span className="text-text-body">{auction.starting_price.toLocaleString()}{t.common.won}</span>
           </div>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-text-muted">현재가</span>
+            <span className="text-text-muted">{t.auction.currentPrice}</span>
             <span className="text-2xl font-bold text-primary">{auction.current_price.toLocaleString()}{t.common.won}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-text-muted">입찰 수</span>
-            <span className="text-text-body">{auction.bid_count}회</span>
+            <span className="text-text-muted">{t.auction.bidCount}</span>
+            <span className="text-text-body">{t.auction.bidsCount.replace('{count}', String(auction.bid_count))}</span>
           </div>
         </div>
 
-        {/* 입찰 폼 */}
+        {/* Bid form */}
         {!isEnded && (
           <div className="border border-border-base rounded-lg p-4 mb-6">
-            <h3 className="font-semibold mb-3">입찰하기</h3>
+            <h3 className="font-semibold mb-3">{t.auction.placeBid}</h3>
             <p className="text-sm text-text-muted mb-3">
-              최소 입찰가: {minBidPrice.toLocaleString()}{t.common.won} 이상
+              {t.auction.minimumBid}: {minBidPrice.toLocaleString()}{t.common.won} {t.auction.orMore}
             </p>
             <div className="flex gap-2">
               <Input
                 type="number"
                 value={bidPrice}
                 onChange={(e) => setBidPrice(e.target.value)}
-                placeholder={`${minBidPrice.toLocaleString()}원 이상 입력`}
+                placeholder={t.auction.enterBidAmount.replace('{price}', minBidPrice.toLocaleString())}
                 min={minBidPrice}
                 className="flex-1"
               />
@@ -243,16 +261,17 @@ export default function AuctionDetail() {
                 variant="primary"
                 onClick={handleBid}
                 disabled={placeBidMutation.isPending}
+                className="whitespace-nowrap min-w-[70px]"
               >
-                {placeBidMutation.isPending ? '입찰중...' : '입찰'}
+                {placeBidMutation.isPending ? t.auction.bidding : t.auction.bid}
               </Button>
             </div>
           </div>
         )}
 
-        {/* 상품 설명 */}
+        {/* Product description */}
         <div className="border-t border-border-base pt-6">
-          <h3 className="font-semibold mb-3">상품 설명</h3>
+          <h3 className="font-semibold mb-3">{t.auction.productDescription}</h3>
           <div className="whitespace-pre-wrap leading-relaxed text-text-body">
             {auction.product.content}
           </div>

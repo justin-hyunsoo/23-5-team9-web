@@ -10,26 +10,42 @@ interface AuctionCardProps {
   auction: AuctionResponse;
 }
 
-function formatRemainingTime(endAt: string): string {
+type TimeTranslations = {
+  timeEnded: string;
+  days: string;
+  hours: string;
+  minutes: string;
+  remaining: string;
+};
+
+function formatRemainingTime(endAt: string, t: TimeTranslations): string {
   const now = new Date();
   const end = new Date(endAt);
   const diff = end.getTime() - now.getTime();
 
-  if (diff <= 0) return '종료됨';
+  if (diff <= 0) return t.timeEnded;
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-  if (days > 0) return `${days}일 ${hours}시간 남음`;
-  if (hours > 0) return `${hours}시간 ${minutes}분 남음`;
-  return `${minutes}분 남음`;
+  if (days > 0) return `${days}${t.days} ${hours}${t.hours} ${t.remaining}`;
+  if (hours > 0) return `${hours}${t.hours} ${minutes}${t.minutes} ${t.remaining}`;
+  return `${minutes}${t.minutes} ${t.remaining}`;
 }
 
 export default function AuctionCard({ auction }: AuctionCardProps) {
   const t = useTranslation();
 
   const formatPrice = (price: number) => `${price.toLocaleString()}${t.common.won}`;
+
+  const timeTranslations = useMemo(() => ({
+    timeEnded: t.auction.timeEnded,
+    days: t.auction.days,
+    hours: t.auction.hours,
+    minutes: t.auction.minutes,
+    remaining: t.auction.remaining,
+  }), [t]);
 
   const firstImageId = useMemo(
     () => (auction.product.image_ids && auction.product.image_ids.length > 0 ? auction.product.image_ids[0] : undefined),
@@ -43,23 +59,23 @@ export default function AuctionCard({ auction }: AuctionCardProps) {
   });
 
   const isEnded = auction.status !== 'active';
-  const remainingTime = formatRemainingTime(auction.end_at);
+  const remainingTime = formatRemainingTime(auction.end_at, timeTranslations);
 
   return (
     <Link to={`/auction/${auction.id}`} className="group text-inherit no-underline">
       <Card className="border border-border-medium rounded-lg p-3">
         <CardContent>
-          {/* 경매 상태 뱃지 */}
+          {/* Auction status badge */}
           <div className="flex items-center justify-between mb-3">
             <Badge variant={isEnded ? 'secondary' : 'primary'} className="text-xs">
-              {isEnded ? '종료' : '진행중'}
+              {isEnded ? t.auction.ended : t.auction.inProgress}
             </Badge>
             {!isEnded && (
               <span className="text-xs text-status-error font-medium">{remainingTime}</span>
             )}
           </div>
 
-          {/* 상품 이미지 */}
+          {/* Product image */}
           {auction.product.image_ids && auction.product.image_ids.length > 0 && (
             <CardImage src={firstImage?.image_url ?? undefined} alt={auction.product.title} aspectRatio="square" />
           )}
@@ -69,19 +85,19 @@ export default function AuctionCard({ auction }: AuctionCardProps) {
           </CardTitle>
           <p className="text-sm text-text-muted line-clamp-2 mb-2">{auction.product.content}</p>
 
-          {/* 가격 정보 */}
+          {/* Price info */}
           <div className="space-y-1">
             <div className="text-xs text-text-muted">
-              시작가: {formatPrice(auction.starting_price)}
+              {t.auction.startingPrice}: {formatPrice(auction.starting_price)}
             </div>
             <div className="text-[15px] font-extrabold text-primary">
-              현재가: {formatPrice(auction.current_price)}
+              {t.auction.currentPrice}: {formatPrice(auction.current_price)}
             </div>
           </div>
 
-          {/* 입찰 수 */}
+          {/* Bid count */}
           <div className="mt-2 text-xs text-text-secondary">
-            입찰 {auction.bid_count}회
+            {t.auction.bidsCount.replace('{count}', String(auction.bid_count))}
           </div>
         </CardContent>
       </Card>

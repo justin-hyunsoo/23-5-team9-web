@@ -9,10 +9,12 @@ import RegionSelectModal from "@/features/location/components/RegionSelectModal"
 import { Button } from "@/shared/ui";
 import { useNavigate } from "react-router-dom";
 import { useIsLoggedIn } from "@/features/auth/hooks/store";
+import { useTranslation } from "@/shared/i18n";
 
 export default function AuctionList() {
   const navigate = useNavigate();
   const isLoggedIn = useIsLoggedIn();
+  const t = useTranslation();
   const {
     currentRegionId,
     currentRegionName,
@@ -40,18 +42,18 @@ export default function AuctionList() {
   };
 
   return (
-    <PageContainer title="경매">
+    <PageContainer title={t.auction.auction}>
       <div className="mb-6 flex items-center justify-between gap-4">
         <RegionSelector regionName={currentRegionName} onClick={openModal} />
         <Button onClick={handleCreateAuction} variant="primary" size="sm">
-          경매 등록
+          {t.auction.create}
         </Button>
       </div>
       <DataListLayout
         isLoading={loading}
         error={error}
         isEmpty={auctions.length === 0}
-        emptyMessage="등록된 경매가 없습니다"
+        emptyMessage={t.auction.noAuctions}
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {auctions.map((auction) => (

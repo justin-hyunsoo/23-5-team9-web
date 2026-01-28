@@ -173,10 +173,10 @@ export default function AuctionNew() {
       };
 
       const newAuction = await createAuction.mutateAsync(payload);
-      alert('경매가 등록되었습니다!');
+      alert(t.auction.registered);
       navigate(`/auction/${newAuction.id}`);
     } catch (err) {
-      alert(getErrorMessage(err, '경매 등록에 실패했습니다.'));
+      alert(getErrorMessage(err, t.auction.registerFailed));
     }
   });
 
@@ -185,7 +185,7 @@ export default function AuctionNew() {
   const minDate = now.toISOString().split('T')[0];
 
   return (
-    <PageContainer title="경매 등록">
+    <PageContainer title={t.auction.create}>
       <DetailHeader />
       <DetailSection>
         <form
@@ -197,26 +197,26 @@ export default function AuctionNew() {
         >
           <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
 
-          {/* 제목 */}
+          {/* Title */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-text-secondary mb-1">상품 제목</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">{t.auction.productTitle}</label>
             <input
               type="text"
               {...register('title')}
-              placeholder="상품 제목을 입력해주세요"
+              placeholder={t.auction.enterProductTitle}
               className="w-full text-xl font-bold text-text-heading bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1"
             />
             {errors.title && <p className="mt-1 text-sm text-status-error">{errors.title.message}</p>}
           </div>
 
-          {/* 시작가 */}
+          {/* Starting price */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-text-secondary mb-1">시작가</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">{t.auction.startingPrice}</label>
             <div className="flex items-baseline gap-1">
               <input
                 type="number"
                 {...register('starting_price', { valueAsNumber: true })}
-                placeholder="시작가"
+                placeholder={t.auction.startingPrice}
                 min="1"
                 className="text-2xl font-bold text-primary bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1 w-40"
               />
@@ -225,10 +225,10 @@ export default function AuctionNew() {
             {errors.starting_price && <p className="mt-1 text-sm text-status-error">{errors.starting_price.message}</p>}
           </div>
 
-          {/* 종료 일시 */}
+          {/* End date/time */}
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">종료 날짜</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">{t.auction.endDate}</label>
               <input
                 type="date"
                 {...register('end_date')}
@@ -238,7 +238,7 @@ export default function AuctionNew() {
               {errors.end_date && <p className="mt-1 text-sm text-status-error">{errors.end_date.message}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">종료 시간</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">{t.auction.endHour}</label>
               <input
                 type="time"
                 {...register('end_time')}
@@ -248,14 +248,14 @@ export default function AuctionNew() {
             </div>
           </div>
 
-          {/* 상품 설명 */}
+          {/* Product description */}
           <div className="mt-6 border-t border-border-base pt-6">
-            <label className="block text-sm font-medium text-text-secondary mb-1">상품 설명</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">{t.auction.productDescription}</label>
             <textarea
               {...register('content')}
               rows={6}
               className="w-full bg-transparent text-text-body leading-relaxed outline-none border border-border-medium rounded-lg p-3 focus:border-primary resize-none"
-              placeholder="상품에 대한 설명을 입력해주세요"
+              placeholder={t.auction.enterProductDescription}
             />
             {errors.content && <p className="mt-1 text-sm text-status-error">{errors.content.message}</p>}
           </div>
@@ -324,7 +324,7 @@ export default function AuctionNew() {
                 {t.common.cancel}
               </Button>
               <Button size="sm" type="submit" disabled={createAuction.isPending || isAnyUploading}>
-                {createAuction.isPending ? t.common.processing : '경매 등록'}
+                {createAuction.isPending ? t.common.processing : t.auction.create}
               </Button>
             </div>
           </div>

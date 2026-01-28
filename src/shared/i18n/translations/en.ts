@@ -19,6 +19,8 @@ export const en: TranslationKeys = {
     hide: 'Hide',
     random: 'Random',
     link: 'Link',
+    upload: 'Upload',
+    uploading: 'Uploading...',
     user: 'User',
   },
 
@@ -98,6 +100,12 @@ export const en: TranslationKeys = {
     registerProduct: '+ Add Product',
     mySalesItems: 'My Items',
     noSalesItems: 'No items for sale.',
+    imagesDropzone: 'Drag & drop images here',
+    imagesSelect: 'Select images',
+    imagesNone: 'No images yet',
+    imagesSelected: '{count} selected',
+    imageUploadFailed: 'Image upload failed.',
+    imageUploadingWait: 'Please wait until image uploads finish.',
     ownProduct: 'This is your own product.',
     confirmDelete: 'Are you sure you want to delete this product?',
     deleted: 'Product deleted.',
@@ -185,6 +193,7 @@ export const en: TranslationKeys = {
     email: 'Email',
     enterImageUrl: 'Enter image URL:',
     saveProfile: 'Save',
+    imageUploadFailed: 'Profile image upload failed.',
     savedLocationSetPrefix: "Set to saved location ('",
     savedLocationSetSuffix: "').",
     currentLocationSetPrefix: "Set to current location ('",
@@ -201,8 +210,6 @@ export const en: TranslationKeys = {
     findingLocation: 'Finding location...',
     orSelectDirectly: 'or select directly',
     regionSettings: 'Region Settings',
-    allRegions: 'All Regions',
-    selectAtLeastSido: 'Please select at least a province.',
     browserNotSupported: 'Browser does not support geolocation.',
     serverLocationError: 'Could not find location from server.',
     locationUnavailable: 'Unable to retrieve location.',
@@ -214,15 +221,5 @@ export const en: TranslationKeys = {
   // Layout
   layout: {
     goBack: '← Back',
-  },
-
-  // Image
-  image: {
-    productImages: 'Product Images',
-    addImage: 'Add Photo',
-    uploading: 'Uploading...',
-    uploadFailed: 'Failed to upload image.',
-    maxImagesReached: 'Maximum number of images reached.',
-    noImages: 'Add photos of your product.',
   },
 } as const;

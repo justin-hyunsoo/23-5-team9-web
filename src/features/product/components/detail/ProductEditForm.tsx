@@ -11,7 +11,6 @@ export function ProductEditForm() {
   return (
     <ProductForm
       initialData={{ ...product, content: product.content ?? undefined }}
-      initialImageIds={product.image_ids}
       onSubmit={handleEdit}
       onCancel={cancelEditing}
       submitLabel={t.common.save}

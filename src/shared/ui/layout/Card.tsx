@@ -26,9 +26,10 @@ interface CardImageProps {
   alt: string;
   aspectRatio?: 'square' | 'video' | 'auto';
   className?: string;
+  onError?: () => void;
 }
 
-export function CardImage({ src, alt, aspectRatio = 'square', className = '' }: CardImageProps) {
+export function CardImage({ src, alt, aspectRatio = 'square', className = '', onError }: CardImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const aspectClass = aspectRatio === 'square' ? 'aspect-square' : aspectRatio === 'video' ? 'aspect-video' : '';
@@ -49,6 +50,7 @@ export function CardImage({ src, alt, aspectRatio = 'square', className = '' }: 
           onError={() => {
             setIsLoading(false);
             setHasError(true);
+            try { onError?.(); } catch {}
           }}
         />
       ) : (

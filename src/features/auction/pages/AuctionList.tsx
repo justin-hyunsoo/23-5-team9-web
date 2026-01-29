@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AuctionCard from "@/features/auction/components/AuctionCard";
+import ProductCard from "@/features/product/components/list/ProductCard";
 import { useAuctions } from "@/features/auction/hooks/useAuctions";
 import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DataListLayout } from "@/shared/layouts/DataListLayout";
@@ -62,7 +62,20 @@ export default function AuctionList() {
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {auctions.map((auction) => (
-            <AuctionCard key={auction.id} auction={auction} />
+            <ProductCard
+              key={auction.id}
+              product={{
+                ...auction.product,
+                auction: {
+                  id: auction.id,
+                  product_id: auction.product_id,
+                  current_price: auction.current_price,
+                  end_at: auction.end_at,
+                  bid_count: auction.bid_count,
+                  status: auction.status,
+                },
+              }}
+            />
           ))}
         </div>
       </DataListLayout>

@@ -5,9 +5,11 @@ import { PageContainer } from "@/shared/layouts/PageContainer";
 import { DetailHeader, DetailSection, LoginRequired, OnboardingRequired } from '@/shared/ui';
 import ProductForm, { type ProductFormData } from "@/features/product/components/form/ProductForm";
 import { useTranslation } from "@/shared/i18n";
+import { useHierarchicalBack } from "@/shared/hooks/useHierarchicalBack";
 
 function ProductNew() {
   const navigate = useNavigate();
+  const goBack = useHierarchicalBack();
   const { isLoggedIn, needsOnboarding } = useUser();
   const createProduct = useCreateProduct();
   const t = useTranslation();
@@ -54,7 +56,7 @@ function ProductNew() {
       <DetailSection>
         <ProductForm
           onSubmit={handleSubmit}
-          onCancel={() => navigate(-1)}
+          onCancel={goBack}
           isLoading={createProduct.isPending}
         />
       </DetailSection>

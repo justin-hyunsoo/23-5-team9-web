@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
+import { useHierarchicalBack } from '@/shared/hooks/useHierarchicalBack';
 
 interface ChatHeaderProps {
   opponentId?: string;
@@ -19,11 +20,12 @@ function ChatHeader({
 }: ChatHeaderProps) {
   const navigate = useNavigate();
   const t = useTranslation();
+  const goBack = useHierarchicalBack();
 
   return (
     <div className="flex items-center gap-3 px-4 py-3 bg-bg-page border-b border-border-medium">
       <button
-        onClick={() => navigate(-1)}
+        onClick={goBack}
         className="p-1 -ml-1 text-text-secondary hover:text-text-heading transition-colors md:hidden"
       >
         ←

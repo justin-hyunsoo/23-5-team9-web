@@ -1,16 +1,16 @@
-import { useNavigate } from 'react-router-dom';
 import { Button } from '../display/Button';
 import { useTranslation } from '@/shared/i18n';
+import { useHierarchicalBack } from '@/shared/hooks/useHierarchicalBack';
 
 export function DetailHeader() {
-  const navigate = useNavigate();
   const t = useTranslation();
+  const goBack = useHierarchicalBack();
 
   return (
     <div className="mb-4">
       <Button
         variant="ghost"
-        onClick={() => navigate(-1)}
+        onClick={goBack}
         className="pl-0 hover:bg-transparent hover:text-primary"
       >
         {t.layout.goBack}

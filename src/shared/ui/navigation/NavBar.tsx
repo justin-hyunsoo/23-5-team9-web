@@ -8,6 +8,8 @@ import { Button } from '../display/Button';
 import { Badge } from '../feedback';
 import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 import { useProductFiltersStore } from '@/features/product/store/productFiltersStore';
+import { useChatNavigationStore } from '@/features/chat/store/chatNavigationStore';
+import { useMyCarrotNavigationStore } from '@/features/user/store/myCarrotNavigationStore';
 
 export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getProductSearchParams = useProductFiltersStore((state) => state.getSearchParams);
+  const lastChatPath = useChatNavigationStore((state) => state.lastPath);
+  const lastMyCarrotPath = useMyCarrotNavigationStore((state) => state.lastPath);
 
   const MENUS = [
     { id: 'products', label: t.nav.products, path: '/products' },
@@ -31,9 +35,13 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   });
 
   const handleNav = (path: string) => {
-    // Preserve product filters when navigating to /products
+    // Preserve navigation state for each section
     if (path === '/products') {
       navigate(path + getProductSearchParams());
+    } else if (path === '/chat') {
+      navigate(lastChatPath);
+    } else if (path === '/my') {
+      navigate(lastMyCarrotPath);
     } else {
       navigate(path);
     }

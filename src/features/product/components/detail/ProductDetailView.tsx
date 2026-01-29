@@ -136,7 +136,7 @@ export function ProductDetailView() {
                   variant="primary"
                   onClick={handleBid}
                   disabled={isBidding}
-                  className="whitespace-nowrap min-w-[70px]"
+                  className="whitespace-nowrap min-w-17.5"
                 >
                   {isBidding ? t.auction.bidding : t.auction.bid}
                 </Button>

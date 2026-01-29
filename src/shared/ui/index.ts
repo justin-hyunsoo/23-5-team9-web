@@ -9,7 +9,7 @@ export { Badge, Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequ
 export { Card, CardImage, CardContent, CardTitle, CardMeta, DetailSection, DetailImage, DetailHeader, Thumbnail } from './layout';
 
 // Navigation
-export { NavBar, TabBar } from './navigation';
+export { NavBar, TabBar, Pagination } from './navigation';
 export type { Tab } from './navigation';
 
 // Display

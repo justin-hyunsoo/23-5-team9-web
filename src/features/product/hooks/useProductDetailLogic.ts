@@ -15,7 +15,8 @@ export function useProductDetailLogic(productId: string) {
   const { product, loading: productLoading, error: productError, refetch } = useProduct(productId);
   const auctionInfo = product?.auction;
   const { profile: sellerProfile } = useUserProfile(product?.owner_id);
-  const { products: sellerProducts } = useUserProducts(product?.owner_id!);
+  const { products: sellerProducts } = useUserProducts(product?.owner_id!, undefined, undefined, false);
+  const { products: sellerAuctions } = useUserProducts(product?.owner_id!, undefined, undefined, true);
 
   const placeBidMutation = usePlaceBid();
   const [bidPrice, setBidPrice] = useState('');
@@ -74,6 +75,7 @@ export function useProductDetailLogic(productId: string) {
     auction,
     sellerProfile,
     sellerProducts,
+    sellerAuctions,
     productLoading,
     productError,
     // Auction-specific

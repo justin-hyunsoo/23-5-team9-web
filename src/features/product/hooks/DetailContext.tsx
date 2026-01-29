@@ -9,6 +9,7 @@ export interface DetailContextValue {
   product: DetailProduct;
   sellerProfile: PublicUserResponse | null | undefined;
   sellerProducts: ProductResponse[] | undefined;
+  sellerAuctions: ProductResponse[] | undefined;
   isLiked: boolean;
   isOwner: boolean;
   isEditing: boolean;
@@ -28,6 +29,7 @@ export interface LogicWithDetailFields {
   product: DetailProduct | null | undefined;
   sellerProfile: PublicUserResponse | null | undefined;
   sellerProducts: ProductResponse[] | undefined;
+  sellerAuctions: ProductResponse[] | undefined;
   isLiked: boolean;
   isOwner: boolean | undefined;
   isEditing: boolean;
@@ -49,6 +51,7 @@ export function toDetailValue(logic: LogicWithDetailFields): DetailContextValue 
     product: logic.product,
     sellerProfile: logic.sellerProfile,
     sellerProducts: logic.sellerProducts,
+    sellerAuctions: logic.sellerAuctions,
     isLiked: logic.isLiked,
     isOwner: logic.isOwner ?? false,
     isEditing: logic.isEditing,

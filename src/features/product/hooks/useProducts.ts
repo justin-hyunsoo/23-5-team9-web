@@ -98,8 +98,8 @@ export function useDeleteProduct() {
 }
 
 // 기존 호환성을 위한 alias (필요 없으면 삭제 가능)
-export const useUserProducts = (userId: string, category?: string, search?: string) =>
-  useProducts({ userId, category, search });
+export const useUserProducts = (userId: string, category?: string, search?: string, auction?: boolean) =>
+  useProducts({ userId, category, search, auction });
 
 export function usePlaceBid() {
   const queryClient = useQueryClient();

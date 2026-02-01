@@ -4,6 +4,7 @@ import { useMessages, useSendMessage, useMarkAsRead, useChatRoom } from '@/featu
 import { useUser, useUserProfile } from '@/features/user/hooks/useUser';
 import { Loading, ErrorMessage, DetailHeader } from '@/shared/ui';
 import { TransferMenu } from '@/features/pay/components/transfer';
+import { useTransactions } from '@/features/pay/hooks/useTransactions';
 import ChatHeader from '@/features/chat/components/ChatHeader';
 import MessageList from '@/features/chat/components/MessageList';
 import ChatInput from '@/features/chat/components/ChatInput';
@@ -25,6 +26,10 @@ function ChatRoom() {
   const markAsReadMutation = useMarkAsRead(chatId || '');
 
   const { profile: opponentProfile } = useUserProfile(roomInfo?.opponent_id);
+  const { transactions } = useTransactions({
+    partnerId: roomInfo?.opponent_id,
+    refetchInterval: POLLING_CONFIG.TRANSACTIONS,
+  });
 
   useEffect(() => {
     if (!userLoading && !isLoggedIn) {
@@ -72,7 +77,7 @@ function ChatRoom() {
           />
         )}
 
-        <MessageList messages={messages} currentUserId={user?.id} />
+        <MessageList messages={messages} transactions={transactions} currentUserId={user?.id} />
 
         <ChatInput onSend={handleSend} isPending={sendMessageMutation.isPending} />
       </div>

@@ -11,6 +11,7 @@ export const POLLING_CONFIG = {
 
   // 결제/송금 관련
   USER_BALANCE: 5_000,     // 채팅방 잔액 (5초)
+  TRANSACTIONS: 5_000,     // 거래 내역 (5초)
 
   // staleTime 설정
   STALE_TIME: {

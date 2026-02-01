@@ -7,24 +7,44 @@ const ITEMS_PER_PAGE = 10;
 export const transactionKeys = {
   all: ['transactions'] as const,
   list: (offset: number) => [...transactionKeys.all, 'list', offset] as const,
+  partner: (partnerId: string, offset: number) => [...transactionKeys.all, 'partner', partnerId, offset] as const,
 };
 
-export function useTransactions() {
+interface UseTransactionsOptions {
+  partnerId?: string;
+  refetchInterval?: number | false;
+}
+
+export function useTransactions(options?: UseTransactionsOptions) {
+  const { partnerId, refetchInterval } = options || {};
   const token = localStorage.getItem('token');
   const queryClient = useQueryClient();
   const [offset, setOffset] = useState(0);
   const [allTransactions, setAllTransactions] = useState<PayTransaction[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
+  const queryKey = partnerId
+    ? transactionKeys.partner(partnerId, offset)
+    : transactionKeys.list(offset);
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: transactionKeys.list(offset),
+    queryKey,
     queryFn: () => payApi.getTransactions({
       limit: ITEMS_PER_PAGE,
       offset,
+      partner_id: partnerId,
     }),
     enabled: !!token,
     staleTime: 1000 * 60,
+    refetchInterval,
   });
+
+  // Reset state when partnerId changes
+  useEffect(() => {
+    setOffset(0);
+    setAllTransactions([]);
+    setHasMore(true);
+  }, [partnerId]);
 
   // Sync query data to state
   useEffect(() => {
@@ -53,7 +73,11 @@ export function useTransactions() {
     setOffset(0);
     setAllTransactions([]);
     setHasMore(true);
-    queryClient.invalidateQueries({ queryKey: transactionKeys.all });
+    if (partnerId) {
+      queryClient.invalidateQueries({ queryKey: ['transactions', 'partner', partnerId] });
+    } else {
+      queryClient.invalidateQueries({ queryKey: transactionKeys.all });
+    }
   };
 
   return {

@@ -43,7 +43,6 @@ function ChatList() {
   }
 
   if (loading) return <Loading />;
-  if (error) return <ErrorMessage message={t.chat.loadFailed} />;
   if (rooms.length === 0) return (
     <PageContainer title={t.chat.chat}>
       <EmptyState message={t.chat.noHistory} />

@@ -23,7 +23,7 @@ function formatDateTime(dateStr: string, locale: string): string {
 export function ProductDetailView() {
   const t = useTranslation();
   const { language } = useLanguage();
-  const { product, isLiked, isOwner, isDeleting, handleLike, startEditing, handleDelete } = useDetail();
+  const { product, isOwner, isDeleting, startEditing, handleDelete } = useDetail();
   const { auction, isAuction, isEnded, remainingTime, bidPrice, setBidPrice, minBidPrice, handleBid, isBidding } = useProductDetail();
 
   const { data: images = [] } = useQuery<ImageUploadResponse[]>({
@@ -92,18 +92,12 @@ export function ProductDetailView() {
           <div className="whitespace-pre-wrap leading-relaxed text-text-body">{displayContent}</div>
         </div>
 
-        <div className="flex items-center justify-between pt-6 mt-6 border-t border-border-base">
-          <Button variant={isLiked ? "primary" : "outline"} size="sm" onClick={handleLike}>
-            <span className="mr-2">{isLiked ? '♥' : '♡'}</span>
-            {t.product.like} {product.like_count + (isLiked ? 1 : 0)}
-          </Button>
-          {isOwner && (
-            <div className="flex gap-2">
-              <Button size="sm" onClick={startEditing}>{t.common.edit}</Button>
-              <Button size="sm" variant="ghost" onClick={handleDelete} disabled={isDeleting}>{t.common.delete}</Button>
-            </div>
-          )}
-        </div>
+        {isOwner && (
+          <div className="flex items-center justify-end pt-6 mt-6 border-t border-border-base gap-2">
+            <Button size="sm" onClick={startEditing}>{t.common.edit}</Button>
+            <Button size="sm" variant="ghost" onClick={handleDelete} disabled={isDeleting}>{t.common.delete}</Button>
+          </div>
+        )}
       </DetailSection>
 
       {/* Box 2: Auction Information */}

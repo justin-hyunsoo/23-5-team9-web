@@ -1,8 +1,8 @@
-import { useState, useMemo, MouseEvent } from 'react';
+import { useMemo, MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '@/features/product/types';
 import type { AuctionInfo } from '@/shared/api/types';
-import { Card, CardContent, CardImage, CardTitle, Badge, Button, StatGroup, Avatar } from '@/shared/ui';
+import { Card, CardContent, CardImage, CardTitle, Badge, Button, Avatar } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
 import { useTranslation } from '@/shared/i18n';
 import { formatPrice, formatRemainingTime } from '@/shared/lib/formatting';
@@ -16,8 +16,6 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, showActions, onEdit, onDelete }: ProductCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(product.like_count);
   const { profile } = useUserProfile(product.owner_id);
   const t = useTranslation();
   const firstImageUrl = useFirstImage(product.image_ids);
@@ -37,12 +35,6 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
   const remainingTime = auction ? formatRemainingTime(auction.end_at, timeLabels) : '';
 
   const stop = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); };
-
-  const handleLike = (e: MouseEvent) => {
-    stop(e);
-    setIsLiked(prev => !prev);
-    setLikeCount(prev => prev + (isLiked ? -1 : 1));
-  };
 
   return (
     <Link to={`/products/${product.id}`} className="group text-inherit no-underline">
@@ -92,18 +84,6 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
           ) : (
             <div className="mb-1 text-[15px] font-extrabold text-primary">{formatPrice(product.price, t.common.won)}</div>
           )}
-
-          <StatGroup className="mt-auto pt-2.5">
-            <Button
-              onClick={handleLike}
-              variant="ghost"
-              size="sm"
-              className={`p-1 flex items-center gap-1 text-[13px] ${isLiked ? 'text-primary' : 'text-text-muted'}`}
-            >
-              <span>{isLiked ? '♥' : '♡'}</span>
-              <span>{likeCount}</span>
-            </Button>
-          </StatGroup>
 
           {showActions && (
             <div className="flex gap-2 mt-3 pt-3 border-t border-border-medium">

@@ -14,6 +14,7 @@ export function ProductEditForm() {
       submitLabel={t.common.save}
       showIsSold={true}
       showRegion={true}
+      showAuctionOption={false}
       isLoading={isUpdating}
     />
   );

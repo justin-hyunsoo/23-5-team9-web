@@ -35,9 +35,9 @@ export function CardImage({ src, alt, aspectRatio = 'square', className = '', on
   const aspectClass = aspectRatio === 'square' ? 'aspect-square' : aspectRatio === 'video' ? 'aspect-video' : '';
 
   return (
-    <div className={`relative mb-3 w-full overflow-hidden rounded-xl bg-bg-box border border-border-light/20 ${aspectClass} ${className}`}>
+    <div className={`relative mb-3 w-full overflow-hidden rounded-xl bg-bg-page border border-border-light/20 ${aspectClass} ${className}`}>
       {isLoading && src && (
-        <div className="absolute inset-0 bg-bg-box flex items-center justify-center animate-pulse">
+        <div className="absolute inset-0 bg-bg-page flex items-center justify-center animate-pulse">
           <span className="text-4xl text-text-placeholder">📷</span>
         </div>
       )}
@@ -54,7 +54,7 @@ export function CardImage({ src, alt, aspectRatio = 'square', className = '', on
           }}
         />
       ) : (
-        <div className="absolute top-0 left-0 w-full h-full bg-bg-box flex items-center justify-center text-text-muted">
+        <div className="absolute top-0 left-0 w-full h-full bg-bg-page flex items-center justify-center text-text-muted">
           <span className="text-4xl">🖼️</span>
         </div>
       )}

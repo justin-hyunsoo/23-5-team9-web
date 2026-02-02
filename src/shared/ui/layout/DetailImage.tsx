@@ -13,7 +13,7 @@ export function DetailImage({ src, alt, className = '' }: DetailImageProps) {
   return (
     <div className={`relative rounded-xl overflow-hidden ${className}`}>
       {isLoading && src && (
-        <div className="absolute inset-0 bg-bg-box flex items-center justify-center animate-pulse">
+        <div className="absolute inset-0 bg-bg-page flex items-center justify-center animate-pulse">
           <span className="text-6xl text-text-placeholder">📷</span>
         </div>
       )}
@@ -27,7 +27,7 @@ export function DetailImage({ src, alt, className = '' }: DetailImageProps) {
           onError={() => { setIsLoading(false); setHasError(true); }}
         />
       ) : (
-        <div className="w-full max-h-[400px] min-h-[120px] bg-bg-box flex items-center justify-center text-text-muted">
+        <div className="w-full max-h-[400px] min-h-[120px] bg-bg-page flex items-center justify-center text-text-muted">
           <div className="text-center">
             <div className="text-6xl">🖼️</div>
             <div className="mt-2 text-sm">{alt}</div>

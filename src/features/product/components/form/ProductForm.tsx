@@ -17,6 +17,7 @@ interface ProductFormProps {
   submitLabel?: string;
   showIsSold?: boolean;
   showRegion?: boolean;
+  showAuctionOption?: boolean;
   isLoading?: boolean;
 }
 
@@ -27,6 +28,7 @@ const ProductForm = ({
   submitLabel,
   showIsSold = false,
   showRegion = false,
+  showAuctionOption = true,
   isLoading = false,
 }: ProductFormProps) => {
   const t = useTranslation();
@@ -126,23 +128,27 @@ const ProductForm = ({
         {errors.price && <p className="mt-1 text-sm text-status-error">{errors.price.message}</p>}
       </div>
 
-      <div className="mb-6 flex items-center gap-4">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" {...register('isAuction')} className="w-4 h-4 accent-primary" />
-          <span className="text-sm font-medium text-text-heading">{t.auction.auction}</span>
-        </label>
-        {isAuction && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-text-secondary">{t.auction.endDate}:</span>
-            <input
-              type="datetime-local"
-              {...register('auctionEndAt')}
-              className="text-sm bg-transparent border border-border-medium rounded px-2 py-1 focus:border-primary outline-none"
-            />
+      {showAuctionOption && (
+        <>
+          <div className="mb-6 flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" {...register('isAuction')} className="w-4 h-4 accent-primary" />
+              <span className="text-sm font-medium text-text-heading">{t.auction.auction}</span>
+            </label>
+            {isAuction && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-text-secondary">{t.auction.endDate}:</span>
+                <input
+                  type="datetime-local"
+                  {...register('auctionEndAt')}
+                  className="text-sm bg-transparent border border-border-medium rounded px-2 py-1 focus:border-primary outline-none"
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      {errors.auctionEndAt && <p className="mb-4 text-sm text-status-error">{errors.auctionEndAt.message}</p>}
+          {errors.auctionEndAt && <p className="mb-4 text-sm text-status-error">{errors.auctionEndAt.message}</p>}
+        </>
+      )}
 
       {showRegion && (
         <div className="mb-6">

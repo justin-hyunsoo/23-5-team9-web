@@ -62,7 +62,7 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
             )}
           </div>
 
-          <div className={`aspect-square rounded-lg overflow-hidden mb-3 ${firstImageUrl ? '' : 'border border-border-medium bg-bg-box'}`}>
+          <div className={`aspect-square rounded-lg overflow-hidden mb-3 ${firstImageUrl ? '' : 'border border-border-medium bg-bg-page'}`}>
             {firstImageUrl ? (
               <CardImage src={firstImageUrl} alt={product.title} aspectRatio="square" />
             ) : (

@@ -12,6 +12,7 @@ interface ProductLike {
   owner_id: string;
   category_id: string;
   region_id: string;
+  is_sold?: boolean;
 }
 
 interface DetailHandlersOptions {
@@ -72,7 +73,7 @@ export function useDetailHandlers({ product, redirectPath, onEditSuccess }: Deta
       price: data.price,
       category_id: product.category_id,
       image_ids: data.image_ids ?? [],
-      region_id: product.region_id,
+      region_id: data.region_id ?? product.region_id,
       is_sold: data.is_sold ?? false,
     };
 
@@ -90,6 +91,22 @@ export function useDetailHandlers({ product, redirectPath, onEditSuccess }: Deta
     if (product?.owner_id) navigate(`/user/${product.owner_id}`);
   }, [product?.owner_id, navigate]);
 
+  const handleToggleSold = useCallback(async () => {
+    if (!product) return;
+
+    const updateData: UpdateProductRequest = {
+      is_sold: !product.is_sold,
+    };
+
+    try {
+      await updateProduct.mutateAsync({ id: product.id, data: updateData });
+      alert(t.product.statusChanged);
+      onEditSuccess?.();
+    } catch {
+      alert(t.product.updateFailed);
+    }
+  }, [product, updateProduct, t, onEditSuccess]);
+
   const startEditing = useCallback(() => setIsEditing(true), []);
   const cancelEditing = useCallback(() => setIsEditing(false), []);
 
@@ -104,6 +121,7 @@ export function useDetailHandlers({ product, redirectPath, onEditSuccess }: Deta
     handleChat,
     handleDelete,
     handleEdit,
+    handleToggleSold,
     handleNavigateToSeller,
     startEditing,
     cancelEditing,

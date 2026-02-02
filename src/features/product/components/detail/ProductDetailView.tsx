@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { imageApi, ImageUploadResponse } from '@/features/product/api/imageApi';
+import { fetchRegionById } from '@/features/location/api/region';
 import { DetailImage, Thumbnail, Button, Badge, Input, DetailSection } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { useLanguage } from '@/shared/store/languageStore';
@@ -29,6 +30,12 @@ export function ProductDetailView() {
   const { data: images = [] } = useQuery<ImageUploadResponse[]>({
     queryKey: ['detail', 'images', product.id, product.image_ids ?? []],
     queryFn: () => product.image_ids?.length ? Promise.all(product.image_ids.map(id => imageApi.getById(id))) : Promise.resolve([]),
+  });
+
+  const { data: region } = useQuery({
+    queryKey: ['region', product.region_id],
+    queryFn: () => fetchRegionById(product.region_id),
+    enabled: !!product.region_id,
   });
 
   const { index, hasPrev, hasNext, goPrev, goNext, goTo } = useImageCarousel(images.length);
@@ -73,7 +80,17 @@ export function ProductDetailView() {
 
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            {product.is_sold && <Badge variant="secondary" className="text-xs">{t.product.soldOut}</Badge>}
+            <Badge variant={product.is_sold ? 'secondary' : 'primary'} className="text-xs">
+              {product.is_sold ? t.product.soldOut : t.product.onSale}
+            </Badge>
+            {region && (
+              <span className="flex items-center gap-1 text-xs text-text-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+                {region.sigugun} {region.dong}
+              </span>
+            )}
           </div>
           {needsTranslation && (
             <Button variant="ghost" size="sm" onClick={onTranslate} disabled={isTranslating}>

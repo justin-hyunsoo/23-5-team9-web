@@ -93,6 +93,7 @@ export const en: TranslationKeys = {
     price: 'Price',
     enterDescription: 'Enter product description',
     soldOut: 'Sold',
+    onSale: 'On Sale',
     enterSearchQuery: 'Enter search query',
     like: 'Like',
     translate: 'Translate',
@@ -115,6 +116,8 @@ export const en: TranslationKeys = {
     updated: 'Product updated.',
     updateFailed: 'Failed to update product.',
     noImage: 'No image',
+    region: 'Location',
+    changeRegion: 'Change Location',
   },
 
   // Product validation

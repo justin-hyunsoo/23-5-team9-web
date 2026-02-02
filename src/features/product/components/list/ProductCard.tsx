@@ -55,9 +55,11 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
                   <span className="text-xs text-status-error font-medium">{remainingTime}</span>
                 )}
               </>
-            ) : product.is_sold ? (
-              <Badge variant="secondary" className="text-xs">{t.product.soldOut}</Badge>
-            ) : null}
+            ) : (
+              <Badge variant={product.is_sold ? 'secondary' : 'primary'} className="text-xs">
+                {product.is_sold ? t.product.soldOut : t.product.onSale}
+              </Badge>
+            )}
           </div>
 
           <div className={`aspect-square rounded-lg overflow-hidden mb-3 ${firstImageUrl ? '' : 'border border-border-medium bg-bg-box'}`}>

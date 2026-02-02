@@ -20,6 +20,7 @@ export interface DetailContextValue {
   handleChat: () => Promise<void>;
   handleDelete: () => Promise<void>;
   handleEdit: (data: ProductFormData) => Promise<void>;
+  handleToggleSold: () => Promise<void>;
   handleNavigateToSeller: () => void;
   startEditing: () => void;
   cancelEditing: () => void;
@@ -40,6 +41,7 @@ export interface LogicWithDetailFields {
   handleChat: () => Promise<void>;
   handleDelete: () => Promise<void>;
   handleEdit: (data: ProductFormData) => Promise<void>;
+  handleToggleSold: () => Promise<void>;
   handleNavigateToSeller: () => void;
   startEditing: () => void;
   cancelEditing: () => void;
@@ -62,6 +64,7 @@ export function toDetailValue(logic: LogicWithDetailFields): DetailContextValue 
     handleChat: logic.handleChat,
     handleDelete: logic.handleDelete,
     handleEdit: logic.handleEdit,
+    handleToggleSold: logic.handleToggleSold,
     handleNavigateToSeller: logic.handleNavigateToSeller,
     startEditing: logic.startEditing,
     cancelEditing: logic.cancelEditing,

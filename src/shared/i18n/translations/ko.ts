@@ -91,6 +91,7 @@ export const ko = {
     price: '가격',
     enterDescription: '상품 설명을 입력하세요',
     soldOut: '판매완료',
+    onSale: '판매중',
     enterSearchQuery: '검색어를 입력해주세요',
     like: '좋아요',
     translate: '번역하기',
@@ -113,6 +114,8 @@ export const ko = {
     updated: '상품이 수정되었습니다.',
     updateFailed: '상품 수정에 실패했습니다.',
     noImage: '이미지 없음',
+    region: '거래 지역',
+    changeRegion: '지역 변경',
   },
 
   // Product validation

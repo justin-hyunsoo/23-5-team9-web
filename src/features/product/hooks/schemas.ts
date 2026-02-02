@@ -13,6 +13,7 @@ export const productFormSchema = z.object({
   is_sold: z.boolean().optional(),
   isAuction: z.boolean().optional(),
   auctionEndAt: z.string().optional(),
+  region_id: z.string().optional(),
 }).refine(
   (data) => !data.isAuction || (data.isAuction && data.auctionEndAt),
   { message: '경매 종료 시간을 입력해주세요.', path: ['auctionEndAt'] }

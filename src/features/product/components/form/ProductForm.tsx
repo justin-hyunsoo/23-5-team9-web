@@ -1,9 +1,12 @@
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { productFormSchema, type ProductFormData } from '@/features/product/hooks/schemas';
 import { useImageUpload, ImageUploadSection } from '@/features/image';
+import RegionSelectModal from '@/features/location/components/RegionSelectModal';
+import { fetchRegionById } from '@/features/location/api/region';
 
 export type { ProductFormData };
 
@@ -13,6 +16,7 @@ interface ProductFormProps {
   onCancel: () => void;
   submitLabel?: string;
   showIsSold?: boolean;
+  showRegion?: boolean;
   isLoading?: boolean;
 }
 
@@ -22,9 +26,27 @@ const ProductForm = ({
   onCancel,
   submitLabel,
   showIsSold = false,
+  showRegion = false,
   isLoading = false,
 }: ProductFormProps) => {
   const t = useTranslation();
+  const [regionModalOpen, setRegionModalOpen] = useState(false);
+  const [regionId, setRegionId] = useState<string | undefined>(initialData?.region_id);
+  const [regionName, setRegionName] = useState<string>('');
+
+  useEffect(() => {
+    if (initialData?.region_id) {
+      fetchRegionById(initialData.region_id)
+        .then(region => setRegionName(`${region.sigugun} ${region.dong}`))
+        .catch(() => setRegionName(''));
+    }
+  }, [initialData?.region_id]);
+
+  const handleRegionSelect = (id: string, name: string) => {
+    setRegionId(id);
+    setRegionName(name);
+  };
+
   const {
     register,
     handleSubmit,
@@ -69,7 +91,7 @@ const ProductForm = ({
       alert(t.product.imageUploadingWait);
       return;
     }
-    await onSubmit({ ...data, image_ids: imageIds });
+    await onSubmit({ ...data, image_ids: imageIds, region_id: regionId });
   });
 
   return (
@@ -121,6 +143,30 @@ const ProductForm = ({
         )}
       </div>
       {errors.auctionEndAt && <p className="mb-4 text-sm text-status-error">{errors.auctionEndAt.message}</p>}
+
+      {showRegion && (
+        <div className="mb-6">
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-text-secondary">{t.product.region}:</span>
+            <button
+              type="button"
+              onClick={() => setRegionModalOpen(true)}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-text-primary bg-bg-secondary hover:bg-bg-tertiary rounded-lg transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+              </svg>
+              <span>{regionName || t.location.allRegions}</span>
+            </button>
+          </div>
+          <RegionSelectModal
+            isOpen={regionModalOpen}
+            onClose={() => setRegionModalOpen(false)}
+            onSelect={handleRegionSelect}
+            initialRegionId={regionId}
+          />
+        </div>
+      )}
 
       <div className="mt-6 border-t border-border-base pt-6">
         <textarea

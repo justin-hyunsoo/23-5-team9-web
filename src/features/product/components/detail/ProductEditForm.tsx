@@ -13,6 +13,7 @@ export function ProductEditForm() {
       onCancel={cancelEditing}
       submitLabel={t.common.save}
       showIsSold={true}
+      showRegion={true}
       isLoading={isUpdating}
     />
   );

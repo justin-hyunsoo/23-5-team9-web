@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Router basename="/23-5-team9-web">
+      <Router basename={import.meta.env.BASE_URL}>
         <App />
       </Router>
       <ReactQueryDevtools initialIsOpen={false} />

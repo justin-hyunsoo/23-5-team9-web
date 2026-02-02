@@ -22,7 +22,12 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
 
   const auction = product.auction;
   const isAuction = !!auction;
-  const isAuctionEnded = auction?.status !== 'active';
+  const isAuctionEnded = Boolean(
+    auction && (
+      auction.status !== 'active' ||
+      (auction.end_at ? new Date(auction.end_at).getTime() <= Date.now() : false)
+    )
+  );
 
   const timeLabels = useMemo(() => ({
     timeEnded: t.auction.timeEnded,

@@ -30,7 +30,7 @@ export const en: TranslationKeys = {
     chat: 'Chat',
     myCarrot: 'My Carrot',
     login: 'Login',
-    carrotMarket: '🥕 Market',
+    carrotMarket: 'Carrot Market',
     themeToggle: 'Toggle theme',
     langToggle: 'Toggle language',
     langLabel: 'EN',

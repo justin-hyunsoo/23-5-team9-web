@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar } from '@/shared/ui';
+import { ActionIcon, Group, Text, UnstyledButton } from '@mantine/core';
+import { Avatar, Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { useHierarchicalBack } from '@/shared/hooks/useHierarchicalBack';
 
@@ -23,33 +24,46 @@ function ChatHeader({
   const goBack = useHierarchicalBack();
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 bg-bg-page border-b border-border-medium">
-      <button
+    <Group
+      gap="md"
+      px="md"
+      py="sm"
+      bg="var(--bg-page)"
+      style={{ borderBottom: '1px solid var(--border-medium)' }}
+    >
+      <ActionIcon
+        variant="subtle"
+        color="gray"
         onClick={goBack}
-        className="p-1 -ml-1 text-text-secondary hover:text-text-heading transition-colors md:hidden"
+        hiddenFrom="md"
+        ml={-4}
       >
-        ←
-      </button>
-      <div
-        className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1"
+        <span>←</span>
+      </ActionIcon>
+
+      <UnstyledButton
         onClick={() => opponentId && navigate(`/user/${opponentId}`)}
+        style={{ flex: 1 }}
       >
-        <Avatar
-          src={opponentProfileImage || undefined}
-          alt={opponentNickname || t.chat.otherParty}
-          size="sm"
-        />
-        <span className="font-semibold text-text-heading">
-          {opponentNickname || t.common.unknown}
-        </span>
-      </div>
-      <button
+        <Group gap="md">
+          <Avatar
+            src={opponentProfileImage || undefined}
+            alt={opponentNickname || t.chat.otherParty}
+            size="sm"
+          />
+          <Text fw={600} c="var(--text-heading)">
+            {opponentNickname || t.common.unknown}
+          </Text>
+        </Group>
+      </UnstyledButton>
+
+      <Button
+        size="sm"
         onClick={onToggleTransferMenu}
-        className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
       >
         {userCoin.toLocaleString()} C
-      </button>
-    </div>
+      </Button>
+    </Group>
   );
 }
 

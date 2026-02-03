@@ -1,8 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/features/user/hooks/useUser';
-import { Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
-import { Group, Paper, Text } from '@mantine/core';
+import { Alert, Button, Group, Text } from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons-react';
 
 export function OnboardingBanner() {
   const { user, needsOnboarding } = useUser();
@@ -17,15 +17,29 @@ export function OnboardingBanner() {
   if (!shouldShowBanner) return null;
 
   return (
-    <Paper bg="orange" c="white" py={8} px="md" radius={0}>
-      <Group justify="center" gap="sm">
+    <Alert
+      variant="light"
+      color="orange"
+      radius={0}
+      py="xs"
+      icon={false}
+      bg="var(--mantine-color-orange-1)"
+    >
+      <Group justify="center" gap="md">
         <Text size="sm" fw={500}>
           {t.auth.onboardingRequired}
         </Text>
-        <Button onClick={() => navigate('/auth/onboarding')} variant="secondary" size="sm">
+        <Button
+          variant="filled"
+          color="orange"
+          size="xs"
+          radius="xl"
+          rightSection={<IconChevronRight size={14} />}
+          onClick={() => navigate('/auth/onboarding')}
+        >
           {t.auth.goToSettings}
         </Button>
       </Group>
-    </Paper>
+    </Alert>
   );
 }

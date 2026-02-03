@@ -52,8 +52,6 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   const NavItem = ({ label, path, mobile = false }: { label: string, path: string, mobile?: boolean }) => {
     const isActive = pathname.startsWith(path);
-    const mobileStyle = mobile ? "w-full text-left text-lg" : "";
-    const activeStyle = isActive ? "text-primary font-bold" : "text-text-body font-medium";
     const isChat = path === '/chat';
     const showBadge = isChat && totalUnreadCount > 0;
 
@@ -61,7 +59,14 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
       <Button
         onClick={() => handleNav(path)}
         variant="ghost"
-        className={`${mobileStyle} ${activeStyle} gap-2`}
+        fullWidth={mobile}
+        style={{
+          textAlign: mobile ? 'left' : undefined,
+          fontSize: mobile ? 'var(--mantine-font-size-lg)' : undefined,
+          color: isActive ? 'var(--color-brand)' : 'var(--text-body)',
+          fontWeight: isActive ? 700 : 500,
+          gap: 8,
+        }}
       >
         {label}
         {showBadge && (

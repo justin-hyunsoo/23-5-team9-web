@@ -4,8 +4,14 @@ import {
 } from '@mantine/core';
 import type React from 'react';
 
-type AppButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
-type AppButtonSize = 'sm' | 'md' | 'lg';
+type AppButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'outline-primary'
+  | 'outline-danger'
+  | 'ghost';
+type AppButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export interface ButtonProps
   extends Omit<MantineButtonProps, 'variant' | 'size' | 'fullWidth' | 'color'> {
@@ -20,13 +26,17 @@ const variantToMantine: Record<AppButtonVariant, MantineButtonProps['variant']> 
   primary: 'filled',
   secondary: 'light',
   outline: 'outline',
+  'outline-primary': 'outline',
+  'outline-danger': 'outline',
   ghost: 'subtle',
 };
 
 const variantToColor: Record<AppButtonVariant, MantineButtonProps['color']> = {
   primary: 'orange',
   secondary: 'gray',
-  outline: 'orange',
+  outline: 'gray',
+  'outline-primary': 'orange',
+  'outline-danger': 'red',
   ghost: 'gray',
 };
 

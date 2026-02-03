@@ -9,8 +9,8 @@ export { Badge, Loading, ErrorMessage, EmptyState, LoginRequired, OnboardingRequ
 export { Card, CardImage, CardContent, CardTitle, CardMeta, DetailSection, DetailImage, DetailHeader, Thumbnail } from './layout';
 
 // Navigation
-export { NavBar, TabBar, Pagination } from './navigation';
-export type { Tab } from './navigation';
+export { NavBar, TabBar, SegmentedTabBar, Pagination } from './navigation';
+export type { Tab, SegmentedTab } from './navigation';
 
 // Display
 export { Avatar, Button, Stat, StatGroup, StatCard, GoogleIcon, CategorySelector } from './display';

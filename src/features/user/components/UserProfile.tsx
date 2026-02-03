@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserProducts, useCreateProduct } from "@/features/product/hooks/useProducts";
-import { EmptyState, Button, DetailSection, Pagination } from '@/shared/ui';
+import { EmptyState, Button, DetailSection, Pagination, SegmentedTabBar } from '@/shared/ui';
 import ProductCard from "@/features/product/components/list/ProductCard";
 import ProductForm from "@/features/product/components/form/ProductForm";
 import { useTranslation } from '@/shared/i18n';
@@ -115,21 +115,15 @@ const UserProfile = () => {
 
       <div>
         <h3 className="text-lg font-bold mb-4">{t.product.mySalesItems}</h3>
-        <div className="mb-4 flex gap-2">
-          <Button
-            variant={!showAuction ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => handleTabChange('regular')}
-          >
-            {t.product.regular}
-          </Button>
-          <Button
-            variant={showAuction ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => handleTabChange('auction')}
-          >
-            {t.auction.auction}
-          </Button>
+        <div className="mb-4">
+          <SegmentedTabBar
+            tabs={[
+              { id: 'regular', label: t.product.regular },
+              { id: 'auction', label: t.auction.auction },
+            ]}
+            activeTab={salesTab}
+            onTabChange={handleTabChange}
+          />
         </div>
         {currentProducts.length === 0 ? (
           <EmptyState message={showAuction ? t.auction.noAuctions : t.product.noSalesItems} />

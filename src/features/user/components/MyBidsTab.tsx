@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import { productApi } from "@/features/product/api/product";
-import { EmptyState, Loading, Pagination, Button } from '@/shared/ui';
+import { EmptyState, Loading, Pagination, SegmentedTabBar } from '@/shared/ui';
 import ProductCard from "@/features/product/components/list/ProductCard";
 import { useTranslation } from '@/shared/i18n';
 import { useUser } from '@/features/user/hooks/useUser';
@@ -192,31 +192,17 @@ const MyBidsTab = () => {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h3 className="text-lg font-bold mb-4">{t.auction.myBids}</h3>
-
         {/* Single-layer Tabs: In progress / Unpaid / Paid */}
-        <div className="mb-4 flex gap-2 flex-wrap">
-          <Button
-            variant={bidsTab === 'active' ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => handleBidsTabChange('active')}
-          >
-            {t.auction.inProgress}
-          </Button>
-          <Button
-            variant={bidsTab === 'unpaid' ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => handleBidsTabChange('unpaid')}
-          >
-            {t.auction.auctionUnpaid}
-          </Button>
-          <Button
-            variant={bidsTab === 'paid' ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => handleBidsTabChange('paid')}
-          >
-            {t.auction.auctionPaid}
-          </Button>
+        <div className="mb-4">
+          <SegmentedTabBar
+            tabs={[
+              { id: 'active', label: t.auction.inProgress },
+              { id: 'unpaid', label: t.auction.auctionUnpaid },
+              { id: 'paid', label: t.auction.auctionPaid },
+            ]}
+            activeTab={bidsTab}
+            onTabChange={handleBidsTabChange}
+          />
         </div>
 
         {currentAuctions.length === 0 ? (

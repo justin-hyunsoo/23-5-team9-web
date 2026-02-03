@@ -11,8 +11,9 @@ import {
   Checkbox,
   Text,
   UnstyledButton,
+  Alert,
 } from '@mantine/core';
-import { IconMapPin } from '@tabler/icons-react';
+import { IconMapPin, IconInfoCircle } from '@tabler/icons-react';
 import { Button, SegmentedTabBar } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { productFormSchema, type ProductFormData } from '@/features/product/hooks/schemas';
@@ -107,6 +108,13 @@ const ProductForm = ({
       alert(t.product.imageUploadingWait);
       return;
     }
+    
+    if (watch('isAuction')) {
+      if (!window.confirm(t.auction.cannotEditOrDelete)) {
+        return;
+      }
+    }
+
     await onSubmit({ ...data, image_ids: imageIds, region_id: regionId });
   });
 
@@ -189,19 +197,24 @@ const ProductForm = ({
               />
             </Box>
             {isAuction && (
-              <Group gap="xs" align="center">
-                <Text size="sm" c="dimmed">{t.auction.endDate}:</Text>
-                <TextInput
-                  type="datetime-local"
-                  {...register('auctionEndAt')}
-                  size="sm"
-                  styles={{
-                    input: {
-                      backgroundColor: 'transparent',
-                    },
-                  }}
-                />
-              </Group>
+              <>
+                <Group gap="xs" align="center">
+                  <Text size="sm" c="dimmed">{t.auction.endDate}:</Text>
+                  <TextInput
+                    type="datetime-local"
+                    {...register('auctionEndAt')}
+                    size="sm"
+                    styles={{
+                      input: {
+                        backgroundColor: 'transparent',
+                      },
+                    }}
+                  />
+                </Group>
+                <Alert icon={<IconInfoCircle size={16} />} title={t.auction.notice} color="orange" variant="light">
+                  {t.auction.cannotEditOrDelete}
+                </Alert>
+              </>
             )}
           </Stack>
           {errors.auctionEndAt && <Text size="sm" c="red" mb="md">{errors.auctionEndAt.message}</Text>}

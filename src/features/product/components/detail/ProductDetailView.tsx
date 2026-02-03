@@ -136,7 +136,7 @@ export function ProductDetailView() {
           <Divider />
           <Text style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{displayContent}</Text>
 
-          {isOwner && (
+          {isOwner && !isAuction && (
             <>
               <Divider />
               <Group justify="flex-end" gap="sm">

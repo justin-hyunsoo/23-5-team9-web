@@ -278,6 +278,8 @@ export const ko = {
     auctionUnpaid: '미결제',
     auctionPaymentDesc: '[Auction] 낙찰 완료',
     auctionPaymentSuccess: '낙찰 송금이 완료되었습니다.',
+    notice: '주의',
+    cannotEditOrDelete: '경매는 한번 생성하면 수정이나 삭제가 불가능합니다. 신중하게 등록해주세요.',
   },
 } as const;
 

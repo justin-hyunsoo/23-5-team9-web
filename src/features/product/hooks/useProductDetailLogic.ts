@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useProduct, useUserProducts, usePlaceBid } from "@/features/product/hooks/useProducts";
+import { useProduct, useUserProducts, usePlaceBid, useTopBidder } from "@/features/product/hooks/useProducts";
 import { useUser, useUserProfile } from "@/features/user/hooks/useUser";
 import { useTranslation } from "@/shared/i18n";
 import { useDetailHandlers } from "./shared";
@@ -17,6 +17,10 @@ export function useProductDetailLogic(productId: string) {
   const { profile: sellerProfile } = useUserProfile(product?.owner_id);
   const { products: sellerProducts } = useUserProducts(product?.owner_id!, undefined, undefined, false);
   const { products: sellerAuctions } = useUserProducts(product?.owner_id!, undefined, undefined, true);
+
+  // Fetch top bidder info
+  const { data: topBidder } = useTopBidder(auctionInfo?.id);
+  const { profile: topBidderProfile } = useUserProfile(topBidder?.bidder_id);
 
   const placeBidMutation = usePlaceBid();
   const [bidPrice, setBidPrice] = useState('');
@@ -93,6 +97,9 @@ export function useProductDetailLogic(productId: string) {
     handleBid,
     setBidPrice,
     refetch,
+    // Top bidder
+    topBidder,
+    topBidderProfile,
     ...handlers,
   };
 }

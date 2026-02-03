@@ -235,6 +235,14 @@ export const BidResponseSchema = z.object({
   bid_at: z.string().datetime(),
 });
 
+export const TopBidResponseSchema = z.object({
+  id: z.string(),
+  auction_id: z.string(),
+  bidder_id: z.string(),
+  bid_price: z.number().int(),
+  bid_at: z.string().datetime(),
+});
+
 export const CreateAuctionDataSchema = z.object({
   end_at: z.string().datetime(),
 });
@@ -352,6 +360,7 @@ export type AuctionInfo = z.infer<typeof AuctionInfoSchema>;
 export type AuctionResponse = z.infer<typeof AuctionResponseSchema>;
 export type ProductWithAuctionResponse = z.infer<typeof ProductWithAuctionResponseSchema>;
 export type BidResponse = z.infer<typeof BidResponseSchema>;
+export type TopBidResponse = z.infer<typeof TopBidResponseSchema>;
 export type CreateAuctionData = z.infer<typeof CreateAuctionDataSchema>;
 export type CreateAuctionRequest = z.infer<typeof CreateAuctionRequestSchema>;
 export type PlaceBidRequest = z.infer<typeof PlaceBidRequestSchema>;

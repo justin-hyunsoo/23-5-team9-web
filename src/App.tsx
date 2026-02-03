@@ -33,6 +33,7 @@ function App() {
           <Route path="/chat/:chatId" element={<ChatRoom />} />
           <Route path="/my" element={<MyCarrot />} />
           <Route path="/my/products" element={<MyCarrot initialTab="products" />} />
+          <Route path="/my/bids" element={<MyCarrot initialTab="bids" />} />
           <Route path="/my/profile" element={<MyCarrot initialTab="profile" />} />
           <Route path="/my/coin" element={<MyCarrot initialTab="coin" />} />
           <Route path="/my/transactions" element={<MyCarrot initialTab="transactions" />} />

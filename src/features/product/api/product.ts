@@ -1,6 +1,6 @@
 import client from '@/shared/api/client';
 import type { Product, ProductDetail, CreateProductRequest, UpdateProductRequest } from '../types';
-import type { BidResponse, PlaceBidRequest } from '@/shared/api/types';
+import type { BidResponse, PlaceBidRequest, TopBidResponse } from '@/shared/api/types';
 
 export interface ProductListParams {
   region?: string;
@@ -41,5 +41,14 @@ export const productApi = {
   placeBid: async (auctionId: string, data: PlaceBidRequest): Promise<BidResponse> => {
     const response = await client.post<BidResponse>(`/api/auction/${auctionId}/bids`, data);
     return response.data;
+  },
+
+  getTopBid: async (auctionId: string): Promise<TopBidResponse | null> => {
+    try {
+      const response = await client.get<TopBidResponse>(`/api/auction/${auctionId}/top-bid`);
+      return response.data;
+    } catch {
+      return null;
+    }
   },
 };

@@ -271,5 +271,8 @@ export const en: TranslationKeys = {
     hours: 'h',
     minutes: 'm',
     seconds: 's',
+    topBidder: 'Top Bidder',
+    myBids: 'My Bids',
+    noMyBids: 'You are not the top bidder in any auctions.',
   },
 } as const;

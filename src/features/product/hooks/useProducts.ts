@@ -113,3 +113,12 @@ export function usePlaceBid() {
     },
   });
 }
+
+export function useTopBidder(auctionId: string | undefined) {
+  return useQuery({
+    queryKey: ['auction', 'topBid', auctionId],
+    queryFn: () => productApi.getTopBid(auctionId!),
+    enabled: !!auctionId,
+    staleTime: 1000 * 30, // 30초 캐시
+  });
+}

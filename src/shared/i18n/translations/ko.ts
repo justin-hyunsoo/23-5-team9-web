@@ -269,6 +269,9 @@ export const ko = {
     hours: '시간',
     minutes: '분',
     seconds: '초',
+    topBidder: '현재 최고 입찰자',
+    myBids: '내 입찰 현황',
+    noMyBids: '현재 최고 입찰 중인 경매가 없습니다.',
   },
 } as const;
 

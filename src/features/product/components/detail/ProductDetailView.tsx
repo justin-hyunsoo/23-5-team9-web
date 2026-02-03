@@ -25,7 +25,7 @@ export function ProductDetailView() {
   const t = useTranslation();
   const { language } = useLanguage();
   const { product, isOwner, isDeleting, startEditing, handleDelete } = useDetail();
-  const { auction, isAuction, isEnded, remainingTime, bidPrice, setBidPrice, minBidPrice, handleBid, isBidding } = useProductDetail();
+  const { auction, isAuction, isEnded, remainingTime, bidPrice, setBidPrice, minBidPrice, handleBid, isBidding, topBidder, topBidderProfile } = useProductDetail();
 
   const imageQueries = useQueries({
     queries: (product.image_ids ?? []).map(id => ({
@@ -151,10 +151,16 @@ export function ProductDetailView() {
               <span className="text-text-muted">{t.auction.currentPrice}</span>
               <span className="text-2xl font-bold text-primary">{auction.current_price.toLocaleString()}{t.common.won}</span>
             </div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-2">
               <span className="text-text-muted">{t.auction.bidCount}</span>
               <span className="text-text-body">{t.auction.bidsCount.replace('{count}', String(auction.bid_count))}</span>
             </div>
+            {topBidder && (
+              <div className="flex justify-between items-center">
+                <span className="text-text-muted">{t.auction.topBidder}</span>
+                <span className="text-text-body font-medium">{topBidderProfile?.nickname || t.common.unknown}</span>
+              </div>
+            )}
           </div>
 
           {!isEnded && (

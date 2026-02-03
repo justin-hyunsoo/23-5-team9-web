@@ -48,11 +48,12 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
+                loading={isSubmitting}
                 variant="primary"
                 h="auto"
                 style={{ aspectRatio: '1/1' }}
               >
-                {isSubmitting ? t.auth.loggingIn : t.auth.login}
+                {!isSubmitting &&  t.auth.login}
               </Button>
             </Flex>
 

@@ -168,7 +168,7 @@ const MyBidsTab = () => {
       const next = new URLSearchParams(prev);
       next.set(BIDS_TAB_PARAM, tab);
       return next;
-    });
+    }, { replace: true });
   };
 
   if (needsOnboarding) {

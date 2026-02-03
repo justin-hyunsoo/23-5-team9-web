@@ -65,7 +65,7 @@ const UserProfile = () => {
       const next = new URLSearchParams(prev);
       next.set(SALES_TAB_PARAM, tab);
       return next;
-    });
+    }, { replace: true });
   };
 
   const handleSubmit = async (data: { title: string; price: number; content: string; image_ids?: string[]; isAuction?: boolean; auctionEndAt?: string }) => {

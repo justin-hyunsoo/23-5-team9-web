@@ -9,9 +9,10 @@ export function useFirstImage(imageIds?: string[]) {
   );
 
   const { data: firstImage } = useQuery<ImageUploadResponse | null>({
-    queryKey: ['product', 'image', firstImageId],
+    queryKey: ['image', firstImageId],
     queryFn: () => (firstImageId ? imageApi.getById(firstImageId) : null),
     enabled: !!firstImageId,
+    staleTime: 1000 * 60 * 5, // 5분 캐시
   });
 
   return firstImage?.image_url;

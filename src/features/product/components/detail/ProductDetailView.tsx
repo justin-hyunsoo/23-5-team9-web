@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { imageApi, ImageUploadResponse } from '@/features/product/api/imageApi';
 import { fetchRegionById } from '@/features/location/api/region';
 import { DetailImage, Thumbnail, Button, Badge, Input, DetailSection } from '@/shared/ui';
@@ -27,15 +27,20 @@ export function ProductDetailView() {
   const { product, isOwner, isDeleting, startEditing, handleDelete } = useDetail();
   const { auction, isAuction, isEnded, remainingTime, bidPrice, setBidPrice, minBidPrice, handleBid, isBidding } = useProductDetail();
 
-  const { data: images = [] } = useQuery<ImageUploadResponse[]>({
-    queryKey: ['detail', 'images', product.id, product.image_ids ?? []],
-    queryFn: () => product.image_ids?.length ? Promise.all(product.image_ids.map(id => imageApi.getById(id))) : Promise.resolve([]),
+  const imageQueries = useQueries({
+    queries: (product.image_ids ?? []).map(id => ({
+      queryKey: ['image', id],
+      queryFn: () => imageApi.getById(id),
+      staleTime: 1000 * 60 * 5, // 5분 캐시 - useFirstImage와 공유
+    })),
   });
+  const images = imageQueries.map(q => q.data).filter((img): img is ImageUploadResponse => !!img);
 
   const { data: region } = useQuery({
     queryKey: ['region', product.region_id],
     queryFn: () => fetchRegionById(product.region_id),
     enabled: !!product.region_id,
+    staleTime: 1000 * 60 * 30, // 지역 정보는 30분 캐시 (거의 변하지 않음)
   });
 
   const { index, hasPrev, hasNext, goPrev, goNext, goTo } = useImageCarousel(images.length);

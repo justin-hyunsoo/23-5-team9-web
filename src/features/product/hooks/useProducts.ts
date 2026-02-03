@@ -31,6 +31,7 @@ export function useProducts(options: { regionId?: string; sido?: string; sigugun
   const queryInfo = useQuery({
     queryKey: productKeys.list(params),
     queryFn: () => productApi.getList(params, true),
+    staleTime: 1000 * 60 * 5, // 5분 동안 캐시 유지
   });
 
   const { filtered: regionFiltered, isFiltering } = useRegionFilter(queryInfo.data, { regionId, sido, sigugun }, queryInfo.isLoading);
@@ -54,6 +55,7 @@ export function useProduct(productId: string) {
     queryKey: productKeys.detail(productId),
     queryFn: () => productApi.getById(productId),
     enabled: !!productId,
+    staleTime: 1000 * 60 * 5, // 5분 동안 캐시 유지
   });
 
   return {

@@ -1,5 +1,6 @@
 import { PasswordInput, Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
+import { Box, Stack } from '@mantine/core';
 
 const PasswordTab = () => {
   const t = useTranslation();
@@ -10,13 +11,17 @@ const PasswordTab = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 pt-2">
-      <PasswordInput label={t.user.currentPassword} />
-      <PasswordInput label={t.user.newPassword} />
-      <PasswordInput label={t.user.confirmNewPassword} />
-      <Button type="submit" size="lg" fullWidth className="mt-4">
-        {t.user.changePassword}
-      </Button>
+    <form onSubmit={handleSubmit}>
+      <Stack gap="md" pt="xs">
+        <PasswordInput label={t.user.currentPassword} />
+        <PasswordInput label={t.user.newPassword} />
+        <PasswordInput label={t.user.confirmNewPassword} />
+        <Box pt="sm">
+          <Button type="submit" size="lg" fullWidth>
+            {t.user.changePassword}
+          </Button>
+        </Box>
+      </Stack>
     </form>
   );
 };

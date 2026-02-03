@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Box, Group, TextInput } from '@mantine/core';
+import { Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 
 interface ChatInputProps {
@@ -18,25 +20,32 @@ function ChatInput({ onSend, isPending }: ChatInputProps) {
   };
 
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 px-3 py-2 md:py-3 bg-bg-page border-t border-border-medium"
+      px="sm"
+      py="xs"
+      style={{
+        borderTop: '1px solid var(--mantine-color-default-border)',
+      }}
     >
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder={t.chat.enterMessage}
-        className="flex-1 px-4 py-2.5 bg-bg-page rounded-lg text-sm text-text-heading placeholder:text-text-tertiary focus:outline-none border border-border-medium focus:border-primary"
-      />
-      <button
-        type="submit"
-        disabled={!message.trim() || isPending}
-        className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-opacity"
-      >
-        {t.chat.send}
-      </button>
-    </form>
+      <Group gap="xs" wrap="nowrap">
+        <TextInput
+          flex={1}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder={t.chat.enterMessage}
+          size="md"
+        />
+        <Button
+          type="submit"
+          disabled={!message.trim() || isPending}
+          size="sm"
+        >
+          {t.chat.send}
+        </Button>
+      </Group>
+    </Box>
   );
 }
 

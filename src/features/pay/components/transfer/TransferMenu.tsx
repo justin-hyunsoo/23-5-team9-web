@@ -1,3 +1,4 @@
+import { Box, Group, Text } from '@mantine/core';
 import { Button, Input } from '@/shared/ui';
 import { useTransfer } from '@/features/pay/hooks/useTransfer';
 import { useTranslation } from '@/shared/i18n';
@@ -32,39 +33,39 @@ const TransferMenu = ({
   };
 
   return (
-    <div className="px-4 py-3 bg-bg-box border-b border-border-base">
-      <div className="flex items-center gap-2 mb-2">
+    <Box px="md" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
+      <Group gap="xs" mb="xs">
         <Input
           type="number"
           placeholder={t.pay.amountToTransfer}
           value={transferAmount}
           onChange={(e) => setTransferAmount(e.target.value)}
-          className="flex-1 py-2! px-3! text-sm"
+          style={{ flex: 1 }}
         />
         <Button
           onClick={handleTransfer}
           disabled={transferring || !transferAmount}
           size="sm"
-          className="whitespace-nowrap"
         >
           {transferring ? t.pay.transferring : t.pay.transfer}
         </Button>
-      </div>
-      <div className="flex gap-2 flex-wrap">
+      </Group>
+      <Group gap="xs" wrap="wrap">
         {PRESET_AMOUNTS.map((amount) => (
-          <button
+          <Button
             key={amount}
+            variant="outline"
+            size="sm"
             onClick={() => addAmount(amount)}
-            className="px-3 py-1.5 text-xs border border-border-medium rounded-lg text-text-body hover:border-primary hover:text-primary hover:bg-primary-light transition-colors"
           >
             +{amount.toLocaleString()}
-          </button>
+          </Button>
         ))}
-      </div>
-      <p className="text-xs text-text-secondary mt-2">
+      </Group>
+      <Text size="xs" c="dimmed" mt="xs">
         {displayName}{t.pay.willTransferCoins}
-      </p>
-    </div>
+      </Text>
+    </Box>
   );
 };
 

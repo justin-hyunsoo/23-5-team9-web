@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { Box, Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import UserProfile from '@/features/user/components/UserProfile';
@@ -59,7 +59,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
         </Group>
 
         {/* User info section */}
-        <Paper withBorder radius="md" p="xl" mb="md">
+        <Box p="xl" mb="md">
           <Stack align="center" gap="md">
             <Avatar
               src={user.profile_image || undefined}
@@ -71,7 +71,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
               <Text c="dimmed" fz="sm">{user.email}</Text>
             </Stack>
           </Stack>
-        </Paper>
+        </Box>
 
         {/* Menu list */}
         <Stack gap="sm">

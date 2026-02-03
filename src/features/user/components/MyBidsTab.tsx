@@ -1,20 +1,50 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useProducts } from "@/features/product/hooks/useProducts";
 import { productApi } from "@/features/product/api/product";
-import { EmptyState, Loading, Pagination } from '@/shared/ui';
+import { EmptyState, Loading, Pagination, Button } from '@/shared/ui';
 import ProductCard from "@/features/product/components/list/ProductCard";
 import { useTranslation } from '@/shared/i18n';
 import { useUser } from '@/features/user/hooks/useUser';
 import { PageContainer } from '@/shared/layouts/PageContainer';
 import { OnboardingRequired } from '@/shared/ui';
+import { payApi } from '@/features/pay/api/payApi';
+import type { ProductDetailResponse } from '@/shared/api/types';
+import { useSearchParams } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 8;
+
+type BidsTab = 'active' | 'unpaid' | 'paid';
+
+const BIDS_TAB_PARAM = 'bids';
+
+function parseBidsTab(value: string | null): BidsTab | null {
+  if (value === 'active' || value === 'unpaid' || value === 'paid') return value;
+  return null;
+}
 
 const MyBidsTab = () => {
   const t = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, needsOnboarding } = useUser();
+
+  const bidsTab: BidsTab = parseBidsTab(searchParams.get(BIDS_TAB_PARAM)) ?? 'active';
+
+  useEffect(() => {
+    const parsed = parseBidsTab(searchParams.get(BIDS_TAB_PARAM));
+    if (parsed) return;
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set(BIDS_TAB_PARAM, 'active');
+      return next;
+    }, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [bidsTab]);
 
   // 1. Fetch all auction products
   const { products: auctionProducts, loading: productsLoading } = useProducts({ auction: true });
@@ -59,12 +89,87 @@ const MyBidsTab = () => {
     });
   }, [productDetails, topBidQueries, user?.id]);
 
+  // 5. Get unique owner IDs from ended auctions for payment check
+  const endedAuctions = useMemo(() => {
+    return winningAuctions.filter(product => {
+      const auction = product?.auction;
+      if (!auction) return false;
+      return auction.status !== 'active' || new Date(auction.end_at).getTime() <= Date.now();
+    });
+  }, [winningAuctions]);
+
+  const ownerIds = useMemo(() => {
+    return [...new Set(endedAuctions.map(p => p?.owner_id).filter(Boolean))];
+  }, [endedAuctions]);
+
+  // 6. Fetch transactions for each owner to check payments
+  const transactionQueries = useQueries({
+    queries: ownerIds.map(ownerId => ({
+      queryKey: ['transactions', 'auctionPayment', ownerId],
+      queryFn: () => payApi.getTransactions({ partner_id: ownerId, limit: 50 }),
+      staleTime: 1000 * 30,
+      enabled: !!ownerId,
+    })),
+  });
+
+  const transactionsLoading = transactionQueries.some(q => q.isLoading);
+
+  // 7. Check if a specific auction has been paid
+  const checkAuctionPaid = (product: ProductDetailResponse | undefined): boolean => {
+    if (!product?.auction || !product.owner_id) return false;
+
+    const ownerIndex = ownerIds.indexOf(product.owner_id);
+    if (ownerIndex === -1) return false;
+
+    const transactions = transactionQueries[ownerIndex]?.data;
+    if (!transactions) return false;
+
+    return transactions.some(tx =>
+      tx.type === 'TRANSFER' &&
+      tx.details.description.includes('[Auction] 낙찰 완료') &&
+      tx.details.amount === product.auction!.current_price
+    );
+  };
+
+  // 8. Split auctions by status
+  const activeAuctions = useMemo(() => {
+    return winningAuctions.filter(product => {
+      const auction = product?.auction;
+      if (!auction) return false;
+      return auction.status === 'active' && new Date(auction.end_at).getTime() > Date.now();
+    });
+  }, [winningAuctions]);
+
+  // 9. Split ended auctions by payment status
+  const unpaidAuctions = useMemo(() => {
+    return endedAuctions.filter(product => !checkAuctionPaid(product));
+  }, [endedAuctions, transactionQueries]);
+
+  const paidAuctions = useMemo(() => {
+    return endedAuctions.filter(product => checkAuctionPaid(product));
+  }, [endedAuctions, transactionQueries]);
+
+  // 10. Get current list based on tabs
+  const currentAuctions = useMemo(() => {
+    if (bidsTab === 'active') return activeAuctions;
+    if (bidsTab === 'unpaid') return unpaidAuctions;
+    return paidAuctions;
+  }, [bidsTab, activeAuctions, unpaidAuctions, paidAuctions]);
+
   const paginatedAuctions = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return winningAuctions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [winningAuctions, currentPage]);
+    return currentAuctions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [currentAuctions, currentPage]);
 
-  const totalPages = Math.ceil(winningAuctions.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(currentAuctions.length / ITEMS_PER_PAGE);
+
+  const handleBidsTabChange = (tab: BidsTab) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set(BIDS_TAB_PARAM, tab);
+      return next;
+    });
+  };
 
   if (needsOnboarding) {
     return (
@@ -74,18 +179,48 @@ const MyBidsTab = () => {
     );
   }
 
-  const isLoading = productsLoading || productDetailsLoading || topBidsLoading;
+  const isLoading = productsLoading || productDetailsLoading || topBidsLoading || transactionsLoading;
 
   if (isLoading) {
     return <Loading />;
   }
 
+  const getEmptyMessage = () => {
+    return t.auction.noMyBids;
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h3 className="text-lg font-bold mb-4">{t.auction.myBids}</h3>
-        {winningAuctions.length === 0 ? (
-          <EmptyState message={t.auction.noMyBids} />
+
+        {/* Single-layer Tabs: In progress / Unpaid / Paid */}
+        <div className="mb-4 flex gap-2 flex-wrap">
+          <Button
+            variant={bidsTab === 'active' ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => handleBidsTabChange('active')}
+          >
+            {t.auction.inProgress}
+          </Button>
+          <Button
+            variant={bidsTab === 'unpaid' ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => handleBidsTabChange('unpaid')}
+          >
+            {t.auction.auctionUnpaid}
+          </Button>
+          <Button
+            variant={bidsTab === 'paid' ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => handleBidsTabChange('paid')}
+          >
+            {t.auction.auctionPaid}
+          </Button>
+        </div>
+
+        {currentAuctions.length === 0 ? (
+          <EmptyState message={getEmptyMessage()} />
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

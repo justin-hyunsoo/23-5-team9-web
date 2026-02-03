@@ -276,6 +276,7 @@ export const en: TranslationKeys = {
     noMyBids: 'You are not the top bidder in any auctions.',
     auctionPayment: 'Pay for Auction',
     auctionPaid: 'Paid',
+    auctionUnpaid: 'Unpaid',
     auctionPaymentDesc: '[Auction] Auction Won',
     auctionPaymentSuccess: 'Auction payment completed.',
   },

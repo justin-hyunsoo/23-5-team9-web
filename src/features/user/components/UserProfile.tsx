@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserProducts, useCreateProduct } from "@/features/product/hooks/useProducts";
 import { EmptyState, Button, DetailSection, Pagination } from '@/shared/ui';
 import ProductCard from "@/features/product/components/list/ProductCard";
@@ -12,14 +12,41 @@ import { OnboardingRequired } from '@/shared/ui';
 
 const ITEMS_PER_PAGE = 8;
 
+type SalesTab = 'regular' | 'auction';
+
+const SALES_TAB_PARAM = 'sale';
+
+function parseSalesTab(value: string | null): SalesTab | null {
+  if (value === 'regular' || value === 'auction') return value;
+  return null;
+}
+
 const UserProfile = () => {
   const navigate = useNavigate();
   const t = useTranslation();
   const createProduct = useCreateProduct();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [showForm, setShowForm] = useState(false);
-  const [showAuction, setShowAuction] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const salesTab: SalesTab = parseSalesTab(searchParams.get(SALES_TAB_PARAM)) ?? 'regular';
+  const showAuction = salesTab === 'auction';
+
+  useEffect(() => {
+    const parsed = parseSalesTab(searchParams.get(SALES_TAB_PARAM));
+    if (parsed) return;
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set(SALES_TAB_PARAM, 'regular');
+      return next;
+    }, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [salesTab]);
 
   const { products: regularProducts } = useUserProducts('me', undefined, undefined, false);
   const { products: auctionProducts } = useUserProducts('me', undefined, undefined, true);
@@ -33,9 +60,12 @@ const UserProfile = () => {
 
   const totalPages = Math.ceil(currentProducts.length / ITEMS_PER_PAGE);
 
-  const handleTabChange = (isAuction: boolean) => {
-    setShowAuction(isAuction);
-    setCurrentPage(1);
+  const handleTabChange = (tab: SalesTab) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set(SALES_TAB_PARAM, tab);
+      return next;
+    });
   };
 
   const handleSubmit = async (data: { title: string; price: number; content: string; image_ids?: string[]; isAuction?: boolean; auctionEndAt?: string }) => {
@@ -89,14 +119,14 @@ const UserProfile = () => {
           <Button
             variant={!showAuction ? "primary" : "secondary"}
             size="sm"
-            onClick={() => handleTabChange(false)}
+            onClick={() => handleTabChange('regular')}
           >
             {t.product.regular}
           </Button>
           <Button
             variant={showAuction ? "primary" : "secondary"}
             size="sm"
-            onClick={() => handleTabChange(true)}
+            onClick={() => handleTabChange('auction')}
           >
             {t.auction.auction}
           </Button>

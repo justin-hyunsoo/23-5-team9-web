@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/features/user/hooks/useUser';
-import { Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
+import { Alert, Button, Group, Text } from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons-react';
 
 export function OnboardingBanner() {
   const { user, needsOnboarding } = useUser();
@@ -9,23 +10,36 @@ export function OnboardingBanner() {
   const location = useLocation();
   const t = useTranslation();
 
-  // 온보딩 페이지와 채팅방에서는 배너 숨김
+  // 채팅방에서는 배너 숨김
   const isChatRoom = location.pathname.startsWith('/chat/');
-  const shouldShowBanner = user && needsOnboarding && location.pathname !== '/auth/onboarding' && !isChatRoom;
+  const shouldShowBanner = user && needsOnboarding && !isChatRoom;
 
   if (!shouldShowBanner) return null;
 
   return (
-    <div className="bg-primary text-white p-3 text-center flex justify-center gap-2.5 items-center text-sm font-medium animate-fade-in">
-      <span>{t.auth.onboardingRequired}</span>
-      <Button
-        onClick={() => navigate('/auth/onboarding')}
-        variant="secondary"
-        size="sm"
-        className="text-xs"
-      >
-        {t.auth.goToSettings}
-      </Button>
-    </div>
+    <Alert
+      variant="light"
+      color="orange"
+      radius={0}
+      py="xs"
+      icon={false}
+      bg="var(--color-brand-light)"
+    >
+      <Group justify="center" gap="md">
+        <Text size="sm" fw={500} c="var(--text-primary)">
+          {t.auth.onboardingRequired}
+        </Text>
+        <Button
+          variant="filled"
+          color="orange"
+          size="xs"
+          radius="xl"
+          rightSection={<IconChevronRight size={14} />}
+          onClick={() => navigate('/auth/onboarding')}
+        >
+          {t.auth.goToSettings}
+        </Button>
+      </Group>
+    </Alert>
   );
 }

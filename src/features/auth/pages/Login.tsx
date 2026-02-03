@@ -7,6 +7,7 @@ import { Input, PasswordInput, Button, GoogleIcon } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { useLogin } from '../hooks/useLogin';
 import { loginSchema, type LoginForm } from '../api/schemas';
+import { Alert, Anchor, Box, Flex, Stack, Text, Title } from '@mantine/core';
 
 export default function Login() {
   const { login, serverError } = useLogin();
@@ -22,43 +23,64 @@ export default function Login() {
 
   return (
     <PageContainer>
-      <div className="max-w-105 mx-auto w-full mt-10">
-        <h2 className="mb-8 text-2xl font-bold text-text-primary">{t.auth.login}</h2>
+      <Box w="100%" maw={400} mx="auto" mt={40}>
+        <Stack gap="md">
+          <Title order={2}>{t.auth.login}</Title>
 
-        <form onSubmit={handleSubmit(login)} className="flex flex-col gap-3">
-          <Input
-            type="email"
-            placeholder={t.auth.email}
-            {...register('email')}
-            error={errors.email?.message}
-          />
+        <form onSubmit={handleSubmit(login)}>
+          <Stack gap="sm">
+            <Flex gap="sm" align="stretch">
+              <Stack gap="sm" style={{ flex: 1 }}>
+                <Input
+                  type="email"
+                  placeholder={t.auth.email}
+                  {...register('email')}
+                  error={errors.email?.message}
+                />
 
-          <PasswordInput
-            placeholder={t.auth.password}
-            {...register('password')}
-            error={errors.password?.message}
-          />
+                <PasswordInput
+                  placeholder={t.auth.password}
+                  {...register('password')}
+                  error={errors.password?.message}
+                />
+              </Stack>
 
-          <Button type="submit" disabled={isSubmitting} variant="primary" fullWidth className="mt-4 text-lg">
-            {isSubmitting ? t.auth.loggingIn : t.auth.login}
-          </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                variant="primary"
+                h="auto"
+                style={{ aspectRatio: '1/1' }}
+              >
+                {isSubmitting ? t.auth.loggingIn : t.auth.login}
+              </Button>
+            </Flex>
 
-          {serverError && <div className="mt-3 text-center text-sm font-medium text-status-error">{serverError}</div>}
+            {serverError && (
+              <Alert color="red" variant="light">
+                {serverError}
+              </Alert>
+            )}
+          </Stack>
         </form>
 
         <Button
-          onClick={() => window.location.href = authApi.getGoogleLoginUrl()}
-          variant="outline" fullWidth
-          className="mt-6 flex items-center justify-center gap-2 bg-bg-page"
+          onClick={() => (window.location.href = authApi.getGoogleLoginUrl())}
+          variant="outline"
+          fullWidth
+          leftSection={<GoogleIcon />}
         >
-          <GoogleIcon /> {t.auth.continueWithGoogle}
+          {t.auth.continueWithGoogle}
         </Button>
 
-        <div className="mt-6 text-center text-sm text-text-secondary">
-          {t.auth.noAccount}
-          <Link to="/auth/signup" className="ml-1.5 font-semibold text-primary hover:underline">{t.auth.signup}</Link>
-        </div>
-      </div>
+        <Text size="sm" c="dimmed" ta="center">
+          {t.auth.noAccount}{' '}
+          <Anchor component={Link} to="/auth/signup" fw={600}>
+            {t.auth.signup}
+          </Anchor>
+        </Text>
+      </Stack>
+    </Box>
     </PageContainer>
   );
 }

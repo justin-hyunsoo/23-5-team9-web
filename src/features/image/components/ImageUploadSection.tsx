@@ -1,4 +1,5 @@
 import { RefObject } from 'react';
+import { Box, Group, Stack, Text } from '@mantine/core';
 import { Button, CardImage } from '@/shared/ui';
 import type { UploadEntry } from '../hooks';
 
@@ -32,58 +33,86 @@ export function ImageUploadSection({
   labels,
 }: ImageUploadSectionProps) {
   return (
-    <div className="mt-4">
-      <input ref={inputRef} type="file" accept="image/*" multiple onChange={onFileChange} className="hidden" />
-      <div className="mb-2">
-        <div className={`flex flex-col items-center justify-center gap-2 py-4 ${dragOver ? 'text-primary' : 'text-text-secondary'}`}>
+    <Box mt="md">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={onFileChange}
+        style={{ display: 'none' }}
+      />
+      <Box mb="xs">
+        <Stack
+          align="center"
+          justify="center"
+          gap="xs"
+          py="md"
+          c={dragOver ? 'orange' : 'var(--text-secondary)'}
+        >
           <Button
             type="button"
             size="sm"
-            variant="outline"
+            variant={dragOver ? 'outline-primary' : 'outline'}
             onClick={onOpenPicker}
-            className={`px-3 ${dragOver ? 'text-primary border-primary' : ''}`}
           >
             {labels.select}
           </Button>
-          <div className="text-sm mt-2">{labels.dropzone}</div>
-        </div>
-        <div className="flex justify-end mt-2">
-          <div className="text-sm text-text-secondary">{labels.selected.replace('{count}', String(images.length))}</div>
-        </div>
-      </div>
+          <Text size="sm" mt="xs">{labels.dropzone}</Text>
+        </Stack>
+        <Group justify="flex-end" mt="xs">
+          <Text size="sm" c="var(--text-secondary)">
+            {labels.selected.replace('{count}', String(images.length))}
+          </Text>
+        </Group>
+      </Box>
 
-      <div ref={containerRef} className="flex gap-3 mt-3 flex-wrap items-start">
+      <Group ref={containerRef} gap="md" mt="md" wrap="wrap" align="flex-start">
         {images.length === 0 && (
-          <div className="text-sm text-text-secondary ml-1">{labels.none}</div>
+          <Text size="sm" c="var(--text-secondary)" ml="xs">{labels.none}</Text>
         )}
         {images.map((img, idx) => (
-          <div key={img.clientId} className="relative" data-clientid={img.clientId}>
+          <Box key={img.clientId} pos="relative" data-clientid={img.clientId}>
             <CardImage
               src={img.previewUrl ?? img.image_url ?? undefined}
               alt={`preview-${idx}`}
-              className="w-28 h-28"
+              w={112}
+              h={112}
               onError={() => onImageError(img.clientId)}
             />
 
             {img.uploading && (
-              <div className="absolute top-0 left-0 w-28 h-28 bg-black bg-opacity-40 flex items-center justify-center rounded-xl">
-                <div className="text-white text-sm">{img.progress}%</div>
-              </div>
+              <Box
+                pos="absolute"
+                top={0}
+                left={0}
+                w={112}
+                h={112}
+                bg="rgba(0, 0, 0, 0.4)"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 'var(--mantine-radius-xl)',
+                }}
+              >
+                <Text size="sm" c="white">{img.progress}%</Text>
+              </Box>
             )}
 
             <Button
               type="button"
-              size="sm"
+              size="xs"
               variant="secondary"
               onClick={(e) => { e.stopPropagation(); onRemove(img.id, img.previewUrl); }}
-              className="absolute -top-2 -right-2"
+              style={{ position: 'absolute', top: -8, right: -8 }}
               aria-label="remove image"
             >
               {labels.delete}
             </Button>
-          </div>
+          </Box>
         ))}
-      </div>
-    </div>
+      </Group>
+    </Box>
   );
 }

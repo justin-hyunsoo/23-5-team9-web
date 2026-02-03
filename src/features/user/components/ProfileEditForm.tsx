@@ -12,6 +12,7 @@ import { useUser } from '@/features/user/hooks/useUser';
 import { Button, Input, Select, Avatar } from '@/shared/ui';
 import { imageApi as userImageApi } from '@/features/user/api/imageApi';
 import { useTranslation } from '@/shared/i18n';
+import { Box, Center, Group, Stack, Text } from '@mantine/core';
 
 interface ProfileEditFormProps {
   initialEmail?: string;
@@ -247,100 +248,103 @@ export default function ProfileEditForm({
   const buttonText = submitButtonText || t.user.saveProfile;
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit}>
+      <Stack gap="lg">
+        {/* 1. 프로필 이미지 */}
+        <Center>
+          <Stack gap="sm" align="center">
+            <Avatar src={profileImage} alt="" size="xl" />
 
-      {/* 1. 프로필 이미지 */}
-      <div className="text-center mb-2">
-        <div className="relative inline-block">
-          <Avatar src={profileImage} alt="Profile" size="xl" />
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-1 w-max">
-            <Button type="button" size="sm" variant="secondary" onClick={generateRandomImage} className="text-xs py-1 px-3">
+            <Group gap={6} wrap="wrap" justify="center">
+              <Button type="button" size="sm" variant="secondary" onClick={generateRandomImage}>
                 {t.common.random}
-            </Button>
-            <Button type="button" size="sm" variant="secondary" onClick={triggerFileSelect} className="text-xs py-1 px-3">
-              {uploading ? t.common.uploading || 'Uploading...' : t.common.upload}
-            </Button>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-            <Button type="button" size="sm" variant="secondary" onClick={handleLinkInput} className="text-xs py-1 px-3">
-              {t.common.link}
-            </Button>
-          </div>
-        </div>
-      </div>
+              </Button>
+              <Button type="button" size="sm" variant="secondary" onClick={triggerFileSelect} disabled={uploading}>
+                {uploading ? (t.common.uploading || 'Uploading...') : t.common.upload}
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <Button type="button" size="sm" variant="secondary" onClick={handleLinkInput}>
+                {t.common.link}
+              </Button>
+            </Group>
+          </Stack>
+        </Center>
 
-      {/* 2. 이메일 */}
-      {initialEmail && (
-        <div>
-          <label className="block mb-2 font-bold text-sm text-text-secondary">{t.user.email}</label>
-          <Input value={initialEmail} readOnly className="cursor-not-allowed opacity-70" />
-        </div>
-      )}
+        {/* 2. 이메일 */}
+        {initialEmail && (
+          <Stack gap={6}>
+            <Text size="sm" fw={600} c="dimmed">
+              {t.user.email}
+            </Text>
+            <Input value={initialEmail} readOnly disabled />
+          </Stack>
+        )}
 
-      {/* 3. 닉네임 */}
-      <div>
-        <label className="block mb-2 font-bold text-sm text-text-secondary">{t.user.nickname}</label>
-        <Input
+        {/* 3. 닉네임 */}
+        <Stack gap={6}>
+          <Text size="sm" fw={600} c="dimmed">
+            {t.user.nickname}
+          </Text>
+          <Input
             value={nickname}
-            onChange={e => setNickname(e.target.value)}
+            onChange={(e) => setNickname(e.currentTarget.value)}
             required
             placeholder={t.user.enterNickname}
-        />
-      </div>
+          />
+        </Stack>
 
-      {/* 4. 지역 선택 (3단 드롭다운) */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-            <label className="font-bold text-sm text-text-secondary">{t.user.regionSettings}</label>
+        {/* 4. 지역 선택 (3단 드롭다운) */}
+        <Stack gap="sm">
+          <Group justify="space-between" align="center" wrap="wrap" gap="sm">
+            <Text size="sm" fw={600} c="dimmed">
+              {t.user.regionSettings}
+            </Text>
             <Button
               type="button"
               size="sm"
               onClick={handleDetectLocation}
               disabled={detecting}
               variant="secondary"
-              className="text-xs py-1 px-2"
-          >
+            >
               {detecting ? t.location.findingLocation : t.user.findMyLocationIcon}
+            </Button>
+          </Group>
+
+          <Stack gap="sm">
+            <Select
+              options={sidoOptions}
+              value={selectedSido}
+              onChange={handleSidoChange}
+            />
+
+            <Select
+              options={sigugunOptions}
+              value={selectedSigugun}
+              onChange={handleSigugunChange}
+              disabled={!selectedSido}
+            />
+
+            <Select
+              options={dongOptions}
+              value={selectedDongId}
+              onChange={handleDongChange}
+              disabled={!selectedSigugun}
+            />
+          </Stack>
+        </Stack>
+
+        <Box pt="sm">
+          <Button type="submit" size="lg" fullWidth disabled={loading}>
+            {loading ? t.common.processing : buttonText}
           </Button>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          {/* 시/도 */}
-          <Select
-            options={sidoOptions}
-            value={selectedSido}
-            onChange={handleSidoChange}
-            className="w-full"
-          />
-
-          {/* 시/구/군 */}
-          <Select
-            options={sigugunOptions}
-            value={selectedSigugun}
-            onChange={handleSigugunChange}
-            disabled={!selectedSido}
-            className="w-full"
-          />
-
-          {/* 읍/면/동 */}
-          <Select
-            options={dongOptions}
-            value={selectedDongId}
-            onChange={handleDongChange}
-            disabled={!selectedSigugun}
-            className="w-full"
-          />
-        </div>
-      </div>
-
-      <Button
-        type="submit"
-        size="lg"
-        fullWidth
-        disabled={loading}
-        className="mt-4"
-      >
-        {loading ? t.common.processing : buttonText}
-      </Button>
+        </Box>
+      </Stack>
     </form>
   );
 }

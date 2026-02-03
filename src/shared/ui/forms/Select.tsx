@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { Select as MantineSelect } from '@mantine/core';
 
 export interface SelectOption {
   value: string;
@@ -13,28 +14,34 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ options, label, error, className = '', disabled, ...props }, ref) => {
+  ({ options, label, error, className = '', disabled, onChange, value, ...props }, ref) => {
+    const handleChange = (nextValue: string | null) => {
+      if (!onChange) return;
+
+      // Most call sites treat this component like a native <select> and expect
+      // `e.target.value`. Mantine's Select calls onChange with the selected value.
+      const v = nextValue ?? '';
+      const eventLike = {
+        target: { value: v },
+        currentTarget: { value: v },
+      } as unknown as React.ChangeEvent<HTMLSelectElement>;
+
+      onChange(eventLike);
+    };
+
     return (
-      <div className="w-full">
-        {label && <label className="block mb-2 font-bold text-sm text-text-secondary">{label}</label>}
-        <select
-          ref={ref}
-          disabled={disabled}
-          className={`w-full rounded-xl border p-4 text-base outline-none transition-all appearance-none ${
-            disabled
-              ? 'bg-bg-secondary border-border-light text-text-tertiary cursor-not-allowed opacity-60'
-              : 'bg-bg-page border-border-medium focus:border-primary focus:ring-1 focus:ring-primary/20'
-          } ${error ? 'border-status-error/50 ring-1 ring-status-error/20' : ''} ${className}`}
-          {...props}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {error && <p className="mt-1 text-sm text-status-error ml-1">{error}</p>}
-      </div>
+      <MantineSelect
+        ref={ref as any}
+        className={className}
+        styles={{ root: { width: '100%' } }}
+        data={options}
+        label={label}
+        error={error}
+        disabled={disabled}
+        value={(value as any) ?? null}
+        onChange={handleChange}
+        {...(props as any)}
+      />
     );
   }
 );

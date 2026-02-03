@@ -2,6 +2,7 @@ import { PayTransaction } from '@/features/pay/api/payApi';
 import { Avatar } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { useLanguage } from '@/shared/store/languageStore';
+import { Box, Group, Stack, Text } from '@mantine/core';
 
 interface TransactionItemProps {
   tx: PayTransaction;
@@ -15,93 +16,70 @@ export function TransactionItem({ tx, currentUserId }: TransactionItemProps) {
   const isTransfer = tx.type === 'TRANSFER';
   const isSender = isTransfer && tx.details.user.id === currentUserId;
 
-  const getTransactionInfo = () => {
-    if (tx.type === 'DEPOSIT') {
-      return { label: t.pay.charge, icon: '↓', isPositive: true };
-    }
-    if (tx.type === 'WITHDRAW') {
-      return { label: t.pay.withdraw, icon: '↑', isPositive: false };
-    }
-    // TRANSFER
-    if (isSender) {
-      return { label: t.pay.transfer, icon: '→', isPositive: false };
-    }
-    return { label: t.pay.received, icon: '←', isPositive: true };
-  };
+  const info = tx.type === 'DEPOSIT'
+    ? { label: t.pay.charge, icon: '↓', isPositive: true }
+    : tx.type === 'WITHDRAW'
+      ? { label: t.pay.withdraw, icon: '↑', isPositive: false }
+      : isSender
+        ? { label: '보냄', icon: '→', isPositive: false }
+        : { label: t.pay.received, icon: '←', isPositive: true };
 
-  const { label, icon, isPositive } = getTransactionInfo();
-  const formattedDate = new Date(tx.details.time).toLocaleString(
-    language === 'ko' ? 'ko-KR' : 'en-US'
-  );
+  const sign = info.isPositive ? '+' : '-';
+  const formattedDate = new Date(tx.details.time).toLocaleString(language === 'ko' ? 'ko-KR' : 'en-US');
 
-  // For transfer, show the other party's info
-  const otherParty =
-    isTransfer && 'receive_user' in tx.details
-      ? isSender
-        ? tx.details.receive_user
-        : tx.details.user
-      : null;
+  const otherParty = isTransfer && 'receive_user' in tx.details
+    ? (isSender ? tx.details.receive_user : tx.details.user)
+    : null;
 
-  if (isTransfer) {
-    return (
-      <div
-        className={`flex items-center gap-3 p-4 rounded-lg border-l-4 ${
-          isPositive
-            ? 'bg-blue-500/10 border-l-blue-500'
-            : 'bg-purple-500/10 border-l-purple-500'
-        }`}
-      >
-        <Avatar
-          src={otherParty?.profile_image ?? undefined}
-          alt={otherParty?.nickname || t.common.unknown}
-          size="sm"
-        />
-        <div className="flex-1 text-left">
-          <p className="text-sm font-medium text-text-primary">
-            {label} · {otherParty?.nickname || t.common.unknown}
-          </p>
-          <p className="text-xs text-text-tertiary">{formattedDate}</p>
-        </div>
-        <span
-          className={`font-bold text-lg ${
-            isPositive ? 'text-blue-500' : 'text-purple-500'
-          }`}
-        >
-          {isPositive ? '+' : '-'}
-          {tx.details.amount.toLocaleString()}C
-        </span>
-      </div>
-    );
+  // Determine colors based on transaction type
+  let mainColor = 'var(--text-primary)';
+  let bgColor = 'var(--bg-box)';
+  
+  // Logic: Money IN = Blue, Money OUT = Red (Pink-ish)
+  const isIncoming = tx.type === 'DEPOSIT' || (isTransfer && !isSender);
+  
+  if (isIncoming) {
+      // Deposit or Received: Blue
+      mainColor = 'var(--status-info)';
+      bgColor = 'rgba(59, 130, 246, 0.1)'; 
+  } else {
+      // Withdraw or Sent: Red (Pink-ish pastel for background to look softer)
+      mainColor = 'var(--status-error)';
+      // Using a slightly more pink hue for the background transparency
+      // rgb(255, 87, 87) is soft red, 0.1 opacity makes it pastel pink on white
+      bgColor = 'rgba(255, 87, 87, 0.1)';
   }
 
-  // Deposit / Withdraw
+  // Amount color follows the main color
+  const amountColor = mainColor;
+
   return (
-    <div
-      className={`flex items-center gap-3 p-4 rounded-lg border-l-4 ${
-        isPositive
-          ? 'bg-primary/5 border-l-primary'
-          : 'bg-status-error/5 border-l-status-error'
-      }`}
+    <Box
+      p="md"
+      className="transition-colors duration-200"
+      style={{
+        borderRadius: 'var(--mantine-radius-md)',
+        backgroundColor: bgColor,
+      }}
     >
-      <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-bold ${
-          isPositive ? 'bg-primary' : 'bg-status-error'
-        }`}
-      >
-        {icon}
-      </div>
-      <div className="flex-1 text-left">
-        <p className="text-sm font-medium text-text-primary">{label}</p>
-        <p className="text-xs text-text-tertiary">{formattedDate}</p>
-      </div>
-      <span
-        className={`font-bold text-lg ${
-          isPositive ? 'text-primary' : 'text-status-error'
-        }`}
-      >
-        {isPositive ? '+' : '-'}
-        {tx.details.amount.toLocaleString()}C
-      </span>
-    </div>
+      <Group gap="sm" wrap="nowrap">
+        {isTransfer ? (
+          <Avatar src={otherParty?.profile_image ?? undefined} alt={otherParty?.nickname || t.common.unknown} size="sm" />
+        ) : (
+          <Text fw={700} style={{ width: 28, textAlign: 'center', opacity: 0.7, color: mainColor }}>
+            {info.icon}
+          </Text>
+        )}
+        <Stack gap={2} style={{ flex: 1 }}>
+          <Text size="sm" fw={500}>
+            {info.label}{isTransfer && otherParty && ` · ${otherParty.nickname || t.common.unknown}`}
+          </Text>
+          <Text size="xs" c="dimmed">{formattedDate}</Text>
+        </Stack>
+        <Text fw={700} fz="lg" style={{ color: amountColor }}>
+          {sign}{tx.details.amount.toLocaleString()}C
+        </Text>
+      </Group>
+    </Box>
   );
 }

@@ -10,9 +10,13 @@ import type { ProductFormData } from '@/features/product/hooks/schemas';
 interface ProductLike {
   id: string;
   owner_id: string;
+  title: string;
+  content: string | null;
+  price: number;
+  image_ids?: string[];
   category_id: string;
   region_id: string;
-  is_sold?: boolean;
+  is_sold: boolean;
 }
 
 interface DetailHandlersOptions {
@@ -95,6 +99,12 @@ export function useDetailHandlers({ product, redirectPath, onEditSuccess }: Deta
     if (!product) return;
 
     const updateData: UpdateProductRequest = {
+      title: product.title,
+      content: product.content ?? '',
+      price: product.price,
+      category_id: product.category_id,
+      region_id: product.region_id,
+      image_ids: product.image_ids ?? [],
       is_sold: !product.is_sold,
     };
 

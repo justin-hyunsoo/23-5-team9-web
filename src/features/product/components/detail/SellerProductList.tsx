@@ -4,6 +4,7 @@ import { useDetail } from '@/features/product/hooks/DetailContext';
 import ProductCard from '@/features/product/components/list/ProductCard';
 import { Pagination, SegmentedTabBar } from '@/shared/ui';
 import { DataListLayout } from '@/shared/layouts/DataListLayout';
+import { SimpleGrid, Stack, Title } from '@mantine/core';
 
 const ITEMS_PER_PAGE = 4;
 
@@ -41,31 +42,32 @@ export function SellerProductList() {
   const nickname = sellerProfile?.nickname || t.product.seller;
 
   return (
-    <div className="mt-8">
-      <h3 className="text-lg font-bold mb-4">
+    <Stack gap="md" mt="xl">
+      <Title order={3} size="h4">
         {nickname}{t.product.salesItems}
-      </h3>
-      <div className="mb-4">
-        <SegmentedTabBar
-          tabs={[
-            { id: 'regular', label: t.product.regular },
-            { id: 'auction', label: t.auction.auction },
-          ]}
-          activeTab={showAuction ? 'auction' : 'regular'}
-          onTabChange={(tab) => handleTabChange(tab === 'auction')}
-        />
-      </div>
+      </Title>
+
+      <SegmentedTabBar
+        tabs={[
+          { id: 'regular', label: t.product.regular },
+          { id: 'auction', label: t.auction.auction },
+        ]}
+        activeTab={showAuction ? 'auction' : 'regular'}
+        onTabChange={(tab) => handleTabChange(tab === 'auction')}
+      />
+
       <DataListLayout
         isLoading={false}
         error={undefined}
         isEmpty={currentItems.length === 0}
         emptyMessage={showAuction ? t.auction.noAuctions : t.product.noProducts}
       >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="md">
           {paginatedItems.map(p => (
             <ProductCard key={p.id} product={p} />
           ))}
-        </div>
+        </SimpleGrid>
+
         {totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
@@ -74,6 +76,6 @@ export function SellerProductList() {
           />
         )}
       </DataListLayout>
-    </div>
+    </Stack>
   );
 }

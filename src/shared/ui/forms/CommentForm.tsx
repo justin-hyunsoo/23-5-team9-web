@@ -1,4 +1,5 @@
 import React from 'react';
+import { Group } from '@mantine/core';
 import { Input } from './Input';
 import { Button } from '../display/Button';
 
@@ -9,7 +10,6 @@ interface CommentFormProps {
   placeholder?: string;
   submitText?: string;
   isSubmitting?: boolean;
-  className?: string;
 }
 
 export function CommentForm({
@@ -19,25 +19,24 @@ export function CommentForm({
   placeholder = '메시지를 입력하세요',
   submitText = '전송',
   isSubmitting = false,
-  className = ''
 }: CommentFormProps) {
   return (
-    <form onSubmit={onSubmit} className={`flex gap-2.5 ${className}`}>
+    <Group component="form" onSubmit={onSubmit} gap="sm" wrap="nowrap">
       <Input
         type="text"
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="flex-1 bg-bg-page"
+        style={{ flex: 1, backgroundColor: 'var(--bg-page)' }}
       />
       <Button
         type="submit"
         variant="primary"
-        className="h-auto px-5 whitespace-nowrap"
+        style={{ height: 'auto', paddingInline: 20, whiteSpace: 'nowrap' }}
         disabled={isSubmitting || !value.trim()}
       >
         {submitText}
       </Button>
-    </form>
+    </Group>
   );
 }

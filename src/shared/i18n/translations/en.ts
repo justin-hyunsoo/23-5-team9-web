@@ -28,7 +28,7 @@ export const en: TranslationKeys = {
   nav: {
     products: 'Products',
     chat: 'Chat',
-    myOrange: 'My Orange',
+    myOrange: 'My Gamgyul',
     login: 'Login',
     orangeMarket: '🍊 Market',
     themeToggle: 'Toggle theme',
@@ -115,6 +115,7 @@ export const en: TranslationKeys = {
     deleteFailed: 'Failed to delete product.',
     updated: 'Product updated.',
     updateFailed: 'Failed to update product.',
+    statusChanged: 'Product status updated.',
     noImage: 'No image',
     region: 'Location',
     changeRegion: 'Change Location',
@@ -174,7 +175,7 @@ export const en: TranslationKeys = {
 
   // User
   user: {
-    myOrange: 'My Orange',
+    myOrange: 'My Gamgyul',
     myProducts: 'My Products',
     editProfile: 'Edit Profile',
     changePassword: 'Change Password',

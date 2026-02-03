@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Box, Group, TextInput, ActionIcon } from '@mantine/core';
+import { IconSend } from '@tabler/icons-react';
 import { useTranslation } from '@/shared/i18n';
 
 interface ChatInputProps {
@@ -18,25 +20,38 @@ function ChatInput({ onSend, isPending }: ChatInputProps) {
   };
 
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 px-3 py-2 md:py-3 bg-bg-page border-t border-border-medium"
+      px="md"
+      py="sm"
+      bg="body"
+      style={{
+        borderTop: '1px solid var(--mantine-color-default-border)',
+      }}
     >
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder={t.chat.enterMessage}
-        className="flex-1 px-4 py-2.5 bg-bg-page rounded-lg text-sm text-text-heading placeholder:text-text-tertiary focus:outline-none border border-border-medium focus:border-primary"
-      />
-      <button
-        type="submit"
-        disabled={!message.trim() || isPending}
-        className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-opacity"
-      >
-        {t.chat.send}
-      </button>
-    </form>
+      <Group gap="sm" wrap="nowrap">
+        <TextInput
+          flex={1}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder={t.chat.enterMessage}
+          size="md"
+          radius="xl"
+        />
+        <ActionIcon
+          type="submit"
+          disabled={!message.trim() || isPending}
+          size={42}
+          radius="xl"
+          variant="filled"
+          color="blue"
+          loading={isPending}
+        >
+          <IconSend size={20} />
+        </ActionIcon>
+      </Group>
+    </Box>
   );
 }
 

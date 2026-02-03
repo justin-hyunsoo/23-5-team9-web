@@ -10,11 +10,14 @@ import MessageList from '@/features/chat/components/MessageList';
 import ChatInput from '@/features/chat/components/ChatInput';
 import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 import { useTranslation } from '@/shared/i18n';
+import { Box, Container, Paper, Stack } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 function ChatRoom() {
   const t = useTranslation();
   const { chatId } = useParams();
   const navigate = useNavigate();
+  const isMdUp = useMediaQuery('(min-width: 768px)');
   const [showTransferMenu, setShowTransferMenu] = useState(false);
   const { user, isLoggedIn, isLoading: userLoading } = useUser({
     refetchInterval: getPollingInterval(POLLING_CONFIG.CHAT_ROOM_PAGE),
@@ -55,33 +58,39 @@ function ChatRoom() {
   if (error) return <ErrorMessage message={t.chat.messageFailed} />;
 
   return (
-    <div className="w-full md:max-w-250 md:mx-auto md:px-4 md:py-6 md:min-h-[calc(100vh-60px)]">
-      <div className="hidden md:block">
+    <Container size="md" py={{ base: 0, md: 'md' }} h={{ base: 'calc(100dvh - 60px)', md: 'auto' }} p={{ base: 0, md: 'md' }}>
+      <Box visibleFrom="md" mb="md">
         <DetailHeader />
-      </div>
+      </Box>
 
-      <div className="flex flex-col h-[calc(100dvh-64px)] md:h-[70vh] bg-bg-base md:bg-bg-page md:rounded-lg md:border md:border-border-medium md:overflow-hidden">
-        <ChatHeader
-          opponentId={roomInfo?.opponent_id}
-          opponentNickname={opponentProfile?.nickname}
-          opponentProfileImage={opponentProfile?.profile_image}
-          userCoin={user?.coin || 0}
-          onToggleTransferMenu={() => setShowTransferMenu(!showTransferMenu)}
-        />
-
-        {showTransferMenu && (
-          <TransferMenu
-            currentCoin={user?.coin || 0}
-            recipientId={roomInfo?.opponent_id}
-            recipientName={opponentProfile?.nickname || t.chat.otherParty}
+      <Paper
+        withBorder={isMdUp}
+        radius={isMdUp ? 'md' : 0}
+        style={{ overflow: 'hidden' }}
+        h={{ base: '100%', md: '75vh' }}
+      >
+        <Stack gap={0} h="100%">
+          <ChatHeader
+            opponentId={roomInfo?.opponent_id}
+            opponentNickname={opponentProfile?.nickname}
+            opponentProfileImage={opponentProfile?.profile_image}
+            userCoin={user?.coin || 0}
+            onToggleTransferMenu={() => setShowTransferMenu(!showTransferMenu)}
           />
-        )}
 
-        <MessageList messages={messages} transactions={transactions} currentUserId={user?.id} />
+          {showTransferMenu && (
+            <TransferMenu
+              currentCoin={user?.coin || 0}
+              recipientId={roomInfo?.opponent_id}
+              recipientName={opponentProfile?.nickname || t.chat.otherParty}
+            />
+          )}
 
-        <ChatInput onSend={handleSend} isPending={sendMessageMutation.isPending} />
-      </div>
-    </div>
+          <MessageList messages={messages} transactions={transactions} currentUserId={user?.id} />
+          <ChatInput onSend={handleSend} isPending={sendMessageMutation.isPending} />
+        </Stack>
+      </Paper>
+    </Container>
   );
 }
 

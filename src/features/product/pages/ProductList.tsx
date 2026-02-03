@@ -11,6 +11,7 @@ import RegionSelectModal from "@/features/location/components/RegionSelectModal"
 import { useTranslation } from "@/shared/i18n";
 import { SegmentedTabBar } from "@/shared/ui";
 import { useProductFilters } from "@/features/product/store/productFiltersStore";
+import { Group, SimpleGrid, Stack } from "@mantine/core";
 
 export default function ProductList() {
   const t = useTranslation();
@@ -69,29 +70,31 @@ export default function ProductList() {
 
   return (
     <PageContainer title={t.product.usedGoods}>
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <RegionSelector regionName={currentRegionName} onClick={openModal} />
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      </div>
-      <div className="mb-4">
+      <Stack gap="md">
+        <Group justify="space-between" align="center" wrap="wrap" gap="md">
+          <RegionSelector regionName={currentRegionName} onClick={openModal} />
+          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        </Group>
+
         <SegmentedTabBar
           tabs={filterOptions.map((opt) => ({ id: String(opt.value), label: opt.label }))}
           activeTab={String(showAuction)}
           onTabChange={(tab) => handleAuctionChange(tab === 'true')}
         />
-      </div>
-      <DataListLayout
-        isLoading={loading}
-        error={error}
-        isEmpty={products.length === 0}
-        emptyMessage={searchQuery ? t.product.noSearchResults : t.product.noProducts}
-      >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </DataListLayout>
+
+        <DataListLayout
+          isLoading={loading}
+          error={error}
+          isEmpty={products.length === 0}
+          emptyMessage={searchQuery ? t.product.noSearchResults : t.product.noProducts}
+        >
+          <SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="lg">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </SimpleGrid>
+        </DataListLayout>
+      </Stack>
       <RegionSelectModal
         isOpen={isModalOpen}
         onClose={closeModal}

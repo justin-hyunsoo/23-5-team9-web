@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Box, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useUserProducts, useCreateProduct } from "@/features/product/hooks/useProducts";
 import { Button, DetailSection, Pagination, SegmentedTabBar } from '@/shared/ui';
 import ProductCard from "@/features/product/components/list/ProductCard";
@@ -100,13 +101,13 @@ const UserProfile = () => {
     }
 
   return (
-    <div className="flex flex-col gap-6">
+    <Stack gap="xl">
       {!showForm ? (
-        <div className="flex justify-end">
+        <Group justify="flex-end">
           <Button size="sm" onClick={() => setShowForm(true)}>
             {t.product.registerProduct}
           </Button>
-        </div>
+        </Group>
       ) : (
         <DetailSection>
           <ProductForm
@@ -117,9 +118,9 @@ const UserProfile = () => {
         </DetailSection>
       )}
 
-      <div>
-        <h3 className="text-lg font-bold mb-4">{t.product.mySalesItems}</h3>
-        <div className="mb-4">
+      <Box>
+        <Text size="lg" fw={700} mb="md">{t.product.mySalesItems}</Text>
+        <Box mb="md">
           <SegmentedTabBar
             tabs={[
               { id: 'regular', label: t.product.regular },
@@ -128,7 +129,7 @@ const UserProfile = () => {
             activeTab={salesTab}
             onTabChange={handleTabChange}
           />
-        </div>
+        </Box>
 
         <DataListLayout
           isLoading={productsLoading}
@@ -136,11 +137,11 @@ const UserProfile = () => {
           isEmpty={currentProducts.length === 0}
           emptyMessage={showAuction ? t.auction.noAuctions : t.product.noSalesItems}
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="md">
             {paginatedProducts.map(p => (
               <ProductCard key={p.id} product={p} />
             ))}
-          </div>
+          </SimpleGrid>
           {totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
@@ -149,8 +150,8 @@ const UserProfile = () => {
             />
           )}
         </DataListLayout>
-      </div>
-    </div>
+      </Box>
+    </Stack>
   );
 };
 

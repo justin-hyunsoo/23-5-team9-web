@@ -1,4 +1,16 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+  AspectRatio,
+  Box,
+  type BoxProps,
+  Card as MantineCard,
+  Center,
+  Image,
+  Skeleton,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useTranslation } from '@/shared/i18n';
 
 interface CardProps {
   children: ReactNode;
@@ -8,16 +20,21 @@ interface CardProps {
 }
 
 export function Card({ children, className = '', onClick, hoverable = true }: CardProps) {
-  const hoverClass = hoverable ? 'transition-transform duration-200 hover:-translate-y-1' : '';
-  const clickClass = onClick ? 'cursor-pointer' : '';
-
   return (
-    <div
-      className={`flex flex-col ${hoverClass} ${clickClass} ${className}`}
+    <MantineCard
+      className={className}
+      withBorder
+      radius="md"
+      padding="md"
       onClick={onClick}
+      style={{
+        cursor: onClick ? 'pointer' : undefined,
+        transition: hoverable ? 'transform 200ms ease' : undefined,
+        borderColor: 'var(--color-border-light)',
+      }}
     >
       {children}
-    </div>
+    </MantineCard>
   );
 }
 
@@ -27,39 +44,94 @@ interface CardImageProps {
   aspectRatio?: 'square' | 'video' | 'auto';
   className?: string;
   onError?: () => void;
+  emptyLabel?: string;
+  w?: BoxProps['w'];
+  h?: BoxProps['h'];
+  style?: BoxProps['style'];
 }
 
-export function CardImage({ src, alt, aspectRatio = 'square', className = '', onError }: CardImageProps) {
-  const [isLoading, setIsLoading] = useState(true);
+export function CardImage({ src, alt, aspectRatio = 'square', className = '', onError, emptyLabel, w, h, style }: CardImageProps) {
+  const t = useTranslation();
+  const [isLoading, setIsLoading] = useState(Boolean(src));
   const [hasError, setHasError] = useState(false);
-  const aspectClass = aspectRatio === 'square' ? 'aspect-square' : aspectRatio === 'video' ? 'aspect-video' : '';
 
-  return (
-    <div className={`relative mb-3 w-full overflow-hidden rounded-xl bg-bg-page border border-border-light/20 ${aspectClass} ${className}`}>
+  useEffect(() => {
+    setIsLoading(Boolean(src));
+    setHasError(false);
+  }, [src]);
+
+  const ratio = useMemo(() => {
+    if (aspectRatio === 'square') return 1;
+    if (aspectRatio === 'video') return 16 / 9;
+    return undefined;
+  }, [aspectRatio]);
+
+  const label = emptyLabel ?? t.product.noImage;
+
+  const content = (
+    <Box
+      pos="relative"
+      className={className}
+      w={w}
+      h={h}
+      style={{
+        borderRadius: 'var(--mantine-radius-md)',
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
       {isLoading && src && (
-        <div className="absolute inset-0 bg-bg-page flex items-center justify-center animate-pulse">
-          <span className="text-4xl text-text-placeholder">📷</span>
-        </div>
+        <Skeleton visible h="100%" w="100%" style={{ position: 'absolute', inset: 0, zIndex: 1 }} />
       )}
+
       {src && !hasError ? (
-        <img
+        <Image
           src={src}
           alt={alt}
-          className={`h-full w-full object-cover transition-all duration-300 group-hover:scale-105 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+          fit="cover"
+          h="100%"
+          w="100%"
+          radius="md"
           onLoad={() => setIsLoading(false)}
           onError={() => {
             setIsLoading(false);
             setHasError(true);
-            try { onError?.(); } catch {}
+            try {
+              onError?.();
+            } catch {}
           }}
         />
       ) : (
-        <div className="absolute top-0 left-0 w-full h-full bg-bg-page flex items-center justify-center text-text-muted">
-          <span className="text-4xl">🖼️</span>
-        </div>
+        <Center
+          h="100%"
+          w="100%"
+          style={{
+            background: 'transparent',
+            color: 'var(--text-muted)',
+          }}
+        >
+          <Stack align="center" gap={6}>
+            <Text size="32px" lh={1} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}>
+              🍊
+            </Text>
+            <Text size="xs" fw={700} style={{ opacity: 0.8 }}>
+              {label}
+            </Text>
+          </Stack>
+        </Center>
       )}
-    </div>
+    </Box>
   );
+
+  if (ratio) {
+    return (
+      <AspectRatio ratio={ratio} w={w}>
+        {content}
+      </AspectRatio>
+    );
+  }
+
+  return content;
 }
 
 interface CardContentProps {
@@ -68,7 +140,7 @@ interface CardContentProps {
 }
 
 export function CardContent({ children, className = '' }: CardContentProps) {
-  return <div className={`px-0.5 ${className}`}>{children}</div>;
+  return <Box className={className}>{children}</Box>;
 }
 
 interface CardTitleProps {
@@ -78,9 +150,9 @@ interface CardTitleProps {
 
 export function CardTitle({ children, className = '' }: CardTitleProps) {
   return (
-    <h3 className={`mb-1.5 line-clamp-2 text-base font-medium leading-snug text-text-heading ${className}`}>
+    <Text fw={600} lineClamp={2} className={className}>
       {children}
-    </h3>
+    </Text>
   );
 }
 
@@ -91,8 +163,8 @@ interface CardMetaProps {
 
 export function CardMeta({ children, className = '' }: CardMetaProps) {
   return (
-    <div className={`text-[13px] text-text-secondary ${className}`}>
+    <Text size="xs" c="dimmed" className={className}>
       {children}
-    </div>
+    </Text>
   );
 }

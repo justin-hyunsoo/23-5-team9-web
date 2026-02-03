@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Box, Group, SimpleGrid, Text } from '@mantine/core';
 import { useUser, useUserProfile } from '@/features/user/hooks/useUser';
 import { useUserProducts } from '@/features/product/hooks/useProducts';
 import { useCreateRoom } from '@/features/chat/hooks/useChat';
@@ -63,30 +64,30 @@ function SellerProfile() {
       <DetailHeader />
 
       {/* 판매자 프로필 섹션 */}
-      <DetailSection className="mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <DetailSection style={{ marginBottom: 'var(--mantine-spacing-lg)' }}>
+        <Group justify="space-between">
+          <Group gap="md">
             <Avatar
               src={profile.profile_image || undefined}
               alt={profile.nickname || undefined}
               size="lg"
             />
-            <div>
-              <h1 className="text-xl font-bold text-text-heading">{profile.nickname}</h1>
-            </div>
-          </div>
+            <Box>
+              <Text size="xl" fw={700} c="var(--text-heading)">{profile.nickname}</Text>
+            </Box>
+          </Group>
           {!isOwnProfile && (
             <Button onClick={handleChatClick} disabled={createRoom.isPending}>
               {createRoom.isPending ? t.product.connecting : t.product.startChat}
             </Button>
           )}
-        </div>
+        </Group>
       </DetailSection>
 
       {/* 판매 상품 목록 */}
-      <div>
-        <h2 className="text-lg font-bold mb-4">{profile.nickname}{t.user.sellerSalesItems}</h2>
-        <div className="mb-4">
+      <Box>
+        <Text size="lg" fw={700} mb="md">{profile.nickname}{t.user.sellerSalesItems}</Text>
+        <Box mb="md">
           <SegmentedTabBar
             tabs={[
               { id: 'regular', label: t.product.regular },
@@ -95,18 +96,18 @@ function SellerProfile() {
             activeTab={showAuction ? 'auction' : 'regular'}
             onTabChange={(tab) => handleTabChange(tab === 'auction')}
           />
-        </div>
+        </Box>
         <DataListLayout
           isLoading={productsLoading}
           error={productsError}
           isEmpty={currentProducts.length === 0}
           emptyMessage={showAuction ? t.auction.noAuctions : t.product.noProducts}
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="md">
             {paginatedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
+          </SimpleGrid>
           {totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
@@ -115,7 +116,7 @@ function SellerProfile() {
             />
           )}
         </DataListLayout>
-      </div>
+      </Box>
     </PageContainer>
   );
 }

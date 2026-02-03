@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { Box, Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons-react';
 import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import UserProfile from '@/features/user/components/UserProfile';
 import MyBidsTab from '@/features/user/components/MyBidsTab';
 import CoinTab from '@/features/pay/pages/CoinTab';
-import PasswordTab from '@/features/user/components/PasswordTab';
 import TransactionTab from '@/features/pay/components/transaction/TransactionTab';
 import { useAuth } from '@/features/auth/hooks/store';
 import { Loading, Button, Avatar, DetailHeader } from '@/shared/ui';
@@ -14,7 +15,7 @@ import { useOnboarding } from '@/features/user/hooks/useUser';
 import { useUser } from '@/features/user/hooks/useUser';
 import { POLLING_CONFIG } from '@/shared/config/polling';
 
-type TabType = 'products' | 'bids' | 'profile' | 'coin' | 'transactions' | 'password';
+type TabType = 'products' | 'bids' | 'profile' | 'coin' | 'transactions';
 
 interface MyCarrotProps {
   initialTab?: TabType;
@@ -33,7 +34,6 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
     { id: 'profile', label: t.user.editProfile, to: '/my/profile' },
     { id: 'coin', label: t.pay.coinManagement, to: '/my/coin' },
     { id: 'transactions', label: t.pay.transactionHistory, to: '/my/transactions' },
-    { id: 'password', label: t.user.changePassword, to: '/my/password' },
   ];
 
   if (!user) return <Loading />;
@@ -53,39 +53,49 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
   if (!initialTab) {
     return (
       <PageContainer>
-        <div className="flex justify-between items-center mb-7.5">
-          <h2 className="text-2xl font-extrabold m-0">{t.user.myOrange}</h2>
+        <Group justify="space-between" align="center" mb="xl">
+          <Title order={2}>{t.user.myOrange}</Title>
           <Button onClick={() => { logout(); navigate('/products'); }} variant="outline" size="sm">{t.auth.logout}</Button>
-        </div>
+        </Group>
 
-        {/* User info section - 코인관리 스타일 적용 */}
-        <div className="rounded-lg bg-bg-page p-8 mb-6 flex flex-col items-center">
-          <Avatar
-            src={user.profile_image || undefined}
-            alt={user.nickname || t.common.unknown}
-            size="lg"
-          />
-          <div className="mt-4 text-center">
-            <div className="text-xl font-bold text-text-heading">{user.nickname || t.common.unknown}</div>
-            <div className="text-sm text-text-secondary mt-1">{user.email}</div>
-          </div>
-        </div>
+        {/* User info section */}
+        <Box p="xl" mb="md">
+          <Stack align="center" gap="md">
+            <Avatar
+              src={user.profile_image || undefined}
+              alt={user.nickname || t.common.unknown}
+              size="lg"
+            />
+            <Stack align="center" gap={4}>
+              <Text fw={700} fz="xl">{user.nickname || t.common.unknown}</Text>
+              <Text c="dimmed" fz="sm">{user.email}</Text>
+            </Stack>
+          </Stack>
+        </Box>
 
-        {/* Menu list - 코인관리 버튼 스타일 적용 */}
-        <div className="flex flex-col gap-3">
+        {/* Menu list */}
+        <Stack gap="sm">
           {MENU_ITEMS.map((item) => (
-            <button
+            <UnstyledButton
               key={item.id}
               onClick={() => navigate(item.to)}
-              className="flex items-center justify-between w-full p-4 text-left border border-border-medium rounded-lg bg-bg-page hover:border-primary hover:text-primary transition-colors"
+              w="100%"
             >
-              <span className="text-base font-medium text-text-heading">{item.label}</span>
-              <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+              <Paper
+                withBorder
+                radius="md"
+                p="md"
+                style={{ transition: 'border-color 0.2s, color 0.2s' }}
+                className="hover:border-primary hover:text-primary"
+              >
+                <Group justify="space-between" align="center">
+                  <Text fw={500}>{item.label}</Text>
+                  <IconChevronRight size={20} style={{ color: 'var(--mantine-color-dimmed)' }} />
+                </Group>
+              </Paper>
+            </UnstyledButton>
           ))}
-        </div>
+        </Stack>
       </PageContainer>
     );
   }
@@ -94,11 +104,11 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
   return (
     <PageContainer>
       <DetailHeader />
-      <h2 className="text-2xl font-extrabold mb-6">
+      <Title order={2} mb="lg">
         {MENU_ITEMS.find(item => item.id === initialTab)?.label}
-      </h2>
+      </Title>
 
-      <div className="content-area">
+      <Stack>
         {initialTab === 'products' && <UserProfile />}
         {initialTab === 'bids' && <MyBidsTab />}
         {initialTab === 'profile' && (
@@ -113,8 +123,7 @@ function MyCarrot({ initialTab }: MyCarrotProps) {
         )}
         {initialTab === 'coin' && <CoinTab />}
         {initialTab === 'transactions' && <TransactionTab />}
-        {initialTab === 'password' && <PasswordTab />}
-      </div>
+      </Stack>
     </PageContainer>
   );
 }

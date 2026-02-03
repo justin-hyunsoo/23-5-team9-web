@@ -5,6 +5,7 @@ import { useChatRooms, ChatRoom } from '@/features/chat/hooks/useChat';
 import { useUser } from '@/features/user/hooks/useUser';
 import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 import { useTranslation } from '@/shared/i18n';
+import { Stack } from '@mantine/core';
 
 function ChatList() {
   const { isLoggedIn, isLoading: userLoading, needsOnboarding } = useUser();
@@ -35,6 +36,13 @@ function ChatList() {
   }
 
   if (loading) return <Loading />;
+  if (error) {
+    return (
+      <PageContainer title={t.chat.chat}>
+        <ErrorMessage message={t.chat.loadFailed} />
+      </PageContainer>
+    );
+  }
   if (rooms.length === 0) return (
     <PageContainer title={t.chat.chat}>
       <EmptyState message={t.chat.noHistory} />
@@ -43,14 +51,14 @@ function ChatList() {
 
   return (
     <PageContainer title={t.chat.chat}>
-      <div className="flex flex-col">
+      <Stack gap="xs">
         {rooms.map((room : ChatRoom) => (
           <ChatRoomItem
             key={room.room_id}
             room={room}
           />
         ))}
-      </div>
+      </Stack>
     </PageContainer>
   );
 }

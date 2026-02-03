@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Group, SimpleGrid, Stack, Text } from '@mantine/core';
 import { Button, SegmentedTabBar, StatCard } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 
@@ -25,17 +26,20 @@ export function CoinPanel({ currentCoin, onDeposit, onWithdraw }: CoinPanelProps
   };
 
   return (
-    <div className="text-center py-5">
+    <Stack align="center" py="xl">
       <StatCard
         label={t.pay.ownedCoins}
         value={currentCoin.toLocaleString()}
         unit="C"
         layout="vertical"
         variant="outline"
-        className="mb-7.5"
+        withBorder={false}
+        bg="transparent"
+        radius={0}
+        style={{ marginBottom: 30 }}
       />
 
-      <div className="flex justify-center mb-5">
+      <Group justify="center" mb="lg">
         <SegmentedTabBar
           tabs={[
             { id: 'deposit', label: t.pay.charge },
@@ -44,27 +48,23 @@ export function CoinPanel({ currentCoin, onDeposit, onWithdraw }: CoinPanelProps
           activeTab={mode}
           onTabChange={setMode}
         />
-      </div>
+      </Group>
 
-      <h4 className="mb-5 text-text-secondary font-bold">
+      <Text c="var(--text-secondary)" fw={700} mb="lg">
         {mode === 'deposit' ? t.pay.chargeCoins : t.pay.withdrawCoins}
-      </h4>
-      <div className="grid grid-cols-3 gap-3">
+      </Text>
+
+      <SimpleGrid cols={3} spacing="sm" w="100%">
         {PRESET_AMOUNTS.map((amount) => (
           <Button
             key={amount}
             onClick={() => handleAction(amount)}
-            variant="outline"
-            className={
-              mode === 'deposit'
-                ? 'hover:border-primary hover:text-primary hover:bg-primary-light'
-                : 'hover:border-status-error hover:text-status-error hover:bg-status-error-hover'
-            }
+            variant={mode === 'deposit' ? 'outline-primary' : 'outline-danger'}
           >
             {mode === 'deposit' ? '+' : '-'}{amount.toLocaleString()}
           </Button>
         ))}
-      </div>
-    </div>
+      </SimpleGrid>
+    </Stack>
   );
 }

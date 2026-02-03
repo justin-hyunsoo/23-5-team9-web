@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Box,
+  Stack,
+  Group,
+  TextInput,
+  NumberInput,
+  Textarea,
+  Checkbox,
+  Text,
+  UnstyledButton,
+} from '@mantine/core';
+import { IconMapPin } from '@tabler/icons-react';
 import { Button, SegmentedTabBar } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { productFormSchema, type ProductFormData } from '@/features/product/hooks/schemas';
@@ -54,6 +66,7 @@ const ProductForm = ({
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
@@ -98,41 +111,74 @@ const ProductForm = ({
   });
 
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={wrappedSubmit}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="relative"
+      pos="relative"
     >
-      <div className="mb-2">
-        <input
-          type="text"
+      <Box mb="xs">
+        <TextInput
           {...register('title')}
           placeholder={t.product.enterTitle}
-          className="w-full text-2xl font-bold text-text-heading bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1"
+          variant="unstyled"
+          size="xl"
+          styles={{
+            input: {
+              fontSize: 'var(--mantine-font-size-xl)',
+              fontWeight: 700,
+              borderBottom: '1px dashed var(--mantine-color-default-border)',
+              borderRadius: 0,
+              paddingBottom: 'var(--mantine-spacing-xs)',
+              '&:focus': {
+                borderBottomColor: 'var(--mantine-color-orange-6)',
+              },
+            },
+          }}
+          error={errors.title?.message}
         />
-        {errors.title && <p className="mt-1 text-sm text-status-error">{errors.title.message}</p>}
-      </div>
+      </Box>
 
-      <div className="mb-6">
-        <div className="flex items-baseline gap-1">
-          <input
-            type="number"
-            {...register('price', { valueAsNumber: true })}
-            placeholder={isAuction ? t.auction.startingPrice : t.product.price}
-            min="0"
-            className="text-3xl font-bold text-primary bg-transparent border-b border-dashed border-border-medium focus:border-primary outline-none pb-1 w-40"
+      <Box mb="lg">
+        <Group gap="xs" align="baseline">
+          <Controller
+            name="price"
+            control={control}
+            render={({ field }) => (
+              <NumberInput
+                {...field}
+                placeholder={isAuction ? t.auction.startingPrice : t.product.price}
+                min={0}
+                variant="unstyled"
+                hideControls
+                w={160}
+                styles={{
+                  input: {
+                    fontSize: 'var(--mantine-font-size-xl)',
+                    fontWeight: 700,
+                    color: 'var(--mantine-color-orange-6)',
+                    borderBottom: '1px dashed var(--mantine-color-default-border)',
+                    borderRadius: 0,
+                    paddingBottom: 'var(--mantine-spacing-xs)',
+                    '&:focus': {
+                      borderBottomColor: 'var(--mantine-color-orange-6)',
+                    },
+                  },
+                }}
+              />
+            )}
           />
-          <span className="text-3xl font-bold text-primary">{t.common.won}</span>
-        </div>
-        {errors.price && <p className="mt-1 text-sm text-status-error">{errors.price.message}</p>}
-      </div>
+          <Text size="xl" fw={700} c="orange.6">{t.common.won}</Text>
+        </Group>
+        {errors.price && <Text size="sm" c="red" mt="xs">{errors.price.message}</Text>}
+      </Box>
 
       {showAuctionOption && (
         <>
-          <div className="mb-6 flex flex-col gap-3">
-            <div>
+          <Stack gap="sm" mb="lg">
+            <Box>
               <SegmentedTabBar
                 tabs={[
                   { id: 'regular', label: t.product.regular },
@@ -141,55 +187,76 @@ const ProductForm = ({
                 activeTab={isAuction ? 'auction' : 'regular'}
                 onTabChange={(tab) => setValue('isAuction', tab === 'auction')}
               />
-            </div>
+            </Box>
             {isAuction && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-text-secondary">{t.auction.endDate}:</span>
-                <input
+              <Group gap="xs" align="center">
+                <Text size="sm" c="dimmed">{t.auction.endDate}:</Text>
+                <TextInput
                   type="datetime-local"
                   {...register('auctionEndAt')}
-                  className="text-sm bg-transparent border border-border-medium rounded px-2 py-1 focus:border-primary outline-none"
+                  size="sm"
+                  styles={{
+                    input: {
+                      backgroundColor: 'transparent',
+                    },
+                  }}
                 />
-              </div>
+              </Group>
             )}
-          </div>
-          {errors.auctionEndAt && <p className="mb-4 text-sm text-status-error">{errors.auctionEndAt.message}</p>}
+          </Stack>
+          {errors.auctionEndAt && <Text size="sm" c="red" mb="md">{errors.auctionEndAt.message}</Text>}
         </>
       )}
 
       {showRegion && (
-        <div className="mb-6">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-text-secondary">{t.product.region}:</span>
-            <button
-              type="button"
+        <Box mb="lg">
+          <Group gap="sm" align="center">
+            <Text size="sm" c="dimmed">{t.product.region}:</Text>
+            <UnstyledButton
               onClick={() => setRegionModalOpen(true)}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-text-primary bg-bg-secondary hover:bg-bg-tertiary rounded-lg transition-colors"
+              px="sm"
+              py={6}
+              style={{
+                fontSize: 'var(--mantine-font-size-sm)',
+                fontWeight: 500,
+                backgroundColor: 'var(--mantine-color-default-hover)',
+                borderRadius: 'var(--mantine-radius-md)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--mantine-spacing-xs)',
+              }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-              </svg>
+              <IconMapPin size={16} color="var(--mantine-color-orange-6)" />
               <span>{regionName || t.location.allRegions}</span>
-            </button>
-          </div>
+            </UnstyledButton>
+          </Group>
           <RegionSelectModal
             isOpen={regionModalOpen}
             onClose={() => setRegionModalOpen(false)}
             onSelect={handleRegionSelect}
             initialRegionId={regionId}
           />
-        </div>
+        </Box>
       )}
 
-      <div className="mt-6 border-t border-border-base pt-6">
-        <textarea
+      <Box mt="lg" pt="lg" style={{ borderTop: '1px solid var(--mantine-color-default-border)' }}>
+        <Textarea
           {...register('content')}
           rows={6}
-          className="w-full bg-transparent text-text-body leading-relaxed outline-none border-b border-dashed border-border-medium focus:border-primary resize-none"
+          variant="unstyled"
           placeholder={t.product.enterDescription}
+          styles={{
+            input: {
+              borderBottom: '1px dashed var(--mantine-color-default-border)',
+              borderRadius: 0,
+              '&:focus': {
+                borderBottomColor: 'var(--mantine-color-orange-6)',
+              },
+            },
+          }}
+          error={errors.content?.message}
         />
-        {errors.content && <p className="mt-1 text-sm text-status-error">{errors.content.message}</p>}
-      </div>
+      </Box>
 
       <ImageUploadSection
         images={images}
@@ -209,23 +276,25 @@ const ProductForm = ({
         }}
       />
 
-      <div className="flex items-center justify-end pt-6 mt-6 border-t border-border-base">
+      <Group justify="flex-end" pt="lg" mt="lg" style={{ borderTop: '1px solid var(--mantine-color-default-border)' }}>
         {showIsSold && (
-          <label className="flex items-center gap-2 cursor-pointer mr-auto">
-            <input type="checkbox" {...register('is_sold')} className="w-4 h-4 accent-primary" />
-            <span className="text-sm text-text-secondary">{t.product.soldOut}</span>
-          </label>
+          <Checkbox
+            {...register('is_sold')}
+            label={t.product.soldOut}
+            size="sm"
+            style={{ marginRight: 'auto' }}
+          />
         )}
-        <div className="flex gap-2">
+        <Group gap="xs">
           <Button size="sm" variant="ghost" type="button" onClick={onCancel}>
             {t.common.cancel}
           </Button>
           <Button size="sm" type="submit" disabled={isLoading}>
             {isLoading ? t.common.processing : (submitLabel || t.common.save)}
           </Button>
-        </div>
-      </div>
-    </form>
+        </Group>
+      </Group>
+    </Box>
   );
 };
 

@@ -2,11 +2,12 @@ import { useMemo, MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '@/features/product/types';
 import type { AuctionInfo } from '@/shared/api/types';
-import { Card, CardContent, CardImage, CardTitle, Badge, Button, Avatar } from '@/shared/ui';
+import { Card, CardContent, CardImage, Badge, Button as AppButton, Avatar } from '@/shared/ui';
 import { useUserProfile } from '@/features/user/hooks/useUser';
 import { useTranslation } from '@/shared/i18n';
 import { formatPrice, formatRemainingTime } from '@/shared/lib/formatting';
 import { useFirstImage } from '@/features/image';
+import { Button as MantineButton, Group, Stack, Text } from '@mantine/core';
 
 interface ProductCardProps {
   product: Product & { auction?: AuctionInfo };
@@ -42,69 +43,88 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
   const stop = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); };
 
   return (
-    <Link to={`/products/${product.id}`} className="group text-inherit no-underline">
-      <Card className="border border-border-medium rounded-lg p-3">
+    <Link
+      to={`/products/${product.id}`}
+      style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}
+    >
+      <Card>
         <CardContent>
-          <div className="flex items-center gap-2 mb-3">
-            <Avatar src={profile?.profile_image ?? undefined} alt={profile?.nickname || t.product.seller} size="sm" />
-            <span className="text-sm text-text-secondary truncate">{profile?.nickname || t.common.unknown}</span>
-          </div>
+          <Stack gap="sm">
+            <Group gap="xs" wrap="nowrap">
+              <Avatar src={profile?.profile_image ?? undefined} alt={profile?.nickname || t.product.seller} size="sm" />
+              <Text size="sm" c="dimmed" lineClamp={1} style={{ flex: 1 }}>
+                {profile?.nickname || t.common.unknown}
+              </Text>
+            </Group>
 
-          <div className="flex items-center justify-between mb-2 h-5">
-            {isAuction ? (
-              <>
-                <Badge variant={isAuctionEnded ? 'secondary' : 'primary'} className="text-xs">
-                  {isAuctionEnded ? t.auction.ended : t.auction.inProgress}
+            <Group justify="space-between" align="center" wrap="nowrap">
+              {isAuction ? (
+                <>
+                  <Badge variant={isAuctionEnded ? 'secondary' : 'primary'}>
+                    {isAuctionEnded ? t.auction.ended : t.auction.inProgress}
+                  </Badge>
+                  {!isAuctionEnded && (
+                    <Text size="xs" c="red" fw={600} lineClamp={1}>
+                      {remainingTime}
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <Badge variant={product.is_sold ? 'secondary' : 'primary'}>
+                  {product.is_sold ? t.product.soldOut : t.product.onSale}
                 </Badge>
-                {!isAuctionEnded && (
-                  <span className="text-xs text-status-error font-medium">{remainingTime}</span>
-                )}
-              </>
-            ) : (
-              <Badge variant={product.is_sold ? 'secondary' : 'primary'} className="text-xs">
-                {product.is_sold ? t.product.soldOut : t.product.onSale}
-              </Badge>
+              )}
+            </Group>
+
+            <CardImage src={firstImageUrl} alt={product.title} aspectRatio="square" />
+
+            <Text fw={700} lineClamp={1}>
+              {product.title}
+            </Text>
+
+            {!isAuction && (
+              <Text size="sm" c="dimmed" lineClamp={1} mih={24}>
+                {product.content}
+              </Text>
             )}
-          </div>
 
-          <div className={`aspect-square rounded-lg overflow-hidden mb-3 ${firstImageUrl ? '' : 'border border-border-medium bg-bg-page'}`}>
-            {firstImageUrl ? (
-              <CardImage src={firstImageUrl} alt={product.title} aspectRatio="square" />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                <span className="text-3xl text-text-muted">📦</span>
-                <span className="text-xs text-text-secondary">{t.product.noImage}</span>
-              </div>
-            )}
-          </div>
-
-          <CardTitle className="tracking-tighter break-keep text-text-heading line-clamp-1">{product.title}</CardTitle>
-          <p className="text-sm text-text-muted line-clamp-2 h-10 mb-2">{product.content}</p>
-
-          <div className="h-16">
-            {isAuction ? (
-              <div className="space-y-1">
-                <div className="text-xs text-text-muted">
-                  {t.auction.startingPrice}: {formatPrice(product.price, t.common.won)}
-                </div>
-                <div className="text-[15px] font-extrabold text-primary">
-                  {t.auction.currentPrice}: {formatPrice(auction.current_price, t.common.won)}
-                </div>
-                <div className="text-xs text-text-secondary">
-                  {t.auction.bidsCount.replace('{count}', String(auction.bid_count))}
-                </div>
-              </div>
-            ) : (
-              <div className="text-[15px] font-extrabold text-primary">{formatPrice(product.price, t.common.won)}</div>
-            )}
-          </div>
-
-          {showActions && (
-            <div className="flex gap-2 mt-3 pt-3 border-t border-border-medium">
-              <Button onClick={(e) => { stop(e); onEdit?.(product); }} variant="secondary" size="sm" className="flex-1">{t.common.edit}</Button>
-              <Button onClick={(e) => { stop(e); onDelete?.(product); }} variant="ghost" size="sm" className="flex-1 text-status-error hover:bg-status-error-hover">{t.common.delete}</Button>
+            <div style={{ minHeight: isAuction ? 64 : undefined }}>
+              {isAuction ? (
+                <Stack gap={2}>
+                  <Text size="xs" c="dimmed">
+                    {t.auction.startingPrice}: {formatPrice(product.price, t.common.won)}
+                  </Text>
+                  <Text fw={800} c="orange">
+                    {t.auction.currentPrice}: {formatPrice(auction.current_price, t.common.won)}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    {t.auction.bidsCount.replace('{count}', String(auction.bid_count))}
+                  </Text>
+                </Stack>
+              ) : (
+                <Text fw={800} c="orange">
+                  {formatPrice(product.price, t.common.won)}
+                </Text>
+              )}
             </div>
-          )}
+
+            {showActions && (
+              <Group grow gap="sm">
+                <AppButton onClick={(e) => { stop(e); onEdit?.(product); }} variant="secondary" size="sm">
+                  {t.common.edit}
+                </AppButton>
+                <MantineButton
+                  onClick={(e) => { stop(e); onDelete?.(product); }}
+                  variant="subtle"
+                  color="red"
+                  size="sm"
+                  fullWidth
+                >
+                  {t.common.delete}
+                </MantineButton>
+              </Group>
+            )}
+          </Stack>
         </CardContent>
       </Card>
     </Link>

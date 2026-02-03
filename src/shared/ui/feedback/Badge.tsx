@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Badge as MantineBadge, type BadgeProps as MantineBadgeProps } from '@mantine/core';
 
 interface BadgeProps {
   children: ReactNode;
@@ -7,20 +8,25 @@ interface BadgeProps {
 }
 
 export default function Badge({ children, variant = 'primary', className = '' }: BadgeProps) {
-  const variantStyles = {
-    primary: 'bg-primary-light-hover text-primary',
-    secondary: 'bg-bg-box text-text-secondary',
-    success: 'bg-status-success-light text-status-success-text',
-    error: 'bg-status-error-light text-status-error',
-    warning: 'bg-status-warning-light text-status-warning-text',
-    notification: 'bg-primary text-white',
-  };
+  const mantineVariant: MantineBadgeProps['variant'] =
+    variant === 'secondary' ? 'light' : variant === 'notification' ? 'filled' : 'light';
+
+  const color: MantineBadgeProps['color'] =
+    variant === 'primary'
+      ? 'orange'
+      : variant === 'secondary'
+        ? 'gray'
+        : variant === 'success'
+          ? 'green'
+          : variant === 'error'
+            ? 'red'
+            : variant === 'warning'
+              ? 'yellow'
+              : 'orange';
 
   return (
-    <span
-      className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold min-w-[20px] text-center ${variantStyles[variant]} ${className}`}
-    >
+    <MantineBadge className={className} variant={mantineVariant} color={color} radius="xl">
       {children}
-    </span>
+    </MantineBadge>
   );
 }

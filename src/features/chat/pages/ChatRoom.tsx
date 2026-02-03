@@ -12,13 +12,19 @@ import { POLLING_CONFIG, getPollingInterval } from '@/shared/config/polling';
 import { useTranslation } from '@/shared/i18n';
 import { Box, Container, Paper, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
+import { useVisualViewportHeight } from '@/shared/hooks/useVisualViewportHeight';
 
 function ChatRoom() {
   const t = useTranslation();
   const { chatId } = useParams();
   const navigate = useNavigate();
+  const viewportHeight = useVisualViewportHeight();
   const isMdUp = useMediaQuery('(min-width: 768px)');
   const [showTransferMenu, setShowTransferMenu] = useState(false);
+  
+  const heightStyle = typeof viewportHeight === 'number' 
+    ? `calc(${viewportHeight}px - 60px)` 
+    : `calc(${viewportHeight} - 60px)`;
   const { user, isLoggedIn, isLoading: userLoading } = useUser({
     refetchInterval: getPollingInterval(POLLING_CONFIG.CHAT_ROOM_PAGE),
   });
@@ -58,7 +64,7 @@ function ChatRoom() {
   if (error) return <ErrorMessage message={t.chat.messageFailed} />;
 
   return (
-    <Container size="md" py={{ base: 0, md: 'md' }} h={{ base: 'calc(100dvh - 60px)', md: 'auto' }} p={{ base: 0, md: 'md' }}>
+    <Container size="md" py={{ base: 0, md: 'md' }} h={{ base: heightStyle, md: 'auto' }} p={{ base: 0, md: 'md' }}>
       <Box visibleFrom="md" mb="md">
         <DetailHeader />
       </Box>

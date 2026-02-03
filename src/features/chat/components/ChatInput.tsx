@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Group, TextInput } from '@mantine/core';
-import { Button } from '@/shared/ui';
+import { Box, Group, TextInput, ActionIcon } from '@mantine/core';
+import { IconSend } from '@tabler/icons-react';
 import { useTranslation } from '@/shared/i18n';
 
 interface ChatInputProps {
@@ -23,27 +23,33 @@ function ChatInput({ onSend, isPending }: ChatInputProps) {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      px="sm"
-      py="xs"
+      px="md"
+      py="sm"
+      bg="body"
       style={{
         borderTop: '1px solid var(--mantine-color-default-border)',
       }}
     >
-      <Group gap="xs" wrap="nowrap">
+      <Group gap="sm" wrap="nowrap">
         <TextInput
           flex={1}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={t.chat.enterMessage}
           size="md"
+          radius="xl"
         />
-        <Button
+        <ActionIcon
           type="submit"
           disabled={!message.trim() || isPending}
-          size="sm"
+          size={42}
+          radius="xl"
+          variant="filled"
+          color="blue"
+          loading={isPending}
         >
-          {t.chat.send}
-        </Button>
+          <IconSend size={20} />
+        </ActionIcon>
       </Group>
     </Box>
   );

@@ -4,7 +4,7 @@ import type { PayTransaction } from '@/features/pay/api/payApi';
 import { useTranslation } from '@/shared/i18n';
 import { useLanguage } from '@/shared/store/languageStore';
 import { formatMessageTime } from '@/shared/lib/formatting';
-import { Box, Center, Group, Paper, ScrollArea, Stack, Text } from '@mantine/core';
+import { Box, Center, Group, Paper, ScrollArea, Stack, Text, useComputedColorScheme } from '@mantine/core';
 
 export type ChatItem =
   | { type: 'message'; data: Message; timestamp: number }
@@ -20,6 +20,8 @@ function MessageList({ messages, transactions = [], currentUserId }: MessageList
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const t = useTranslation();
   const { language } = useLanguage();
+  const computedColorScheme = useComputedColorScheme('light');
+  const isDark = computedColorScheme === 'dark';
 
   // Merge messages and transactions, sorted by time
   const chatItems: ChatItem[] = [
@@ -88,9 +90,9 @@ function MessageList({ messages, transactions = [], currentUserId }: MessageList
 
             return (
               <Center key={`tx-${tx.id}`} my={4}>
-                <Paper withBorder radius="xl" px="md" py={6}>
+                <Paper withBorder radius="xl" px="md" py={6} bg={isDark ? 'dark.6' : 'gray.0'}>
                   <Group gap="xs" wrap="nowrap">
-                    <Text size="sm" fw={600} c={isSender ? 'grape' : 'blue'}>
+                    <Text size="sm" fw={600} c={isSender ? 'blue' : 'teal'}>
                       {isSender ? '↑' : '↓'} {amount.toLocaleString()}C
                     </Text>
                     <Text size="xs" c="dimmed">
@@ -125,18 +127,20 @@ function MessageList({ messages, transactions = [], currentUserId }: MessageList
               )}
 
               <Paper
-                radius="md"
-                px="sm"
-                py={8}
+                radius="lg"
+                px="md"
+                py="xs"
                 withBorder={!isMe}
-                bg={isMe ? 'orange.6' : undefined}
+                bg={isMe ? 'blue.6' : (isDark ? 'dark.6' : 'gray.1')}
                 c={isMe ? 'white' : undefined}
                 style={{
                   maxWidth: '75%',
                   wordBreak: 'break-word',
+                  borderBottomRightRadius: isMe ? 0 : undefined,
+                  borderBottomLeftRadius: !isMe ? 0 : undefined,
                 }}
               >
-                <Text size="sm" style={{ lineHeight: 1.5 }}>
+                <Text size="sm" style={{ lineHeight: 1.4 }}>
                   {msg.content}
                 </Text>
               </Paper>

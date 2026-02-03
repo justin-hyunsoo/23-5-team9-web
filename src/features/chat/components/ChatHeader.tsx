@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { ActionIcon, Group, Text, UnstyledButton } from '@mantine/core';
-import { Avatar, Button } from '@/shared/ui';
+import { ActionIcon, Avatar, Button, Group, Text, UnstyledButton } from '@mantine/core';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { useTranslation } from '@/shared/i18n';
 import { useHierarchicalBack } from '@/shared/hooks/useHierarchicalBack';
 
@@ -28,8 +28,8 @@ function ChatHeader({
       gap="md"
       px="md"
       py="sm"
-      bg="var(--bg-page)"
-      style={{ borderBottom: '1px solid var(--border-medium)' }}
+      bg="body"
+      style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}
     >
       <ActionIcon
         variant="subtle"
@@ -38,27 +38,30 @@ function ChatHeader({
         hiddenFrom="md"
         ml={-4}
       >
-        <span>←</span>
+        <IconArrowLeft size={20} />
       </ActionIcon>
 
       <UnstyledButton
         onClick={() => opponentId && navigate(`/user/${opponentId}`)}
         style={{ flex: 1 }}
       >
-        <Group gap="md">
+        <Group gap="sm">
           <Avatar
-            src={opponentProfileImage || undefined}
+            src={opponentProfileImage}
             alt={opponentNickname || t.chat.otherParty}
-            size="sm"
+            radius="xl"
           />
-          <Text fw={600} c="var(--text-heading)">
+          <Text fw={600} size="sm">
             {opponentNickname || t.common.unknown}
           </Text>
         </Group>
       </UnstyledButton>
 
       <Button
-        size="sm"
+        variant="light"
+        color="orange"
+        size="xs"
+        radius="xl"
         onClick={onToggleTransferMenu}
       >
         {userCoin.toLocaleString()} C

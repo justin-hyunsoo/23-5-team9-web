@@ -1,5 +1,4 @@
-import { Box, Group, Text } from '@mantine/core';
-import { Button, Input } from '@/shared/ui';
+import { Box, Group, Text, NumberInput, Button } from '@mantine/core';
 import { useTransfer } from '@/features/pay/hooks/useTransfer';
 import { useTranslation } from '@/shared/i18n';
 
@@ -35,27 +34,30 @@ const TransferMenu = ({
   return (
     <Box px="md" py="sm" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
       <Group gap="xs" mb="xs">
-        <Input
-          type="number"
+        <NumberInput
           placeholder={t.pay.amountToTransfer}
           value={transferAmount}
-          onChange={(e) => setTransferAmount(e.target.value)}
+          onChange={(val) => setTransferAmount(val.toString())}
           style={{ flex: 1 }}
+          hideControls
+          leftSection="C"
         />
         <Button
           onClick={handleTransfer}
           disabled={transferring || !transferAmount}
           size="sm"
+          loaderProps={{ type: 'dots' }}
+          loading={transferring}
         >
-          {transferring ? t.pay.transferring : t.pay.transfer}
+          {t.pay.transfer}
         </Button>
       </Group>
       <Group gap="xs" wrap="wrap">
         {PRESET_AMOUNTS.map((amount) => (
           <Button
             key={amount}
-            variant="outline"
-            size="sm"
+            variant="default"
+            size="xs"
             onClick={() => addAmount(amount)}
           >
             +{amount.toLocaleString()}

@@ -36,7 +36,8 @@ export function useChatRooms(options: UseChatRoomsOptions = {}) {
       return refetchInterval;
     },
     enabled,
-    retry: false, // 에러 발생 시 재시도하지 않음
+    retry: 2, // 네트워크 오류 등을 위해 2회 재시도
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
   });
 
   // Compute total unread count

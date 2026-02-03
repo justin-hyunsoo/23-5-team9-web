@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { payApi, PayTransaction } from '@/features/pay/api/payApi';
+import { useToken } from '@/features/auth/hooks/store';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,7 +18,7 @@ interface UseTransactionsOptions {
 
 export function useTransactions(options?: UseTransactionsOptions) {
   const { partnerId, refetchInterval } = options || {};
-  const token = localStorage.getItem('token');
+  const token = useToken();
   const queryClient = useQueryClient();
   const [offset, setOffset] = useState(0);
   const [allTransactions, setAllTransactions] = useState<PayTransaction[]>([]);

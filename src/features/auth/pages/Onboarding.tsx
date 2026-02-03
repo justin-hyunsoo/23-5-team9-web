@@ -4,6 +4,7 @@ import ProfileEditForm from '@/features/user/components/ProfileEditForm';
 import { useOnboarding } from '@/features/user/hooks/useUser';
 import { useTranslation } from '@/shared/i18n';
 import { getErrorMessage } from '@/shared/api/types';
+import { useToken } from '@/features/auth/hooks/store';
 
 export default function Onboarding() {
   const [error, setError] = useState('');
@@ -12,10 +13,10 @@ export default function Onboarding() {
   const t = useTranslation();
   const redirect = searchParams.get('redirect') || '/products';
   const onboardingMutation = useOnboarding();
+  const token = useToken();
 
   const handleOnboardingSubmit = async (data: { nickname: string; region_id: string; profile_image: string }) => {
      setError('');
-     const token = localStorage.getItem('token');
       if (!token) {
           navigate('/auth/login');
           return;

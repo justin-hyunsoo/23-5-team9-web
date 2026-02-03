@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type CSSProperties, ReactNode } from 'react';
 import { Group, Paper, type PaperProps, Stack, Text } from '@mantine/core';
 
 interface StatProps {
@@ -42,6 +42,10 @@ interface StatCardProps {
   value: string | number;
   unit?: string;
   className?: string;
+  style?: CSSProperties;
+  bg?: PaperProps['bg'];
+  withBorder?: boolean;
+  p?: PaperProps['p'];
   layout?: 'vertical' | 'horizontal';
   variant?: 'outline' | 'primary' | 'secondary'; // Button의 variant 시스템 반영
   radius?: PaperProps['radius'];
@@ -52,6 +56,10 @@ export function StatCard({
   value, 
   unit, 
   className = '', 
+  style,
+  bg,
+  withBorder,
+  p,
   layout = 'vertical',
   variant = 'outline',
   radius = 'md',
@@ -60,18 +68,19 @@ export function StatCard({
   const isPrimary = variant === 'primary';
   const isSecondary = variant === 'secondary';
 
-  const bg = isPrimary ? 'orange' : isSecondary ? 'var(--mantine-color-gray-0)' : 'transparent';
+  const computedBg = isPrimary ? 'orange' : isSecondary ? 'var(--mantine-color-gray-0)' : 'transparent';
   const c = isPrimary ? 'white' : undefined;
 
   const valueColor = isPrimary ? 'white' : 'orange';
 
   return (
     <Paper
-      withBorder={variant === 'outline'}
+      withBorder={withBorder ?? variant === 'outline'}
       radius={radius}
-      p={isVertical ? 'xl' : 'md'}
+      p={p ?? (isVertical ? 'xl' : 'md')}
       className={className}
-      bg={bg as any}
+      style={style}
+      bg={(bg ?? computedBg) as any}
       c={c}
     >
       {isVertical ? (

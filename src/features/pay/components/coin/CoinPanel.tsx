@@ -33,6 +33,8 @@ export function CoinPanel({ currentCoin, onDeposit, onWithdraw }: CoinPanelProps
         unit="C"
         layout="vertical"
         variant="outline"
+        withBorder={false}
+        bg="transparent"
         radius={0}
         style={{ marginBottom: 30 }}
       />

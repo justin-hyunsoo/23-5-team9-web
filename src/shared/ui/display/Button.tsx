@@ -12,6 +12,7 @@ export interface ButtonProps
   variant?: AppButtonVariant;
   size?: AppButtonSize;
   fullWidth?: boolean;
+  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 

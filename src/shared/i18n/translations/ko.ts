@@ -113,6 +113,7 @@ export const ko = {
     deleteFailed: '상품 삭제에 실패했습니다.',
     updated: '상품이 수정되었습니다.',
     updateFailed: '상품 수정에 실패했습니다.',
+    statusChanged: '판매 상태가 변경되었습니다.',
     noImage: '이미지 없음',
     region: '거래 지역',
     changeRegion: '지역 변경',

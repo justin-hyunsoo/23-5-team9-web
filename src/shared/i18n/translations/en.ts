@@ -115,6 +115,7 @@ export const en: TranslationKeys = {
     deleteFailed: 'Failed to delete product.',
     updated: 'Product updated.',
     updateFailed: 'Failed to update product.',
+    statusChanged: 'Product status updated.',
     noImage: 'No image',
     region: 'Location',
     changeRegion: 'Change Location',

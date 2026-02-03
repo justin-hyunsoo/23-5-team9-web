@@ -8,6 +8,8 @@ import { Input, PasswordInput, Button } from '@/shared/ui';
 import { useTranslation } from '@/shared/i18n';
 import { signupSchema, type SignupForm } from '../api/schemas';
 import { getErrorMessage } from '@/shared/api/types';
+import { Alert, Anchor, Paper, Stack, Text, Title } from '@mantine/core';
+import { PageContainer } from '@/shared/layouts/PageContainer';
 
 interface SignupPageProps {
   onSignup?: () => void;
@@ -49,10 +51,13 @@ export default function Signup({ onSignup }: SignupPageProps) {
   };
 
   return (
-    <div className="mx-auto mt-10 max-w-105 px-4">
-      <h2 className="mb-8 text-2xl font-bold text-text-primary">{t.auth.signup}</h2>
+    <PageContainer>
+      <Paper withBorder radius="md" p="xl" maw={520} mx="auto" mt={40}>
+        <Stack gap="md">
+          <Title order={2}>{t.auth.signup}</Title>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack gap="sm">
         <Input
           type="email"
           placeholder={t.auth.email}
@@ -72,23 +77,31 @@ export default function Signup({ onSignup }: SignupPageProps) {
           error={errors.passwordConfirm?.message}
         />
 
-        {serverError && <div className="text-status-error text-sm mt-3 text-center font-medium">{serverError}</div>}
+              {serverError && (
+                <Alert color="red" variant="light">
+                  {serverError}
+                </Alert>
+              )}
 
         <Button
           type="submit"
           disabled={isSubmitting}
           variant="primary"
           fullWidth
-          className="mt-4"
         >
           {isSubmitting ? t.auth.signingUp : t.auth.next}
         </Button>
-      </form>
+            </Stack>
+          </form>
 
-      <div className="mt-6 text-[0.95rem] text-text-secondary">
-        {t.auth.hasAccount}
-        <Link to="/auth/login" className="text-primary font-semibold no-underline ml-1.5 hover:underline">{t.auth.login}</Link>
-      </div>
-    </div>
+          <Text size="sm" c="dimmed" ta="center">
+            {t.auth.hasAccount}{' '}
+            <Anchor component={Link} to="/auth/login" fw={600}>
+              {t.auth.login}
+            </Anchor>
+          </Text>
+        </Stack>
+      </Paper>
+    </PageContainer>
   );
 }

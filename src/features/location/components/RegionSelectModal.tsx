@@ -12,6 +12,7 @@ import { useUser } from '@/features/user/hooks/useUser';
 import { Button, Select } from '@/shared/ui';
 import { Modal } from '@/shared/ui/feedback';
 import { useTranslation } from '@/shared/i18n';
+import { Divider, Group, Stack } from '@mantine/core';
 
 interface RegionSelectModalProps {
   isOpen: boolean;
@@ -205,7 +206,7 @@ export default function RegionSelectModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={t.location.regionSettings}>
-      <div className="flex flex-col gap-4">
+      <Stack gap="md">
         {/* 내 위치로 찾기 버튼 */}
         <Button
           type="button"
@@ -217,11 +218,7 @@ export default function RegionSelectModal({
           {detecting ? t.location.findingLocation : t.user.findMyLocation}
         </Button>
 
-        <div className="relative flex items-center my-2">
-          <div className="grow border-t border-border-light"></div>
-          <span className="shrink mx-4 text-text-secondary text-sm">{t.location.orSelectDirectly}</span>
-          <div className="grow border-t border-border-light"></div>
-        </div>
+        <Divider label={t.location.orSelectDirectly} labelPosition="center" />
 
         {/* 3단 드롭다운 */}
         <Select
@@ -245,7 +242,7 @@ export default function RegionSelectModal({
         />
 
         {/* 버튼 영역 */}
-        <div className="flex gap-3 mt-4">
+        <Group grow gap="md" mt="md">
           <Button
             type="button"
             variant="secondary"
@@ -262,8 +259,8 @@ export default function RegionSelectModal({
           >
             {t.common.confirm}
           </Button>
-        </div>
-      </div>
+        </Group>
+      </Stack>
     </Modal>
   );
 }

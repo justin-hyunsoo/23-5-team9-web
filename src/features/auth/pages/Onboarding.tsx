@@ -5,6 +5,8 @@ import { useOnboarding } from '@/features/user/hooks/useUser';
 import { useTranslation } from '@/shared/i18n';
 import { getErrorMessage } from '@/shared/api/types';
 import { useToken } from '@/features/auth/hooks/store';
+import { Alert, Paper, Stack, Text, Title } from '@mantine/core';
+import { PageContainer } from '@/shared/layouts/PageContainer';
 
 export default function Onboarding() {
   const [error, setError] = useState('');
@@ -36,24 +38,32 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="mx-auto mt-10 max-w-105 px-4">
-      <h2 className="mb-4 text-2xl font-bold text-text-primary border-b-[3px] border-primary inline-block pb-2">{t.auth.additionalInfo}</h2>
-      <p className="mb-5 text-text-secondary">{t.auth.onboardingDesc}</p>
+    <PageContainer>
+      <Paper withBorder radius="md" p="xl" maw={720} mx="auto" mt={40}>
+        <Stack gap="sm">
+          <Title order={2}>{t.auth.additionalInfo}</Title>
+          <Text c="dimmed">{t.auth.onboardingDesc}</Text>
 
-      {error && <div className="text-status-error text-sm mb-3.75 text-center font-medium">{error}</div>}
+          {error && (
+            <Alert color="red" variant="light">
+              {error}
+            </Alert>
+          )}
 
-      <ProfileEditForm
+          <ProfileEditForm
             initialProfileImage=""
             submitButtonText={t.auth.getStarted}
             forceGPS={true}
             onSubmit={async (data) => {
-                try {
-                    await handleOnboardingSubmit(data);
-                } catch (e: unknown) {
-                    setError(e instanceof Error ? e.message : t.auth.onboardingFailed);
-                }
+              try {
+                await handleOnboardingSubmit(data);
+              } catch (e: unknown) {
+                setError(e instanceof Error ? e.message : t.auth.onboardingFailed);
+              }
             }}
-        />
-    </div>
+          />
+        </Stack>
+      </Paper>
+    </PageContainer>
   );
 }

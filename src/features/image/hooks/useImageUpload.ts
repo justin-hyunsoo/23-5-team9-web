@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Sortable from 'sortablejs';
-import { imageApi, type ImageUploadResponse } from '@/features/product/api/imageApi';
+import { imageApi } from '@/features/product/api/imageApi';
 
 export type UploadEntry = {
   id?: string;

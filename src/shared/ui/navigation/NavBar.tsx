@@ -63,7 +63,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
         style={{
           textAlign: mobile ? 'left' : undefined,
           fontSize: mobile ? 'var(--mantine-font-size-lg)' : undefined,
-          color: isActive ? 'var(--color-brand)' : 'var(--text-body)',
+          color: isActive ? 'var(--color-brand-nav)' : 'var(--text-body)',
           fontWeight: isActive ? 700 : 500,
           gap: 8,
         }}
@@ -89,8 +89,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
               <Title
                 order={1}
                 size="h3"
-                c="orange"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', color: 'var(--color-brand)' }}
                 onClick={() => handleNav('/products')}
               >
                 {t.nav.orangeMarket}
@@ -144,7 +143,7 @@ export default function NavBar({ isLoggedIn }: { isLoggedIn: boolean }) {
         zIndex={APP_Z_INDEX.overlay}
         title={
           <Group justify="space-between" w="100%">
-            <Text fw={700} c="orange">
+            <Text fw={700} style={{ color: 'var(--color-brand)' }}>
               {t.nav.orangeMarket}
             </Text>
             <Group gap={6}>

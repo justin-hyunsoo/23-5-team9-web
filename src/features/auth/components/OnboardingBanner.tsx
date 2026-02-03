@@ -10,9 +10,9 @@ export function OnboardingBanner() {
   const location = useLocation();
   const t = useTranslation();
 
-  // 온보딩 페이지와 채팅방에서는 배너 숨김
+  // 채팅방에서는 배너 숨김
   const isChatRoom = location.pathname.startsWith('/chat/');
-  const shouldShowBanner = user && needsOnboarding && location.pathname !== '/auth/onboarding' && !isChatRoom;
+  const shouldShowBanner = user && needsOnboarding && !isChatRoom;
 
   if (!shouldShowBanner) return null;
 
@@ -23,10 +23,10 @@ export function OnboardingBanner() {
       radius={0}
       py="xs"
       icon={false}
-      bg="var(--mantine-color-orange-1)"
+      bg="var(--color-brand-light)"
     >
       <Group justify="center" gap="md">
-        <Text size="sm" fw={500}>
+        <Text size="sm" fw={500} c="var(--text-primary)">
           {t.auth.onboardingRequired}
         </Text>
         <Button

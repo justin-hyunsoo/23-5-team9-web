@@ -7,6 +7,7 @@
   /* Brand Colors */
   --color-brand: #ff6f0f;
   --color-brand-hover: #e65f00;
+  --color-brand-nav: var(--color-brand);
 
   /* Semantic Colors - Backgrounds */
   --bg-page: #ffffff;           /* 전체 페이지 배경 */
@@ -119,6 +120,7 @@
   /* Brand Colors - 다크모드에서도 동일 */
   --color-brand: #ff6f0f;
   --color-brand-hover: #ff8534;
+  --color-brand-nav: var(--color-brand);
 
   /* Background Colors */
   --bg-page: #1a1a1a;

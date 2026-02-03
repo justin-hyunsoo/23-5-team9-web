@@ -10,8 +10,18 @@ import { useImageCarousel, useContentTranslation } from '@/features/product/hook
 import { useDetail } from '@/features/product/hooks/DetailContext';
 import { useProductDetail } from '@/features/product/hooks/ProductDetailContext';
 import { useUser } from '@/features/user/hooks/useUser';
-
-const NAV_BTN = "absolute top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity";
+import {
+  ActionIcon,
+  Box,
+  Center,
+  Divider,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Title,
+  UnstyledButton,
+} from '@mantine/core';
 
 function formatDateTime(dateStr: string, locale: string): string {
   const date = new Date(dateStr);
@@ -78,186 +88,254 @@ export function ProductDetailView() {
   return (
     <>
       {/* Box 1: Product Information */}
-      <DetailSection className="mb-4">
-        {images.length > 0 && (
-          <div className="mb-6">
-            <div className="relative group">
-              <DetailImage src={images[index].image_url} alt={product.title} />
+      <DetailSection style={{ marginBottom: 'var(--mantine-spacing-md)' }}>
+        <Stack gap="md">
+          {images.length > 0 && (
+            <Stack gap="sm">
+              <Box pos="relative">
+                <DetailImage src={images[index].image_url} alt={product.title} />
+
+                {images.length > 1 && hasPrev && (
+                  <ActionIcon
+                    aria-label="previous image"
+                    onClick={goPrev}
+                    variant="filled"
+                    color="dark"
+                    radius="xl"
+                    size="lg"
+                    style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', backgroundColor: 'rgba(0,0,0,0.4)' }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                  </ActionIcon>
+                )}
+
+                {images.length > 1 && hasNext && (
+                  <ActionIcon
+                    aria-label="next image"
+                    onClick={goNext}
+                    variant="filled"
+                    color="dark"
+                    radius="xl"
+                    size="lg"
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', backgroundColor: 'rgba(0,0,0,0.4)' }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
+                  </ActionIcon>
+                )}
+              </Box>
+
               {images.length > 1 && (
-                <>
-                  {hasPrev && (
-                    <button onClick={goPrev} className={`${NAV_BTN} left-3`} aria-label="previous image">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                    </button>
-                  )}
-                  {hasNext && (
-                    <button onClick={goNext} className={`${NAV_BTN} right-3`} aria-label="next image">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    </button>
-                  )}
-                </>
+                <Group justify="center" gap="xs">
+                  {images.map((img, i) => {
+                    const isSelected = i === index;
+                    return (
+                      <UnstyledButton
+                        key={img.id}
+                        onClick={() => goTo(i)}
+                        aria-label={isSelected ? `image ${i + 1} selected` : `select image ${i + 1}`}
+                      >
+                        <Box
+                          style={{
+                            borderRadius: 'var(--mantine-radius-md)',
+                            overflow: 'hidden',
+                            opacity: isSelected ? 1 : 0.65,
+                            outline: isSelected ? '2px solid var(--mantine-color-orange-6)' : '1px solid var(--mantine-color-gray-3)',
+                            outlineOffset: 2,
+                          }}
+                        >
+                          <Thumbnail src={img.image_url} alt={product.title} size={48} />
+                        </Box>
+                      </UnstyledButton>
+                    );
+                  })}
+                </Group>
               )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-3">
-                {images.map((img, i) => (
-                  <button key={img.id} onClick={() => goTo(i)} className={`rounded-lg overflow-hidden transition-all ${i === index ? 'ring-2 ring-primary ring-offset-2 ring-offset-bg-base' : 'opacity-60 hover:opacity-100'}`} aria-label={i === index ? `image ${i + 1} selected` : `select image ${i + 1}`}>
-                    <Thumbnail src={img.image_url} alt={product.title} size={48} />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Badge variant={product.is_sold ? 'secondary' : 'primary'} className="text-xs">
-              {product.is_sold ? t.product.soldOut : t.product.onSale}
-            </Badge>
-            {region && (
-              <span className="flex items-center gap-1 text-xs text-text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                </svg>
-                {region.sigugun} {region.dong}
-              </span>
-            )}
-          </div>
-          {needsTranslation && (
-            <Button variant="ghost" size="sm" onClick={onTranslate} disabled={isTranslating}>
-              {isTranslating ? t.product.translating : isTranslated ? t.product.showOriginal : t.product.translate}
-            </Button>
+            </Stack>
           )}
-        </div>
 
-        <h2 className="text-2xl font-bold mb-2 text-text-heading">{displayTitle}</h2>
+          <Group justify="space-between" align="center" wrap="nowrap">
+            <Group gap="xs" wrap="nowrap" style={{ minWidth: 0 }}>
+              <Badge variant={product.is_sold ? 'secondary' : 'primary'}>
+                {product.is_sold ? t.product.soldOut : t.product.onSale}
+              </Badge>
 
-        {!isAuction && (
-          <h3 className="text-3xl font-bold mb-6 text-primary">{product.price.toLocaleString()}{t.common.won}</h3>
-        )}
+              {region && (
+                <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style={{ opacity: 0.7 }}>
+                    <path
+                      fillRule="evenodd"
+                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <Text size="xs" c="dimmed" lineClamp={1}>
+                    {region.sigugun} {region.dong}
+                  </Text>
+                </Group>
+              )}
+            </Group>
 
-        <div className="mt-6 border-t border-border-base pt-6">
-          <div className="whitespace-pre-wrap leading-relaxed text-text-body">{displayContent}</div>
-        </div>
+            {needsTranslation && (
+              <Button variant="ghost" size="sm" onClick={onTranslate} disabled={isTranslating}>
+                {isTranslating ? t.product.translating : isTranslated ? t.product.showOriginal : t.product.translate}
+              </Button>
+            )}
+          </Group>
 
-        {isOwner && (
-          <div className="flex items-center justify-end pt-6 mt-6 border-t border-border-base gap-2">
-            <Button size="sm" onClick={startEditing}>{t.common.edit}</Button>
-            <Button size="sm" variant="ghost" onClick={handleDelete} disabled={isDeleting}>{t.common.delete}</Button>
-          </div>
-        )}
+          <Title order={2} size="h2">
+            {displayTitle}
+          </Title>
+
+          {!isAuction && (
+            <Text fw={800} fz={32} c="orange">
+              {product.price.toLocaleString()}{t.common.won}
+            </Text>
+          )}
+
+          <Divider />
+
+          <Text style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+            {displayContent}
+          </Text>
+
+          {isOwner && (
+            <>
+              <Divider />
+              <Group justify="flex-end" gap="sm">
+                <Button size="sm" onClick={startEditing}>
+                  {t.common.edit}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={handleDelete} disabled={isDeleting}>
+                  {t.common.delete}
+                </Button>
+              </Group>
+            </>
+          )}
+        </Stack>
       </DetailSection>
 
       {/* Box 2: Auction Information */}
       {isAuction && auction && (
         <DetailSection>
-          <h3 className="text-xl font-bold mb-4 text-text-heading">{t.auction.auction}</h3>
+          <Stack gap="md">
+            <Title order={3} size="h3">
+              {t.auction.auction}
+            </Title>
 
-          <div className="flex items-center justify-between mb-4">
-            <Badge variant={isEnded ? 'secondary' : 'primary'}>
-              {isEnded ? t.auction.auctionEnded : t.auction.active}
-            </Badge>
-            {!isEnded && (
-              <span className="text-status-error font-bold">
-                {remainingTime === t.auction.timeEnded ? remainingTime : `${remainingTime} ${t.auction.remaining}`}
-              </span>
+            <Group justify="space-between" align="center" wrap="nowrap">
+              <Badge variant={isEnded ? 'secondary' : 'primary'}>
+                {isEnded ? t.auction.auctionEnded : t.auction.active}
+              </Badge>
+              {!isEnded && (
+                <Text c="red" fw={700} lineClamp={1}>
+                  {remainingTime === t.auction.timeEnded ? remainingTime : `${remainingTime} ${t.auction.remaining}`}
+                </Text>
+              )}
+            </Group>
+
+            <Text size="sm" c="dimmed">
+              {t.auction.endTime}: {formatDateTime(auction.end_at, language)}
+            </Text>
+
+            <Paper withBorder radius="md" p="md">
+              <Stack gap="xs">
+                <Group justify="space-between" align="center">
+                  <Text size="sm" c="dimmed">{t.auction.startingPrice}</Text>
+                  <Text size="sm">{product.price.toLocaleString()}{t.common.won}</Text>
+                </Group>
+                <Group justify="space-between" align="center">
+                  <Text size="sm" c="dimmed">{t.auction.currentPrice}</Text>
+                  <Text fw={800} fz={24} c="orange">{auction.current_price.toLocaleString()}{t.common.won}</Text>
+                </Group>
+                <Group justify="space-between" align="center">
+                  <Text size="sm" c="dimmed">{t.auction.bidCount}</Text>
+                  <Text size="sm">{t.auction.bidsCount.replace('{count}', String(auction.bid_count))}</Text>
+                </Group>
+              </Stack>
+            </Paper>
+
+            {topBidder && (
+              <>
+                <Divider />
+                <Group justify="space-between" align="center" wrap="nowrap">
+                  <UnstyledButton onClick={handleNavigateToTopBidder} style={{ flex: 1 }}>
+                    <Group gap="sm" wrap="nowrap">
+                      <Avatar src={topBidderProfile?.profile_image ?? undefined} alt={topBidderProfile?.nickname ?? undefined} size="sm" />
+                      <Stack gap={2}>
+                        <Text fw={600} lineClamp={1}>
+                          {topBidderProfile?.nickname || t.common.unknown}
+                        </Text>
+                        <Text size="sm" c="dimmed">
+                          {t.auction.topBidder}
+                        </Text>
+                      </Stack>
+                    </Group>
+                  </UnstyledButton>
+
+                  {!isTopBidder && (
+                    <Button size="sm" onClick={handleChatWithTopBidder} disabled={createRoom.isPending}>
+                      {createRoom.isPending ? t.product.connecting : t.product.startChat}
+                    </Button>
+                  )}
+                </Group>
+              </>
             )}
-          </div>
 
-          <p className="text-sm text-text-muted mb-4">
-            {t.auction.endTime}: {formatDateTime(auction.end_at, language)}
-          </p>
-
-          <div className="bg-bg-base rounded-lg p-4 mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-text-muted">{t.auction.startingPrice}</span>
-              <span className="text-text-body">{product.price.toLocaleString()}{t.common.won}</span>
-            </div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-text-muted">{t.auction.currentPrice}</span>
-              <span className="text-2xl font-bold text-primary">{auction.current_price.toLocaleString()}{t.common.won}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-text-muted">{t.auction.bidCount}</span>
-              <span className="text-text-body">{t.auction.bidsCount.replace('{count}', String(auction.bid_count))}</span>
-            </div>
-          </div>
-
-          {/* Top Bidder Section */}
-          {topBidder && (
-            <div className="border-t border-border-base pt-4 mb-4">
-              <div className="flex items-center justify-between">
-                <div
-                  className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={handleNavigateToTopBidder}
-                >
-                  <Avatar src={topBidderProfile?.profile_image ?? undefined} alt={topBidderProfile?.nickname ?? undefined} size="sm" />
-                  <div>
-                    <div className="font-semibold text-text-heading">
-                      {topBidderProfile?.nickname || t.common.unknown}
-                    </div>
-                    <div className="text-sm text-text-secondary">{t.auction.topBidder}</div>
-                  </div>
-                </div>
-
-                {!isTopBidder && (
-                  <Button size="sm" onClick={handleChatWithTopBidder} disabled={createRoom.isPending}>
-                    {createRoom.isPending ? t.product.connecting : t.product.startChat}
+            {isEnded && isTopBidder && (
+              <>
+                <Divider />
+                {hasAuctionPayment ? (
+                  <Center>
+                    <Badge variant="secondary">{t.auction.auctionPaid}</Badge>
+                  </Center>
+                ) : (
+                  <Button
+                    variant="primary"
+                    fullWidth
+                    onClick={handleAuctionPayment}
+                    disabled={isPayingAuction}
+                  >
+                    {isPayingAuction ? t.pay.transferring : t.auction.auctionPayment}
                   </Button>
                 )}
-              </div>
-            </div>
-          )}
+              </>
+            )}
 
-          {/* Auction Payment Button (for winner when auction ended) */}
-          {isEnded && isTopBidder && (
-            <div className="border-t border-border-base pt-4">
-              {hasAuctionPayment ? (
-                <div className="flex items-center justify-center">
-                  <Badge variant="secondary" className="text-base px-4 py-2">
-                    {t.auction.auctionPaid}
-                  </Badge>
-                </div>
-              ) : (
-                <Button
-                  variant="primary"
-                  className="w-full"
-                  onClick={handleAuctionPayment}
-                  disabled={isPayingAuction}
-                >
-                  {isPayingAuction ? t.pay.transferring : t.auction.auctionPayment}
-                </Button>
-              )}
-            </div>
-          )}
-
-          {!isEnded && (
-            <div className="pt-4 border-t border-border-base">
-              <h4 className="font-semibold mb-3">{t.auction.placeBid}</h4>
-              <p className="text-sm text-text-muted mb-3">
-                {t.auction.minimumBid}: {minBidPrice.toLocaleString()}{t.common.won} {t.auction.orMore}
-              </p>
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  value={bidPrice}
-                  onChange={(e) => setBidPrice(e.target.value)}
-                  placeholder={t.auction.enterBidAmount.replace('{price}', minBidPrice.toLocaleString())}
-                  min={minBidPrice}
-                  className="flex-1"
-                />
-                <Button
-                  variant="primary"
-                  onClick={handleBid}
-                  disabled={isBidding}
-                  className="whitespace-nowrap min-w-17.5"
-                >
-                  {isBidding ? t.auction.bidding : t.auction.bid}
-                </Button>
-              </div>
-            </div>
-          )}
+            {!isEnded && (
+              <>
+                <Divider />
+                <Stack gap="sm">
+                  <Text fw={600}>{t.auction.placeBid}</Text>
+                  <Text size="sm" c="dimmed">
+                    {t.auction.minimumBid}: {minBidPrice.toLocaleString()}{t.common.won} {t.auction.orMore}
+                  </Text>
+                  <Group gap="sm" wrap="nowrap" align="flex-end">
+                    <Box style={{ flex: 1 }}>
+                      <Input
+                        type="number"
+                        value={bidPrice}
+                        onChange={(e) => setBidPrice(e.currentTarget.value)}
+                        placeholder={t.auction.enterBidAmount.replace('{price}', minBidPrice.toLocaleString())}
+                        min={minBidPrice}
+                      />
+                    </Box>
+                    <Button
+                      variant="primary"
+                      onClick={handleBid}
+                      disabled={isBidding}
+                      style={{ whiteSpace: 'nowrap', minWidth: 120 }}
+                    >
+                      {isBidding ? t.auction.bidding : t.auction.bid}
+                    </Button>
+                  </Group>
+                </Stack>
+              </>
+            )}
+          </Stack>
         </DetailSection>
       )}
     </>

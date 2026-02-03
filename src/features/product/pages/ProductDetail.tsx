@@ -14,7 +14,7 @@ function ProductDetailContent() {
     <PageContainer>
       <DetailHeader />
 
-      <DetailSection className="mb-4">
+      <DetailSection style={{ marginBottom: 'var(--mantine-spacing-md)' }}>
         <SellerSection />
       </DetailSection>
 

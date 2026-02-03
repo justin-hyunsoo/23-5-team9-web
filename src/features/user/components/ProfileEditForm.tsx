@@ -253,7 +253,7 @@ export default function ProfileEditForm({
         {/* 1. 프로필 이미지 */}
         <Center>
           <Stack gap="sm" align="center">
-            <Avatar src={profileImage} alt="Profile" size="xl" />
+            <Avatar src={profileImage} alt="" size="xl" />
 
             <Group gap={6} wrap="wrap" justify="center">
               <Button type="button" size="sm" variant="secondary" onClick={generateRandomImage}>

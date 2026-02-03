@@ -17,18 +17,18 @@ function ChatRoom() {
   const navigate = useNavigate();
   const [showTransferMenu, setShowTransferMenu] = useState(false);
   const { user, isLoggedIn, isLoading: userLoading } = useUser({
-    refetchInterval: getPollingInterval(POLLING_CONFIG.USER_BALANCE),
+    refetchInterval: getPollingInterval(POLLING_CONFIG.CHAT_ROOM_PAGE),
   });
 
   const { room: roomInfo } = useChatRoom(chatId);
-  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: POLLING_CONFIG.CHAT_MESSAGES });
+  const { messages, isLoading: loading, error } = useMessages(chatId, { refetchInterval: POLLING_CONFIG.CHAT_ROOM_PAGE });
   const sendMessageMutation = useSendMessage(chatId || '');
   const markAsReadMutation = useMarkAsRead(chatId || '');
 
   const { profile: opponentProfile } = useUserProfile(roomInfo?.opponent_id);
   const { transactions } = useTransactions({
     partnerId: roomInfo?.opponent_id,
-    refetchInterval: POLLING_CONFIG.TRANSACTIONS,
+    refetchInterval: POLLING_CONFIG.CHAT_ROOM_PAGE,
   });
 
   useEffect(() => {

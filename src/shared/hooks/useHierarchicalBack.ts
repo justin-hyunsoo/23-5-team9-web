@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useProductFiltersStore } from '@/features/product/store/productFiltersStore';
 
 /**
- * Returns a navigation function that goes to the logical parent page
- * based on the page hierarchy, not browser history.
+ * Returns a navigation function that goes back using browser history first,
+ * then falls back to hierarchical navigation for direct URL access.
  *
- * Hierarchy:
+ * Hierarchy fallback:
  * - /products/:id → /products (with saved filters)
  * - /chat/:id → /chat
  * - /my/:tab → /my
@@ -18,6 +18,13 @@ export function useHierarchicalBack() {
   const getProductSearchParams = useProductFiltersStore((state) => state.getSearchParams);
 
   const goBack = useCallback(() => {
+    // If there's browser history, use it (preserves navigation context like myCarrt → product → back to myCarrt)
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    // Fallback: hierarchical navigation for direct URL access
     // /products/:id → /products with filters
     if (/^\/products\/[^/]+$/.test(pathname)) {
       navigate('/products' + getProductSearchParams());
@@ -42,8 +49,8 @@ export function useHierarchicalBack() {
       return;
     }
 
-    // Default fallback to browser history
-    navigate(-1);
+    // Final fallback to products
+    navigate('/products' + getProductSearchParams());
   }, [pathname, navigate, getProductSearchParams]);
 
   return goBack;

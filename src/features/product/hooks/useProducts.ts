@@ -109,7 +109,9 @@ export function usePlaceBid() {
     mutationFn: ({ auctionId, data }: { auctionId: string; productId: string; data: PlaceBidRequest }) =>
       productApi.placeBid(auctionId, data),
     onSuccess: (_, variables) => {
+      // Invalidate product detail and top bidder queries
       queryClient.invalidateQueries({ queryKey: productKeys.detail(variables.productId) });
+      queryClient.invalidateQueries({ queryKey: ['auction', 'topBid', variables.auctionId] });
     },
   });
 }

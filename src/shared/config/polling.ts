@@ -5,13 +5,13 @@
 
 export const POLLING_CONFIG = {
   // 채팅 관련
-  CHAT_ROOMS: 5_000,      // 채팅방 목록 (30초)
-  CHAT_MESSAGES: 5_000,   // 채팅 메시지 (30초)
-  UNREAD_COUNT: 5_000,    // 읽지 않은 메시지 수 (30초)
+  CHAT_ROOMS: 60_000,      // 채팅방 목록 (60초)
+  CHAT_MESSAGES: 10_000,    // 채팅 메시지 - 상세 페이지용 (5초)
+  UNREAD_COUNT: 60_000,    // 읽지 않은 메시지 수 (60초)
 
   // 결제/송금 관련
-  USER_BALANCE: 5_000,     // 채팅방 잔액 (5초)
-  TRANSACTIONS: 5_000,     // 거래 내역 (5초)
+  USER_BALANCE: 50_000,     // 채팅방 잔액 (5초)
+  TRANSACTIONS: 50_000,     // 거래 내역 (5초)
 
   // staleTime 설정
   STALE_TIME: {

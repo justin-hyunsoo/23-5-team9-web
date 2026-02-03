@@ -272,6 +272,10 @@ export const ko = {
     topBidder: '현재 최고 입찰자',
     myBids: '내 입찰 현황',
     noMyBids: '현재 최고 입찰 중인 경매가 없습니다.',
+    auctionPayment: '낙찰 송금하기',
+    auctionPaid: '송금 완료',
+    auctionPaymentDesc: '[Auction] 낙찰 완료',
+    auctionPaymentSuccess: '낙찰 송금이 완료되었습니다.',
   },
 } as const;
 

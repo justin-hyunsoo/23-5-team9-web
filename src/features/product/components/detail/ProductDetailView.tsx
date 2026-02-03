@@ -31,9 +31,7 @@ export function ProductDetailView() {
   const { user, isLoggedIn } = useUser();
   const createRoom = useCreateRoom();
   const { product, isOwner, isDeleting, startEditing, handleDelete } = useDetail();
-  const { auction, isAuction, isEnded, remainingTime, bidPrice, setBidPrice, minBidPrice, handleBid, isBidding, topBidder, topBidderProfile } = useProductDetail();
-
-  const isTopBidder = topBidder && user?.id === topBidder.bidder_id;
+  const { auction, isAuction, isEnded, remainingTime, bidPrice, setBidPrice, minBidPrice, handleBid, isBidding, topBidder, topBidderProfile, isTopBidder, hasAuctionPayment, isPayingAuction, handleAuctionPayment } = useProductDetail();
 
   const handleNavigateToTopBidder = () => {
     if (topBidder?.bidder_id) {
@@ -209,6 +207,28 @@ export function ProductDetailView() {
                   </Button>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Auction Payment Button (for winner when auction ended) */}
+          {isEnded && isTopBidder && (
+            <div className="border-t border-border-base pt-4">
+              {hasAuctionPayment ? (
+                <div className="flex items-center justify-center">
+                  <Badge variant="secondary" className="text-base px-4 py-2">
+                    {t.auction.auctionPaid}
+                  </Badge>
+                </div>
+              ) : (
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={handleAuctionPayment}
+                  disabled={isPayingAuction}
+                >
+                  {isPayingAuction ? t.pay.transferring : t.auction.auctionPayment}
+                </Button>
+              )}
             </div>
           )}
 

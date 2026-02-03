@@ -58,17 +58,18 @@ function ChatRoom() {
   if (error) return <ErrorMessage message={t.chat.messageFailed} />;
 
   return (
-    <Container size="md" py={{ base: 0, md: 'md' }}>
+    <Container size="md" py={{ base: 0, md: 'md' }} h={{ base: 'calc(100dvh - 60px)', md: 'auto' }} p={{ base: 0, md: 'md' }}>
       <Box visibleFrom="md" mb="md">
         <DetailHeader />
       </Box>
 
       <Paper
-        withBorder
+        withBorder={isMdUp}
         radius={isMdUp ? 'md' : 0}
         style={{ overflow: 'hidden' }}
+        h={{ base: '100%', md: '75vh' }}
       >
-        <Stack gap={0} style={{ height: 'min(calc(100dvh - 64px), 70vh)' }}>
+        <Stack gap={0} h="100%">
           <ChatHeader
             opponentId={roomInfo?.opponent_id}
             opponentNickname={opponentProfile?.nickname}

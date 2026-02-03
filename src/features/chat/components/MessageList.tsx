@@ -5,6 +5,7 @@ import { useTranslation } from '@/shared/i18n';
 import { useLanguage } from '@/shared/store/languageStore';
 import { formatMessageTime } from '@/shared/lib/formatting';
 import { Box, Center, Group, Paper, ScrollArea, Stack, Text, useComputedColorScheme } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 export type ChatItem =
   | { type: 'message'; data: Message; timestamp: number }
@@ -22,6 +23,7 @@ function MessageList({ messages, transactions = [], currentUserId }: MessageList
   const { language } = useLanguage();
   const computedColorScheme = useComputedColorScheme('light');
   const isDark = computedColorScheme === 'dark';
+  const isMobile = useMediaQuery('(max-width: 48em)'); // 768px
 
   // Merge messages and transactions, sorted by time
   const chatItems: ChatItem[] = [
@@ -134,7 +136,7 @@ function MessageList({ messages, transactions = [], currentUserId }: MessageList
                 bg={isMe ? 'blue.6' : (isDark ? 'dark.6' : 'gray.1')}
                 c={isMe ? 'white' : undefined}
                 style={{
-                  maxWidth: '75%',
+                  maxWidth: isMobile ? '85%' : '75%',
                   wordBreak: 'break-word',
                   borderBottomRightRadius: isMe ? 0 : undefined,
                   borderBottomLeftRadius: !isMe ? 0 : undefined,

@@ -30,6 +30,7 @@ export function Card({ children, className = '', onClick, hoverable = true }: Ca
       style={{
         cursor: onClick ? 'pointer' : undefined,
         transition: hoverable ? 'transform 200ms ease' : undefined,
+        borderColor: 'var(--color-border-light)',
       }}
     >
       {children}
@@ -73,7 +74,11 @@ export function CardImage({ src, alt, aspectRatio = 'square', className = '', on
       className={className}
       w={w}
       h={h}
-      style={{ borderRadius: 'var(--mantine-radius-md)', overflow: 'hidden', ...style }}
+      style={{
+        borderRadius: 'var(--mantine-radius-md)',
+        overflow: 'hidden',
+        ...style,
+      }}
     >
       {isLoading && src && (
         <Skeleton visible h="100%" w="100%" style={{ position: 'absolute', inset: 0, zIndex: 1 }} />
@@ -101,15 +106,15 @@ export function CardImage({ src, alt, aspectRatio = 'square', className = '', on
           h="100%"
           w="100%"
           style={{
-            backgroundColor: 'var(--color-bg-box)',
-            color: 'var(--color-text-primary)',
+            background: 'transparent',
+            color: 'var(--text-muted)',
           }}
         >
           <Stack align="center" gap={6}>
-            <Text size="xl" fw={700} lh={1}>
-              📦
+            <Text size="32px" lh={1} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}>
+              🍊
             </Text>
-            <Text size="sm" fw={600} style={{ opacity: 0.7 }}>
+            <Text size="xs" fw={700} style={{ opacity: 0.8 }}>
               {label}
             </Text>
           </Stack>

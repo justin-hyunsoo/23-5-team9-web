@@ -129,10 +129,10 @@ function MessageList({ messages, transactions = [], currentUserId }: MessageList
                 px="sm"
                 py={8}
                 withBorder={!isMe}
+                bg={isMe ? 'orange.6' : undefined}
+                c={isMe ? 'white' : undefined}
                 style={{
                   maxWidth: '75%',
-                  background: isMe ? 'var(--mantine-color-orange-6)' : 'var(--mantine-color-white)',
-                  color: isMe ? 'white' : 'var(--mantine-color-text)',
                   wordBreak: 'break-word',
                 }}
               >

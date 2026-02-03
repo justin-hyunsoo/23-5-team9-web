@@ -10,6 +10,7 @@ interface SegmentedTabBarProps<T extends string = string> {
   activeTab: T;
   onTabChange: (tabId: T) => void;
   className?: string;
+  fullWidth?: boolean;
 }
 
 export function SegmentedTabBar<T extends string = string>({
@@ -17,6 +18,7 @@ export function SegmentedTabBar<T extends string = string>({
   activeTab,
   onTabChange,
   className,
+  fullWidth = false,
 }: SegmentedTabBarProps<T>) {
   return (
     <SegmentedControl
@@ -26,6 +28,9 @@ export function SegmentedTabBar<T extends string = string>({
       data={tabs.map((tab) => ({ value: tab.id, label: tab.label }))}
       radius="xl"
       color="orange"
+      fullWidth={fullWidth}
+      withItemsBorders={false}
+      w={fullWidth ? undefined : 'fit-content'}
     />
   );
 }

@@ -95,7 +95,8 @@ const MyBidsTab = () => {
     return winningAuctions.filter(product => {
       const auction = product?.auction;
       if (!auction) return false;
-      return auction.status !== 'active' || new Date(auction.end_at).getTime() <= Date.now();
+      const endAt = auction.end_at.endsWith('Z') || auction.end_at.includes('+') ? auction.end_at : auction.end_at + 'Z';
+      return auction.status !== 'active' || new Date(endAt).getTime() <= Date.now();
     });
   }, [winningAuctions]);
 
@@ -138,7 +139,8 @@ const MyBidsTab = () => {
     return winningAuctions.filter(product => {
       const auction = product?.auction;
       if (!auction) return false;
-      return auction.status === 'active' && new Date(auction.end_at).getTime() > Date.now();
+      const endAt = auction.end_at.endsWith('Z') || auction.end_at.includes('+') ? auction.end_at : auction.end_at + 'Z';
+      return auction.status === 'active' && new Date(endAt).getTime() > Date.now();
     });
   }, [winningAuctions]);
 

@@ -40,7 +40,7 @@ export function useProductDetailLogic(productId: string) {
   const isEnded = Boolean(
     auctionInfo && (
       auctionInfo.status !== 'active' ||
-      (auctionInfo.end_at ? new Date(auctionInfo.end_at).getTime() <= Date.now() : false)
+      (auctionInfo.end_at ? new Date(auctionInfo.end_at.endsWith('Z') || auctionInfo.end_at.includes('+') ? auctionInfo.end_at : auctionInfo.end_at + 'Z').getTime() <= Date.now() : false)
     )
   );
   const minBidPrice = auctionInfo ? auctionInfo.current_price + 1 : 0;

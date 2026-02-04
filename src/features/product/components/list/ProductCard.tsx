@@ -26,7 +26,7 @@ export default function ProductCard({ product, showActions, onEdit, onDelete }: 
   const isAuctionEnded = Boolean(
     auction && (
       auction.status !== 'active' ||
-      (auction.end_at ? new Date(auction.end_at).getTime() <= Date.now() : false)
+      (auction.end_at ? new Date(auction.end_at.endsWith('Z') || auction.end_at.includes('+') ? auction.end_at : auction.end_at + 'Z').getTime() <= Date.now() : false)
     )
   );
 

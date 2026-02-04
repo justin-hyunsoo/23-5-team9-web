@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "@/features/product/components/list/ProductCard";
 import SearchBar from "@/features/product/components/list/SearchBar";
@@ -9,9 +9,11 @@ import { useRegionSelection } from "@/features/location/hooks/useRegionSelection
 import RegionSelector from "@/features/location/components/RegionSelector";
 import RegionSelectModal from "@/features/location/components/RegionSelectModal";
 import { useTranslation } from "@/shared/i18n";
-import { SegmentedTabBar } from "@/shared/ui";
+import { SegmentedTabBar, Pagination } from "@/shared/ui";
 import { useProductFilters } from "@/features/product/store/productFiltersStore";
 import { Group, SimpleGrid, Stack } from "@mantine/core";
+
+const ITEMS_PER_PAGE = 12;
 
 export default function ProductList() {
   const t = useTranslation();
@@ -30,10 +32,15 @@ export default function ProductList() {
   } = useRegionSelection();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   // URL 쿼리 파라미터에서 auction 값 읽기 (기본값: false)
   const auctionParam = searchParams.get("auction");
   const showAuction = auctionParam === "true";
+
+  // 판매 상태 필터: 'onSale' | 'sold'
+  const saleStatusParam = searchParams.get("saleStatus") ?? "onSale";
+  const saleStatus = saleStatusParam as "onSale" | "sold";
 
   // Sync current filters to store for navigation persistence
   const { setFilters } = useProductFilters();
@@ -52,10 +59,20 @@ export default function ProductList() {
       next.set("auction", String(value));
       return next;
     }, { replace: true });
+    setCurrentPage(1);
+  };
+
+  const handleSaleStatusChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("saleStatus", value);
+      return next;
+    }, { replace: true });
+    setCurrentPage(1);
   };
 
   // 지역 필터: 동 단위, 시/구/군 단위, 시/도 단위 모두 지원
-  const { products, loading, error } = useProducts({
+  const { products: allProducts, loading, error } = useProducts({
     search: searchQuery,
     regionId: currentRegionId,
     sido: currentSido,
@@ -63,10 +80,34 @@ export default function ProductList() {
     auction: showAuction,
   });
 
+  // 판매 상태 필터링
+  const filteredProducts = useMemo(() => {
+    if (!allProducts) return [];
+    if (saleStatus === "onSale") return allProducts.filter((p) => !p.is_sold);
+    return allProducts.filter((p) => p.is_sold);
+  }, [allProducts, saleStatus]);
+
+  // 페이지네이션
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
+  // 필터 변경 시 페이지 초기화
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, saleStatus, showAuction, currentRegionId]);
+
   const filterOptions = [
     { value: false, label: t.product.regular },
     { value: true, label: t.auction.auction },
   ] as const;
+
+  const saleStatusOptions = [
+    { id: "onSale", label: t.product.onSale },
+    { id: "sold", label: t.product.soldOut },
+  ];
 
   return (
     <PageContainer title={t.product.usedGoods}>
@@ -76,23 +117,35 @@ export default function ProductList() {
           <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         </Group>
 
-        <SegmentedTabBar
-          tabs={filterOptions.map((opt) => ({ id: String(opt.value), label: opt.label }))}
-          activeTab={String(showAuction)}
-          onTabChange={(tab) => handleAuctionChange(tab === 'true')}
-        />
+        <Group gap="md" wrap="wrap">
+          <SegmentedTabBar
+            tabs={filterOptions.map((opt) => ({ id: String(opt.value), label: opt.label }))}
+            activeTab={String(showAuction)}
+            onTabChange={(tab) => handleAuctionChange(tab === 'true')}
+          />
+          <SegmentedTabBar
+            tabs={saleStatusOptions}
+            activeTab={saleStatus}
+            onTabChange={handleSaleStatusChange}
+          />
+        </Group>
 
         <DataListLayout
           isLoading={loading}
           error={error}
-          isEmpty={products.length === 0}
+          isEmpty={filteredProducts.length === 0}
           emptyMessage={searchQuery ? t.product.noSearchResults : t.product.noProducts}
         >
           <SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="lg">
-            {products.map((product) => (
+            {paginatedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </SimpleGrid>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </DataListLayout>
       </Stack>
       <RegionSelectModal

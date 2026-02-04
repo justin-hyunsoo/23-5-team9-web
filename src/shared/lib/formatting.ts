@@ -42,7 +42,9 @@ export function formatMessageTime(dateString: string, locale: string): string {
 
 // 날짜+시간 표시 (예: "2024년 1월 15일 오후 3:45")
 export function formatDateTime(dateStr: string, locale: string): string {
-  const date = new Date(dateStr);
+  // 서버에서 Z 없이 UTC 시간으로 오는 경우 처리
+  const normalized = dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z';
+  const date = new Date(normalized);
   return date.toLocaleString(locale === 'ko' ? 'ko-KR' : 'en-US', {
     year: 'numeric',
     month: 'long',
@@ -62,7 +64,9 @@ export type TimeLabels = {
 };
 
 export function formatRemainingTime(endAt: string, t: TimeLabels): string {
-  const diff = new Date(endAt).getTime() - Date.now();
+  // 서버에서 Z 없이 UTC 시간으로 오는 경우 처리
+  const normalized = endAt.endsWith('Z') || endAt.includes('+') ? endAt : endAt + 'Z';
+  const diff = new Date(normalized).getTime() - Date.now();
   if (diff <= 0) return t.timeEnded;
 
   const d = Math.floor(diff / 86400000);

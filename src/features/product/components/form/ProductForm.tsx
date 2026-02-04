@@ -11,7 +11,6 @@ import {
   Checkbox,
   Text,
   UnstyledButton,
-  Alert,
   Select,
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
@@ -191,136 +190,155 @@ const ProductForm = ({
 
       {showAuctionOption && (
         <>
-          <Stack gap="sm" mb="lg">
-            <Box>
-              <SegmentedTabBar
-                tabs={[
-                  { id: 'regular', label: t.product.regular },
-                  { id: 'auction', label: t.auction.auction },
-                ]}
-                activeTab={isAuction ? 'auction' : 'regular'}
-                onTabChange={(tab) => setValue('isAuction', tab === 'auction')}
+          <Box mb="lg">
+            <SegmentedTabBar
+              tabs={[
+                { id: 'regular', label: t.product.regular },
+                { id: 'auction', label: t.auction.auction },
+              ]}
+              activeTab={isAuction ? 'auction' : 'regular'}
+              onTabChange={(tab) => setValue('isAuction', tab === 'auction')}
+            />
+          </Box>
+          {isAuction && (
+            <Box
+              mb="lg"
+              p="md"
+              style={{
+                backgroundColor: 'var(--mantine-color-gray-0)',
+                borderRadius: 'var(--mantine-radius-md)',
+                borderLeft: '3px solid var(--mantine-color-orange-5)',
+              }}
+            >
+              <Controller
+                name="auctionEndAt"
+                control={control}
+                render={({ field }) => {
+                  const getDefaultDate = () => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(12, 0, 0, 0);
+                    return tomorrow;
+                  };
+
+                  const currentDate = field.value ? new Date(field.value) : getDefaultDate();
+
+                  if (!field.value) {
+                    field.onChange(currentDate.toISOString());
+                  }
+
+                  const hours = Array.from({ length: 24 }, (_, i) => ({
+                    value: String(i),
+                    label: `${i}시`,
+                  }));
+                  const minutes = Array.from({ length: 12 }, (_, i) => ({
+                    value: String(i * 5),
+                    label: `${i * 5}분`,
+                  }));
+
+                  const updateDateTime = (date: Date | string | null, hour?: number, minute?: number) => {
+                    const baseDate = date
+                      ? (typeof date === 'string' ? new Date(date) : new Date(date))
+                      : new Date(currentDate);
+                    baseDate.setHours(hour ?? currentDate.getHours());
+                    baseDate.setMinutes(minute ?? currentDate.getMinutes());
+                    baseDate.setSeconds(0);
+                    field.onChange(baseDate.toISOString());
+                  };
+
+                  const formatDateKo = (date: Date) => {
+                    const month = date.getMonth() + 1;
+                    const day = date.getDate();
+                    const hour = date.getHours();
+                    const minute = date.getMinutes().toString().padStart(2, '0');
+                    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                    return `${month}월 ${day}일 (${weekdays[date.getDay()]}) ${hour}시 ${minute}분`;
+                  };
+
+                  const formatDateEn = (date: Date) => {
+                    const day = date.getDate();
+                    const hour = date.getHours();
+                    const minute = date.getMinutes().toString().padStart(2, '0');
+                    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    return `${months[date.getMonth()]} ${day} (${weekdays[date.getDay()]}) ${hour}:${minute}`;
+                  };
+
+                  return (
+                    <Stack gap="sm">
+                      <Group gap="xs" align="center" wrap="wrap">
+                        {language === 'ko' ? (
+                          <>
+                            <Text size="md" fw={600} c="orange.6">{formatDateKo(currentDate)}</Text>
+                            <Text size="md" c="dimmed">{t.auction.auctionEndsAt}</Text>
+                          </>
+                        ) : (
+                          <>
+                            <Text size="md" c="dimmed">{t.auction.auctionEndsAt}</Text>
+                            <Text size="md" fw={600} c="orange.6">{formatDateEn(currentDate)}</Text>
+                          </>
+                        )}
+                        <UnstyledButton
+                          onClick={() => setDatePickerOpen(!datePickerOpen)}
+                          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                        >
+                          <IconEdit size={14} color="var(--mantine-color-dimmed)" />
+                          <Text size="xs" c="dimmed">{datePickerOpen ? t.auction.close : t.auction.change}</Text>
+                        </UnstyledButton>
+                      </Group>
+                      {datePickerOpen && (
+                        <Group gap="lg" align="flex-start" mt="xs">
+                          <Box>
+                            <Group gap={4} mb={4}>
+                              <IconCalendar size={14} color="var(--mantine-color-dimmed)" />
+                              <Text size="xs" c="dimmed">{t.auction.date}</Text>
+                            </Group>
+                            <DatePicker
+                              value={currentDate}
+                              onChange={(date) => updateDateTime(date)}
+                              locale="ko"
+                              minDate={new Date()}
+                              size="sm"
+                            />
+                          </Box>
+                          <Box>
+                            <Group gap={4} mb={4}>
+                              <IconClock size={14} color="var(--mantine-color-dimmed)" />
+                              <Text size="xs" c="dimmed">{t.auction.time}</Text>
+                            </Group>
+                            <Stack gap="xs">
+                              <Select
+                                data={hours}
+                                value={String(currentDate.getHours())}
+                                onChange={(v) => updateDateTime(null, Number(v))}
+                                w={90}
+                                size="sm"
+                                comboboxProps={{ withinPortal: true }}
+                              />
+                              <Select
+                                data={minutes}
+                                value={String(Math.floor(currentDate.getMinutes() / 5) * 5)}
+                                onChange={(v) => updateDateTime(null, undefined, Number(v))}
+                                w={90}
+                                size="sm"
+                                comboboxProps={{ withinPortal: true }}
+                              />
+                            </Stack>
+                          </Box>
+                        </Group>
+                      )}
+                      <Group gap={6} align="center">
+                        <IconInfoCircle size={14} color="var(--mantine-color-dimmed)" />
+                        <Text size="xs" c="dimmed">
+                          {t.auction.cannotEditOrDelete}
+                        </Text>
+                      </Group>
+                    </Stack>
+                  );
+                }}
               />
             </Box>
-            {isAuction && (
-              <>
-                <Controller
-                  name="auctionEndAt"
-                  control={control}
-                  render={({ field }) => {
-                    // 기본값: 내일 12:00
-                    const getDefaultDate = () => {
-                      const tomorrow = new Date();
-                      tomorrow.setDate(tomorrow.getDate() + 1);
-                      tomorrow.setHours(12, 0, 0, 0);
-                      return tomorrow;
-                    };
-
-                    const currentDate = field.value ? new Date(field.value) : getDefaultDate();
-
-                    // 아직 값이 없으면 기본값 설정
-                    if (!field.value) {
-                      field.onChange(currentDate.toISOString());
-                    }
-
-                    const hours = Array.from({ length: 24 }, (_, i) => ({
-                      value: String(i),
-                      label: `${i}시`,
-                    }));
-                    const minutes = Array.from({ length: 12 }, (_, i) => ({
-                      value: String(i * 5),
-                      label: `${i * 5}분`,
-                    }));
-
-                    const updateDateTime = (date: Date | string | null, hour?: number, minute?: number) => {
-                      const baseDate = date
-                        ? (typeof date === 'string' ? new Date(date) : new Date(date))
-                        : new Date(currentDate);
-                      baseDate.setHours(hour ?? currentDate.getHours());
-                      baseDate.setMinutes(minute ?? currentDate.getMinutes());
-                      baseDate.setSeconds(0);
-                      field.onChange(baseDate.toISOString());
-                    };
-
-                    const formatDate = (date: Date) => {
-                      const month = date.getMonth() + 1;
-                      const day = date.getDate();
-                      const hour = date.getHours();
-                      const minute = date.getMinutes().toString().padStart(2, '0');
-
-                      if (language === 'ko') {
-                        const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-                        return `${month}월 ${day}일 (${weekdays[date.getDay()]}) ${hour}시 ${minute}분`;
-                      } else {
-                        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                        return `${months[date.getMonth()]} ${day} (${weekdays[date.getDay()]}) ${hour}:${minute}`;
-                      }
-                    };
-
-                    return (
-                      <Stack gap="sm">
-                        <Group gap="xs" align="center">
-                          <Text size="lg" c="orange" fw={600}>{formatDate(currentDate)}</Text>
-                          <Text size="lg" fw={500}>{t.auction.auctionEndsAt}</Text>
-                          <UnstyledButton
-                            onClick={() => setDatePickerOpen(!datePickerOpen)}
-                            style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-                          >
-                            <IconEdit size={14} color="var(--mantine-color-dimmed)" />
-                            <Text size="xs" c="dimmed">{datePickerOpen ? t.auction.close : t.auction.change}</Text>
-                          </UnstyledButton>
-                        </Group>
-                        {datePickerOpen && (
-                          <Group gap="md" align="flex-start">
-                            <Box>
-                              <Group gap={4} mb={4}>
-                                <IconCalendar size={14} color="var(--mantine-color-dimmed)" />
-                                <Text size="xs" c="dimmed">{t.auction.date}</Text>
-                              </Group>
-                              <DatePicker
-                                value={currentDate}
-                                onChange={(date) => updateDateTime(date)}
-                                locale="ko"
-                                minDate={new Date()}
-                                size="sm"
-                              />
-                            </Box>
-                            <Box>
-                              <Group gap={4} mb={4}>
-                                <IconClock size={14} color="var(--mantine-color-dimmed)" />
-                                <Text size="xs" c="dimmed">{t.auction.time}</Text>
-                              </Group>
-                              <Group gap="xs">
-                                <Select
-                                  data={hours}
-                                  value={String(currentDate.getHours())}
-                                  onChange={(v) => updateDateTime(null, Number(v))}
-                                  w={80}
-                                  size="sm"
-                                  comboboxProps={{ withinPortal: true }}
-                                  styles={{ input: { backgroundColor: 'transparent' } }}
-                                />
-                                <Select
-                                  data={minutes}
-                                  value={String(Math.floor(currentDate.getMinutes() / 5) * 5)}
-                                  onChange={(v) => updateDateTime(null, undefined, Number(v))}
-                                  w={80}
-                                  size="sm"
-                                  comboboxProps={{ withinPortal: true }}
-                                  styles={{ input: { backgroundColor: 'transparent' } }}
-                                />
-                              </Group>
-                            </Box>
-                          </Group>
-                        )}
-                      </Stack>
-                    );
-                  }}
-                />
-              </>
-            )}
-          </Stack>
+          )}
           {errors.auctionEndAt && <Text size="sm" c="red" mb="md">{errors.auctionEndAt.message}</Text>}
         </>
       )}
@@ -393,12 +411,7 @@ const ProductForm = ({
         }}
       />
 
-      <Group justify="flex-end" pt="lg" mt="lg" style={{ borderTop: '1px solid var(--mantine-color-default-border)', flexDirection: 'column', alignItems: 'stretch', gap: 'var(--mantine-spacing-md)' }}>
-        {isAuction && (
-          <Alert icon={<IconInfoCircle size={16} />} title={t.auction.notice} color="orange" variant="light">
-            {t.auction.cannotEditOrDelete}
-          </Alert>
-        )}
+      <Group justify="flex-end" pt="lg" mt="lg" style={{ borderTop: '1px solid var(--mantine-color-default-border)' }}>
         <Group justify="flex-end" w="100%">
           {showIsSold && (
             <Checkbox
